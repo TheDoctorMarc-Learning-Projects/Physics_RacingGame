@@ -32,10 +32,10 @@ bool ModulePlayer::Start()
 	car.maxSuspensionForce = 6000.0f;
 
 	// Wheel properties ---------------------------------------
-	float front_connection_height = 0.7f;
-	float front_wheel_radius = 0.7f;
+	float front_connection_height = 0.75f;
+	float front_wheel_radius = 0.75f;
 	float front_wheel_width = 0.65f;
-	float front_suspensionRestLength = 0.7f;
+	float front_suspensionRestLength = 0.75f;
 
 	float rear_connection_height = 0.8f;
 	float rear_wheel_radius = 0.8f;
