@@ -154,10 +154,13 @@ update_status ModulePlayer::Update(float dt)
 
 	}
 
-	inertia = (- vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
+	inertia = (-vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
 	
 	if (vehicle->GetKmh() > 0) {
 		acceleration += inertia; 
+	}
+	else if (vehicle->GetKmh() < 0) {
+		acceleration += inertia / 4;
 	}
 
 	vehicle->ApplyEngineForce(acceleration);
