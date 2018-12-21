@@ -154,3 +154,17 @@ bool ModuleAudio::PlayFx(unsigned int id, int repeat)
 
 	return ret;
 }
+
+
+
+void ModuleAudio::Change_Mus_Volume(int volume) {
+
+	mus_vol = volume;
+	Mix_VolumeMusic(mus_vol);
+
+}
+
+void ModuleAudio::Change_Fx_Volume(int channel, int volume) {
+	fx_vol = volume;
+	Mix_Volume(channel - 1, fx_vol);
+}

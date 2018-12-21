@@ -18,6 +18,14 @@ bool ModulePlayer::Start()
 {
 	LOG("Loading player");
 
+
+	// Fx's
+	engine_fx = App->audio->LoadFx("Sound/engine.wav");
+	App->audio->Change_Fx_Volume(engine_fx, 40);
+	App->audio->PlayFx(engine_fx, -1);
+	
+
+
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
@@ -135,10 +143,18 @@ update_status ModulePlayer::Update(float dt)
 {
 	turn = acceleration = brake = 0.0f;
 
+
+
+
+	
+	// handle movement
+
 	inertia = (-vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
 
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
+		  App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
+
 			acceleration = MAX_ACCELERATION;
 
 			if (App->input->GetKey(SDL_SCANCODE_P) == KEY_REPEAT) {
@@ -149,6 +165,8 @@ update_status ModulePlayer::Update(float dt)
 	}
 
 	else {
+		App->audio->Change_Fx_Volume(engine_fx, 40);
+
 		vehicle->info.rear_wing_size.y = 0.4f;  // close rear wing 
 
 		if (vehicle->GetKmh() > 0) {

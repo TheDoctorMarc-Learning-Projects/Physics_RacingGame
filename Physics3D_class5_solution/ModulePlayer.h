@@ -27,4 +27,7 @@ public:
 	float acceleration;
 	float brake;
 	float inertia; 
+
+	// fxs
+	uint engine_fx; 
 };
