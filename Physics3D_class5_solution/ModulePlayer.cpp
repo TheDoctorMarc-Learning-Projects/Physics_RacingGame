@@ -24,11 +24,14 @@ bool ModulePlayer::Start()
 	car.chassis_size.Set(2.5, 1, 4);
 	car.chassis_offset.Set(0, 1.0, 0);
 
-	car.rear_wing_size.Set(3.5, 0.4, 0.3);
-	car.rear_wing_offset.Set(0, 2.5, -2.5);
+	car.rear_wing_size.Set(4.8, 0.4, 0.3);
+	car.rear_wing_offset.Set(0, 2.4, -2.5);
 
 	car.rear_wing_support_size.Set(0.3, 1, 0.3); 
 	car.rear_wing_support_offset.Set(0, 2, -2); 
+
+	car.rear_wing_flag_size.Set(0.1, 1.1, 1.1); 
+	car.rear_wing_flag_offset.Set(2.5, 2.3, -2.5); 
 
 	car.mass = 500.0f;
 	car.suspensionStiffness = 8.0f;  // 15.88f;

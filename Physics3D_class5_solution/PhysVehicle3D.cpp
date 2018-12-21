@@ -25,7 +25,7 @@ void PhysVehicle3D::Render()
 {
 	Cylinder wheel;
 
-	wheel.color = Red; //  Blue;
+	wheel.color = {0.2f, 0.2f, 0.2f, 1.0f};
 
 	for(int i = 0; i < vehicle->getNumWheels(); ++i)
 	{
@@ -87,6 +87,34 @@ void PhysVehicle3D::Render()
 
 
 
+	// rear wing flag right
+
+	Cube rear_wing_flag_right(info.rear_wing_flag_size.x, info.rear_wing_flag_size.y, info.rear_wing_flag_size.z);
+
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&rear_wing_flag_right.transform);
+	btVector3 offset_q_rw_flag_r(info.rear_wing_flag_offset.x, info.rear_wing_flag_offset.y, info.rear_wing_flag_offset.z);
+	offset_q_rw_flag_r = offset_q_rw_flag_r.rotate(q.getAxis(), q.getAngle());
+
+	rear_wing_flag_right.transform.M[12] += offset_q_rw_flag_r.getX();
+	rear_wing_flag_right.transform.M[13] += offset_q_rw_flag_r.getY();
+	rear_wing_flag_right.transform.M[14] += offset_q_rw_flag_r.getZ();
+	rear_wing_flag_right.color = Blue;
+	rear_wing_flag_right.Render();
+
+
+	// rear wing flag left
+
+	Cube rear_wing_flag_left(info.rear_wing_flag_size.x, info.rear_wing_flag_size.y, info.rear_wing_flag_size.z);
+
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&rear_wing_flag_left.transform);
+	btVector3 offset_q_rw_flag_l(-info.rear_wing_flag_offset.x, info.rear_wing_flag_offset.y, info.rear_wing_flag_offset.z);
+	offset_q_rw_flag_l = offset_q_rw_flag_l.rotate(q.getAxis(), q.getAngle());
+
+	rear_wing_flag_left.transform.M[12] += offset_q_rw_flag_l.getX();
+	rear_wing_flag_left.transform.M[13] += offset_q_rw_flag_l.getY();
+	rear_wing_flag_left.transform.M[14] += offset_q_rw_flag_l.getZ();
+	rear_wing_flag_left.color = Blue;
+	rear_wing_flag_left.Render();
 
 
 

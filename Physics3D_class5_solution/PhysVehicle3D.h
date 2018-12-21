@@ -46,6 +46,8 @@ struct VehicleInfo
 	vec3 rear_wing_support_size;
 	vec3 rear_wing_support_offset;
 
+	vec3 rear_wing_flag_size; 
+	vec3 rear_wing_flag_offset; 
 
 };
 
