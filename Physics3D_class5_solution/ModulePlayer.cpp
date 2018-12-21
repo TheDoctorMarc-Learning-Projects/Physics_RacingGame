@@ -106,6 +106,8 @@ bool ModulePlayer::Start()
 
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetPos(0, 12, 10);
+
+	
 	
 	return true;
 }
@@ -150,6 +152,12 @@ update_status ModulePlayer::Update(float dt)
 			acceleration = -MAX_ACCELERATION / 4;             // go backwards 
 		}
 
+	}
+
+	inertia = (- vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
+	
+	if (vehicle->GetKmh() > 0) {
+		acceleration += inertia; 
 	}
 
 	vehicle->ApplyEngineForce(acceleration);
