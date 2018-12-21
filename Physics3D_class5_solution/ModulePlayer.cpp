@@ -139,10 +139,22 @@ update_status ModulePlayer::Update(float dt)
 
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		acceleration = MAX_ACCELERATION;
+			acceleration = MAX_ACCELERATION;
+
+			if (App->input->GetKey(SDL_SCANCODE_P) == KEY_REPEAT) {
+				vehicle->info.rear_wing_size.y = 0.05f;                   // open rear wing (DRS)
+				acceleration = MAX_ACC_DRS;
+			}
+
 	}
-	else if (vehicle->GetKmh() > 0) {
-		acceleration += inertia;
+
+	else {
+		vehicle->info.rear_wing_size.y = 0.4f;  // close rear wing 
+
+		if (vehicle->GetKmh() > 0) {
+			acceleration += inertia;
+		}
+		
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
@@ -161,7 +173,7 @@ update_status ModulePlayer::Update(float dt)
 	{
 		
 		if (vehicle->GetKmh() > 0) {                      // brake 
-			brake = BRAKE_POWER;	
+			brake = BRAKE_POWER;
 		}
 		else {
 			acceleration = -MAX_ACCELERATION / 4;             // go backwards 
