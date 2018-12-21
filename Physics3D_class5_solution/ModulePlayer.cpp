@@ -135,9 +135,14 @@ update_status ModulePlayer::Update(float dt)
 {
 	turn = acceleration = brake = 0.0f;
 
+	inertia = (-vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
+
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
 		acceleration = MAX_ACCELERATION;
+	}
+	else if (vehicle->GetKmh() > 0) {
+		acceleration += inertia;
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
@@ -163,15 +168,17 @@ update_status ModulePlayer::Update(float dt)
 		}
 
 	}
+	else if (vehicle->GetKmh() < 0) {
+		acceleration += inertia / 4;
+	}
 
-	inertia = (-vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
 	
-	if (vehicle->GetKmh() > 0) {
+	/*if (vehicle->GetKmh() > 0) {
 		acceleration += inertia; 
 	}
 	else if (vehicle->GetKmh() < 0) {
 		acceleration += inertia / 4;
-	}
+	}*/
 
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);
