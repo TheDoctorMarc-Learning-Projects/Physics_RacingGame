@@ -53,6 +53,43 @@ void PhysVehicle3D::Render()
 
 
 	chassis.Render();
+
+
+	// rear wing 
+
+	Cube rear_wing(info.rear_wing_size.x, info.rear_wing_size.y, info.rear_wing_size.z);
+
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&rear_wing.transform);
+	btVector3 offset_q_rw(info.rear_wing_offset.x, info.rear_wing_offset.y, info.rear_wing_offset.z);
+	offset_q_rw = offset_q_rw.rotate(q.getAxis(), q.getAngle());
+
+	rear_wing.transform.M[12] += offset_q_rw.getX();
+	rear_wing.transform.M[13] += offset_q_rw.getY();
+	rear_wing.transform.M[14] += offset_q_rw.getZ();
+	rear_wing.color = Green; 
+	rear_wing.Render(); 
+
+	// rear wing support
+
+	/*Cube rear_wing_support(info.rear_wing_support_size.x, info.rear_wing_support_size.y, info.rear_wing_support_size.z);
+
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&rear_wing_support.transform);
+	rear_wing_support.transform.rotate(-200, (0, 1, 0));
+
+	btVector3 offset_q_rw_sup(info.rear_wing_support_offset.x, info.rear_wing_support_offset.y, info.rear_wing_support_offset.z);
+	offset_q_rw_sup = offset_q_rw_sup.rotate(q.getAxis(), q.getAngle());
+
+	rear_wing_support.transform.M[12] += offset_q_rw_sup.getX();
+	rear_wing_support.transform.M[13] += offset_q_rw_sup.getY();
+	rear_wing_support.transform.M[14] += offset_q_rw_sup.getZ();
+	rear_wing_support.color = Green;
+	rear_wing_support.Render();*/
+
+
+
+
+
+
 }
 
 // ----------------------------------------------------------------------------

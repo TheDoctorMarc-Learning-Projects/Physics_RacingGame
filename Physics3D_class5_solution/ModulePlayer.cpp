@@ -21,8 +21,15 @@ bool ModulePlayer::Start()
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
-	car.chassis_size.Set(2, 1, 4);
+	car.chassis_size.Set(2.5, 1, 4);
 	car.chassis_offset.Set(0, 1.0, 0);
+
+	car.rear_wing_size.Set(3.5, 0.4, 0.3);
+	car.rear_wing_offset.Set(0, 2.5, -2.5);
+
+	car.rear_wing_support_size.Set(0.3, 1, 0.3); 
+	car.rear_wing_support_offset.Set(0, 2, -2); 
+
 	car.mass = 500.0f;
 	car.suspensionStiffness = 8.0f;  // 15.88f;
 	car.suspensionCompression = 0.83f;
@@ -107,7 +114,7 @@ bool ModulePlayer::Start()
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetPos(0, 12, 10);
 
-	
+	 
 	
 	return true;
 }

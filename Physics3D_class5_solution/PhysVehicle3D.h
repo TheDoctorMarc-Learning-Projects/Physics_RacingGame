@@ -36,6 +36,17 @@ struct VehicleInfo
 
 	Wheel* wheels;
 	int num_wheels;
+
+
+	// extra parts
+
+	vec3 rear_wing_size; 
+	vec3 rear_wing_offset;
+
+	vec3 rear_wing_support_size;
+	vec3 rear_wing_support_offset;
+
+
 };
 
 
