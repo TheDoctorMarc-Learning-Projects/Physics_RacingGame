@@ -70,19 +70,20 @@ void PhysVehicle3D::Render()
 
 	// rear wing support
 
-	/*Cube rear_wing_support(info.rear_wing_support_size.x, info.rear_wing_support_size.y, info.rear_wing_support_size.z);
+	Cube rear_wing_support(info.rear_wing_support_size.x, info.rear_wing_support_size.y, info.rear_wing_support_size.z);
 
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&rear_wing_support.transform);
-	rear_wing_support.transform.rotate(-200, (0, 1, 0));
 
 	btVector3 offset_q_rw_sup(info.rear_wing_support_offset.x, info.rear_wing_support_offset.y, info.rear_wing_support_offset.z);
 	offset_q_rw_sup = offset_q_rw_sup.rotate(q.getAxis(), q.getAngle());
 
 	rear_wing_support.transform.M[12] += offset_q_rw_sup.getX();
 	rear_wing_support.transform.M[13] += offset_q_rw_sup.getY();
-	rear_wing_support.transform.M[14] += offset_q_rw_sup.getZ();
+	rear_wing_support.transform.M[14] += offset_q_rw_sup.getZ(); 
 	rear_wing_support.color = Green;
-	rear_wing_support.Render();*/
+	
+	
+	rear_wing_support.Render();
 
 
 

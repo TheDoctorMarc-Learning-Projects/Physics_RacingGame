@@ -29,14 +29,14 @@ bool ModulePlayer::Start()
 	VehicleInfo car;
 
 	// Car properties ----------------------------------------
-	car.chassis_size.Set(2.5, 1, 4);
+	car.chassis_size.Set(2.5, 1, 4.5);
 	car.chassis_offset.Set(0, 1.0, 0);
 
 	car.rear_wing_size.Set(4.8, 0.4, 0.3);
-	car.rear_wing_offset.Set(0, 2.4, -2.5);
+	car.rear_wing_offset.Set(0, 2.6, -2.5);
 
-	car.rear_wing_support_size.Set(0.3, 1, 0.3); 
-	car.rear_wing_support_offset.Set(0, 2, -2); 
+	car.rear_wing_support_size.Set(0.2, 1.0, 0.2); 
+	car.rear_wing_support_offset.Set(0, 1.9, -2.45); 
 
 	car.rear_wing_flag_size.Set(0.1, 1.1, 1.1); 
 	car.rear_wing_flag_offset.Set(2.5, 2.3, -2.5); 
@@ -44,7 +44,7 @@ bool ModulePlayer::Start()
 	car.mass = 500.0f;
 	car.suspensionStiffness = 8.0f;  // 15.88f;
 	car.suspensionCompression = 0.83f;
-	car.suspensionDamping = 1.0f;  // 0.88f;
+	car.suspensionDamping = 0.3f;  // 0.88f;
 	car.maxSuspensionTravelCm = 200.0f;
 	car.frictionSlip = 10; // 50.5;
 	car.maxSuspensionForce = 6000.0f;
@@ -141,13 +141,14 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
-	// handle special keys
-	Keys(); 
-
 	turn = acceleration = brake = 0.0f;
 
 
-	App->camera->Look((1,5,20), vehicle->GetPos(), true);
+	// handle special keys
+	Keys(); 
+
+	
+	App->camera->Look((0,5,5), vehicle->GetPos(), false);
 	// App->camera->Move(vehicle->GetPos() - (1,5,5));
 	
 	// handle movement
