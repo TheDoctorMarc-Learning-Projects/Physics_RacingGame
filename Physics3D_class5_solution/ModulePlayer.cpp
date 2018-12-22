@@ -165,9 +165,9 @@ update_status ModulePlayer::Update(float dt)
 	}
 
 	else {
-		App->audio->Change_Fx_Volume(engine_fx, 40);
+		App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
 
-		vehicle->info.rear_wing_size.y = 0.4f;  // close rear wing 
+		vehicle->info.rear_wing_size.y = 0.4f;  // close DRS
 
 		if (vehicle->GetKmh() > 0) {
 			acceleration += inertia;

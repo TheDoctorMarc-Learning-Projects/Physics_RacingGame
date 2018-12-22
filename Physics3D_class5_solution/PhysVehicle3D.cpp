@@ -54,7 +54,6 @@ void PhysVehicle3D::Render()
 
 	chassis.Render();
 
-
 	// rear wing 
 
 	Cube rear_wing(info.rear_wing_size.x, info.rear_wing_size.y, info.rear_wing_size.z);
@@ -117,6 +116,11 @@ void PhysVehicle3D::Render()
 	rear_wing_flag_left.Render();
 
 
+	// ground
+
+	Cube ground(5000, 0.05, 5000); 
+	ground.color = { 0.9f, 0.9f, 0.9f, 1.0f }; 
+	ground.Render(); 
 
 }
 
