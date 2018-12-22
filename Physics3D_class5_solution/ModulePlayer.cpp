@@ -144,8 +144,8 @@ update_status ModulePlayer::Update(float dt)
 	turn = acceleration = brake = 0.0f;
 
 
-
-
+	App->camera->Look((1,5,20), vehicle->GetPos(), true);
+	// App->camera->Move(vehicle->GetPos() - (1,5,5));
 	
 	// handle movement
 
