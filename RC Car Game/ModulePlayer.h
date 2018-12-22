@@ -32,4 +32,6 @@ public:
 
 	// fxs
 	uint engine_fx; 
+
+	Light focus; 
 };

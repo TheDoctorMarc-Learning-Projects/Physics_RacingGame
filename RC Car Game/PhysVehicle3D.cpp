@@ -41,6 +41,8 @@ void PhysVehicle3D::Render()
 		wheel.Render();
 	}
 
+	// chassis
+
 	Cube chassis(info.chassis_size.x, info.chassis_size.y, info.chassis_size.z);
 	vehicle->getChassisWorldTransform().getOpenGLMatrix(&chassis.transform);
 	btQuaternion q = vehicle->getChassisWorldTransform().getRotation();
@@ -50,9 +52,24 @@ void PhysVehicle3D::Render()
 	chassis.transform.M[12] += offset.getX();
 	chassis.transform.M[13] += offset.getY();
 	chassis.transform.M[14] += offset.getZ();
-
+	chassis.color = Red; 
 
 	chassis.Render();
+
+	// cabin
+	/*Cube cabin(info.cabin_size.x, info.cabin_size.y, info.cabin_size.z);
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&cabin.transform); 
+	btVector3 offset_C(info.cabin_offset.x, info.cabin_offset.y, info.cabin_offset.z);
+	offset_C = offset_C.rotate(q.getAxis(), q.getAngle());
+
+	cabin.transform.M[12] += offset_C.getX();
+	cabin.transform.M[13] += offset_C.getY();
+	cabin.transform.M[14] += offset_C.getZ();
+	cabin.color = Red; 
+
+	cabin.Render();*/
+
+
 
 	// rear wing 
 
@@ -65,7 +82,7 @@ void PhysVehicle3D::Render()
 	rear_wing.transform.M[12] += offset_q_rw.getX();
 	rear_wing.transform.M[13] += offset_q_rw.getY();
 	rear_wing.transform.M[14] += offset_q_rw.getZ();
-	rear_wing.color = Green; 
+	rear_wing.color = Black; 
 	rear_wing.Render(); 
 
 	// rear wing support
@@ -80,7 +97,7 @@ void PhysVehicle3D::Render()
 	rear_wing_support.transform.M[12] += offset_q_rw_sup.getX();
 	rear_wing_support.transform.M[13] += offset_q_rw_sup.getY();
 	rear_wing_support.transform.M[14] += offset_q_rw_sup.getZ(); 
-	rear_wing_support.color = Green;
+	rear_wing_support.color = Black;
 	
 	
 	rear_wing_support.Render();
@@ -98,7 +115,7 @@ void PhysVehicle3D::Render()
 	rear_wing_flag_right.transform.M[12] += offset_q_rw_flag_r.getX();
 	rear_wing_flag_right.transform.M[13] += offset_q_rw_flag_r.getY();
 	rear_wing_flag_right.transform.M[14] += offset_q_rw_flag_r.getZ();
-	rear_wing_flag_right.color = Blue;
+	rear_wing_flag_right.color = Red;
 	rear_wing_flag_right.Render();
 
 
@@ -113,13 +130,30 @@ void PhysVehicle3D::Render()
 	rear_wing_flag_left.transform.M[12] += offset_q_rw_flag_l.getX();
 	rear_wing_flag_left.transform.M[13] += offset_q_rw_flag_l.getY();
 	rear_wing_flag_left.transform.M[14] += offset_q_rw_flag_l.getZ();
-	rear_wing_flag_left.color = Blue;
+	rear_wing_flag_left.color = Red;
 	rear_wing_flag_left.Render();
+
+
+	/*// front light right
+	Cylinder front_light_right(info.front_light_radius_height.x, info.front_light_radius_height.y);
+
+
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&front_light_right.transform);
+	btVector3 offset_f_lig_r(-info.front_light_offset.x, info.front_light_offset.y, info.front_light_offset.z);
+	offset_f_lig_r = offset_f_lig_r.rotate(q.getAxis(), q.getAngle());
+	
+	
+
+	front_light_right.transform.M[12] += offset_f_lig_r.getX();
+	front_light_right.transform.M[13] += offset_f_lig_r.getY();
+	front_light_right.transform.M[14] += offset_f_lig_r.getZ();
+	front_light_right.color = Red;
+	front_light_right.Render();*/
 
 
 	// ground
 
-	Cube ground(5000, 0.05, 5000); 
+    Cube ground(5000, 0.05, 5000); 
 	ground.color = { 0.9f, 0.9f, 0.9f, 1.0f }; 
 	ground.Render(); 
 

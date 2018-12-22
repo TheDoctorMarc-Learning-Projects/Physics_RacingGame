@@ -8,6 +8,7 @@
 
 struct PhysBody3D;
 struct PhysMotor3D;
+struct vec3; 
 
 class ModuleSceneIntro : public Module
 {
