@@ -1,8 +1,11 @@
 #include "Globals.h"
 #include "Application.h"
 #include "ModuleSceneIntro.h"
+#include "ModulePhysics3D.h"
+#include "ModulePlayer.h"
 #include "Primitive.h"
 #include "PhysBody3D.h"
+#include "PhysVehicle3D.h"
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
@@ -23,7 +26,11 @@ bool ModuleSceneIntro::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 
-
+	chaser_sph.radius = 5; 
+	chaser_sph.SetPos(10, 0, 10); 
+	chaser_sph.color = Green; 
+	chaser = App->physics->AddBody(chaser_sph, 6000.0f);
+	
 
 	return ret;
 }
@@ -42,6 +49,14 @@ update_status ModuleSceneIntro::Update(float dt)
 	Plane p(0, 1, 0, 0);
 	p.axis = true;
 	p.Render();
+
+	chaser_sph.SetPos(chaser->GetPos().x, chaser->GetPos().y, chaser->GetPos().z); 
+	chaser_sph.Render(); 
+	
+	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
+		float magnitude = 85000;
+		chaser->Push((App->player->vehicle->GetPos().x - chaser->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - chaser->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - chaser->GetPos().z)*magnitude);
+	}
 
 	return UPDATE_CONTINUE;
 }

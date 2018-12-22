@@ -21,6 +21,7 @@ public:
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
 	void Set_Speed(btVector3);
+	
 
 
 	const vec3 GetPos() const;

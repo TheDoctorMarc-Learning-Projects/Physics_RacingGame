@@ -4,6 +4,7 @@
 #include "p2Point.h"
 
 struct PhysVehicle3D;
+struct btVector3; 
 
 #define MAX_ACCELERATION 9000.0f           // MAX_ACCELERATION 1000.0f
 #define MAX_ACC_DRS 11000.0f
@@ -32,6 +33,6 @@ public:
 
 	// fxs
 	uint engine_fx; 
-
 	Light focus; 
+
 };
