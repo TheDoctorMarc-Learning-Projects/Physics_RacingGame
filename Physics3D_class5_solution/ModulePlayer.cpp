@@ -141,6 +141,9 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+	// handle special keys
+	Keys(); 
+
 	turn = acceleration = brake = 0.0f;
 
 
@@ -223,6 +226,15 @@ update_status ModulePlayer::Update(float dt)
 
 
 	return UPDATE_CONTINUE;
+}
+
+
+void ModulePlayer::Keys() {
+
+	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
+		vehicle->Set_Speed(btVector3(0,0,0)); 
+		vehicle->SetPos(0, 0, 0); 
+	}
 }
 
 

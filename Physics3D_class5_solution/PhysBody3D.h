@@ -6,6 +6,7 @@
 class btRigidBody;
 class Module;
 class vec3; 
+class btVector3; 
 
 // =================================================
 struct PhysBody3D
@@ -19,7 +20,7 @@ public:
 	void GetTransform(float* matrix) const;
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
-
+	void Set_Speed(btVector3);
 
 
 	const vec3 GetPos() const;

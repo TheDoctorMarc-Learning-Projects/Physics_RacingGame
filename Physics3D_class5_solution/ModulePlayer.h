@@ -18,7 +18,9 @@ public:
 
 	bool Start();
 	update_status Update(float dt);
+	void Keys();
 	bool CleanUp();
+	
 
 public:
 

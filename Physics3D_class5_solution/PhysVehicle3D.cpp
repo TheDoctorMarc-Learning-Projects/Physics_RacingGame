@@ -165,3 +165,4 @@ float PhysVehicle3D::GetKmh() const
 {
 	return vehicle->getCurrentSpeedKmHour();
 }
+

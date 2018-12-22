@@ -59,3 +59,9 @@ const vec3 PhysBody3D::GetPos() const {
 
 
 
+void PhysBody3D::Set_Speed(btVector3 speed) {
+	body->setLinearVelocity(speed);
+}
+
+
+
