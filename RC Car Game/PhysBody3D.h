@@ -21,8 +21,8 @@ public:
 	void SetTransform(const float* matrix) const;
 	void SetPos(float x, float y, float z);
 	void Set_Speed(btVector3);
-	
-
+	void Set_Orientation(float angle, vec3 axis); 
+	btRigidBody* Get_Rigid_Body(); 
 
 	const vec3 GetPos() const;
 

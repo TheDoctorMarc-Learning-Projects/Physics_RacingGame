@@ -10,6 +10,7 @@
 #include <gl/GL.h>
 #include <gl/GLU.h>
 
+
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 }
@@ -53,7 +54,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	p.Render();
 
 	chaser_sph.SetPos(chaser->GetPos().x, chaser->GetPos().y, chaser->GetPos().z); 
-	// chaser_sph.Render(); 
+	chaser_sph.Render(); 
 	
 
 	test_ramp.Render(); 
@@ -73,6 +74,8 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 
 Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
 
+	// create cube 
+
 	Cube ramp; 
 	ramp.color = Blue;
 	float angle = 20.0f * _PI / 180 ;
@@ -88,10 +91,12 @@ Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
 	ramp.SetPos(origin.x, origin.y + height.y, origin.z); 
 	ramp.SetRotation(20.0f, { 1, 0, 0 });
 
+	// create physbody 
 
-	ramp_body = App->physics->AddBody(ramp, 500000.0f); 
-
-
+	ramp_body = App->physics->AddBody(ramp, pow(10, 50)); 
+	ramp_body->Set_Orientation(angle, { 1, 0, 0 }); 
+	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
+	 
 
 	return ramp; 
 }

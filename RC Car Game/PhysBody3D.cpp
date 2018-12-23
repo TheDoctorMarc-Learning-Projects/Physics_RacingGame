@@ -1,5 +1,6 @@
 #include "PhysBody3D.h"
 #include "glmath.h"
+#include <math.h>
 #include "Bullet/include/btBulletDynamicsCommon.h"
 
 // =================================================
@@ -63,5 +64,27 @@ void PhysBody3D::Set_Speed(btVector3 speed) {
 	body->setLinearVelocity(speed);
 }
 
+
+
+void PhysBody3D::Set_Orientation(float angle, vec3 axis) {
+	btTransform t = body->getWorldTransform();
+
+	// angle = angle * 180 / _PI; 
+	
+	btScalar x = axis.x * sin(angle / 2); 
+	btScalar y = axis.y * sin(angle / 2);
+	btScalar z = axis.z * sin(angle / 2);
+	btScalar q_real_part = cos(angle / 2); 
+
+	btQuaternion q(x, y, z, q_real_part); 
+	q.normalize(); 
+	t.setRotation(q); 
+	body->setWorldTransform(t); 
+
+}
+
+btRigidBody* PhysBody3D::Get_Rigid_Body() {
+	return body; 
+}
 
 

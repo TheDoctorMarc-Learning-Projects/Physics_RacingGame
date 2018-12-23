@@ -175,7 +175,7 @@ update_status ModulePlayer::Update(float dt)
 	
 	App->camera->Look((10, 50, 20), vehicle->GetPos(), false);
 
-	App->camera->Move(vehicle->GetPos());
+	// App->camera->Move(vehicle->GetPos());
 	
 	// handle movement
 

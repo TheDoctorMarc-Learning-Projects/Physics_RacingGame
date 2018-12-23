@@ -6,6 +6,7 @@
 
 #define MAX_SNAKE 2
 
+class btRigidBody;
 struct PhysBody3D;
 struct PhysMotor3D;
 struct vec3; 
