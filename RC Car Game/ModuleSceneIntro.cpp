@@ -33,7 +33,7 @@ bool ModuleSceneIntro::Start()
 	chaser_sph.color = Green; 
 	chaser = App->physics->AddBody(chaser_sph, 6000.0f);
 	
-	test_ramp = SpawnRamp((0, 0, 0), (10, 10, 10)); 
+	test_ramp = SpawnRamp((0, 0, 0), (10, 30, 30)); 
 	
 
 	return ret;
@@ -58,11 +58,11 @@ update_status ModuleSceneIntro::Update(float dt)
 	
 
 	test_ramp.Render(); 
-/*
-	for (p2List_item<Cube>* c = ramp_cubes.getFirst(); c; c->next) {
-		ramp_cubes.findNode(c->data)->data.Render(); 
+
+	/*for (p2List_item<Cube>* c = ramp_cubes.start; c; c->next) {
+		c->data.Render(); 
 	}*/
-	 
+	
 	
 	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
 		float magnitude = 85000;
@@ -81,7 +81,7 @@ Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
 	// create cube 
 
 	Cube ramp; 
-	ramp.color = Blue;
+	ramp.color = White;
 	float angle = 20.0f * _PI / 180 ;
 	             
 
@@ -92,11 +92,10 @@ Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
 	ramp.size = actual_Size;
 	ramp.size.y = 0.5f; 
 
-	float floor_offset = 1; 
-	ramp.SetPos(origin.x, origin.y + height.y - floor_offset, origin.z);
+	ramp.SetPos(origin.x, height.y / 2, origin.z);
 	ramp.SetRotation(20.0f, { 1, 0, 0 });
 
-	ramp_cubes.add(ramp); 
+	// ramp_cubes.add(ramp); 
 
 	// create physbody 
 
@@ -104,7 +103,7 @@ Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
 	ramp_body->Set_Orientation(angle, { 1, 0, 0 }); 
 	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
 	 
-	ramps.add(ramp_body); 
+	// ramps.add(ramp_body); 
 
 	return ramp; 
 }

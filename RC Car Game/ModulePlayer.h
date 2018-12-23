@@ -10,6 +10,8 @@ struct btVector3;
 #define MAX_ACC_DRS 11000.0f
 #define TURN_DEGREES 25.0f * DEGTORAD      // TURN_DEGREES 15.0f * DEGTORAD 
 #define BRAKE_POWER 3500.0f                // BRAKE_POWER 1000.0f
+#define MAX_SPEED 200.0f
+#define MAX_SPEED_DRS 250.0f
 
 class ModulePlayer : public Module
 {
