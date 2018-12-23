@@ -23,6 +23,8 @@ public:
 	update_status Update(float dt);
 	void Keys();
 	bool CleanUp();
+
+	void CameraLogic();
 	
 
 public:
