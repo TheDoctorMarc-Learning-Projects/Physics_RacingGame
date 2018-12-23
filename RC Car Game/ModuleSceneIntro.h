@@ -21,6 +21,7 @@ public:
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
+	Cube SpawnRamp(vec3 origin, vec3 dest);
 
 public:
 	/*
@@ -46,4 +47,10 @@ public:
 
 	PhysBody3D* chaser; 
 	Sphere chaser_sph; 
+
+
+	// ramps, make a list, for the moment individual
+
+	Cube test_ramp; 
+	PhysBody3D* ramp_body; 
 };
