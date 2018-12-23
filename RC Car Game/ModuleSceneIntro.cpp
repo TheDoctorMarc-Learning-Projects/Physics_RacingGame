@@ -58,8 +58,12 @@ update_status ModuleSceneIntro::Update(float dt)
 	
 
 	test_ramp.Render(); 
-
-
+/*
+	for (p2List_item<Cube>* c = ramp_cubes.getFirst(); c; c->next) {
+		ramp_cubes.findNode(c->data)->data.Render(); 
+	}*/
+	 
+	
 	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
 		float magnitude = 85000;
 		chaser->Push((App->player->vehicle->GetPos().x - chaser->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - chaser->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - chaser->GetPos().z)*magnitude);
@@ -79,24 +83,28 @@ Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
 	Cube ramp; 
 	ramp.color = Blue;
 	float angle = 20.0f * _PI / 180 ;
+	             
 
 	vec3 floor_distance = dest - origin; 
 	vec3 height = floor_distance * sin(angle) / sin(90 - angle); 
 	vec3 dest_in_air = dest + height; 
 	vec3 actual_Size = dest_in_air - origin; 
-
 	ramp.size = actual_Size;
 	ramp.size.y = 0.5f; 
-	
-	ramp.SetPos(origin.x, origin.y + height.y, origin.z); 
+
+	float floor_offset = 1; 
+	ramp.SetPos(origin.x, origin.y + height.y - floor_offset, origin.z);
 	ramp.SetRotation(20.0f, { 1, 0, 0 });
+
+	ramp_cubes.add(ramp); 
 
 	// create physbody 
 
-	ramp_body = App->physics->AddBody(ramp, pow(10, 50)); 
+	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50)); 
 	ramp_body->Set_Orientation(angle, { 1, 0, 0 }); 
 	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
 	 
+	ramps.add(ramp_body); 
 
 	return ramp; 
 }

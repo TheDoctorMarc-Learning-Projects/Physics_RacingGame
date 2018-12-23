@@ -88,14 +88,14 @@ update_status ModulePhysics3D::PreUpdate(float dt)
 
 			if(pbodyA && pbodyB)
 			{
-				p2List_item<Module*>* item = pbodyA->collision_listeners.getFirst();
+				p2List_item<Module*>* item = pbodyA->collision_listeners.start;
 				while(item)
 				{
 					item->data->OnCollision(pbodyA, pbodyB);
 					item = item->next;
 				}
 
-				item = pbodyB->collision_listeners.getFirst();
+				item = pbodyB->collision_listeners.start;
 				while(item)
 				{
 					item->data->OnCollision(pbodyB, pbodyA);
@@ -119,7 +119,7 @@ update_status ModulePhysics3D::Update(float dt)
 		world->debugDrawWorld();
 
 		// Render vehicles
-		p2List_item<PhysVehicle3D*>* item = vehicles.getFirst();
+		p2List_item<PhysVehicle3D*>* item = vehicles.start;
 		while(item)
 		{
 			item->data->Render();
@@ -156,7 +156,7 @@ bool ModulePhysics3D::CleanUp()
 		world->removeCollisionObject(obj);
 	}
 
-	for(p2List_item<btTypedConstraint*>* item = constraints.getFirst(); item; item = item->next)
+	for(p2List_item<btTypedConstraint*>* item = constraints.start; item; item = item->next)
 	{
 		world->removeConstraint(item->data);
 		delete item->data;
@@ -164,22 +164,22 @@ bool ModulePhysics3D::CleanUp()
 	
 	constraints.clear();
 
-	for(p2List_item<btDefaultMotionState*>* item = motions.getFirst(); item; item = item->next)
+	for(p2List_item<btDefaultMotionState*>* item = motions.start; item; item = item->next)
 		delete item->data;
 
 	motions.clear();
 
-	for(p2List_item<btCollisionShape*>* item = shapes.getFirst(); item; item = item->next)
+	for(p2List_item<btCollisionShape*>* item = shapes.start; item; item = item->next)
 		delete item->data;
 
 	shapes.clear();
 
-	for(p2List_item<PhysBody3D*>* item = bodies.getFirst(); item; item = item->next)
+	for(p2List_item<PhysBody3D*>* item = bodies.start; item; item = item->next)
 		delete item->data;
 
 	bodies.clear();
 
-	for(p2List_item<PhysVehicle3D*>* item = vehicles.getFirst(); item; item = item->next)
+	for(p2List_item<PhysVehicle3D*>* item = vehicles.start; item; item = item->next)
 		delete item->data;
 
 	vehicles.clear();

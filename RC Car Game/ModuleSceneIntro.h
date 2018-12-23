@@ -51,7 +51,13 @@ public:
 
 
 	// ramps, make a list, for the moment individual
+	p2List<Cube> ramp_cubes; 
+	p2List<PhysBody3D*> ramps;
+
 
 	Cube test_ramp; 
-	PhysBody3D* ramp_body; 
+	
+
+
+
 };
