@@ -159,6 +159,7 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update(float dt)
 {
+
 	turn = acceleration = brake = 0.0f;
 
 	// handle light
@@ -173,7 +174,7 @@ update_status ModulePlayer::Update(float dt)
 	Keys(); 
 
 	
-	App->camera->Look((10, 50, 20), vehicle->GetPos(), false);
+	//App->camera->Look((10, 50, 20), vehicle->GetPos(), false);
 
 	// App->camera->Move(vehicle->GetPos());
 	
@@ -249,7 +250,7 @@ update_status ModulePlayer::Update(float dt)
 	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
 	App->window->SetTitle(title);
 
-
+	CameraLogic();
 
 
 	return UPDATE_CONTINUE;
@@ -267,6 +268,15 @@ void ModulePlayer::Keys() {
 
 	// reset overturned car
 
+}
+
+void ModulePlayer::CameraLogic()
+{
+	vec3 pos = vehicle->GetPos();
+	vec3 direction = vehicle->GetForwardVector();
+	direction = normalize(direction);
+	App->camera->Position = pos - direction * 20;
+	App->camera->LookAt(pos);
 }
 
 

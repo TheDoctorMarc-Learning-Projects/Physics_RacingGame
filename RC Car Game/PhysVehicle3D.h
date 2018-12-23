@@ -73,4 +73,6 @@ public:
 
 	VehicleInfo info;
 	btRaycastVehicle* vehicle;
+
+	vec3 GetForwardVector() const;
 };
