@@ -52,17 +52,22 @@ public:
 	PhysMotor3D* right_wheel;
 
 
-	PhysBody3D* chaser; 
-	Sphere chaser_sph; 
+	PhysBody3D* big_ball_body; 
+	Sphere big_ball_prim; 
 
 
 	// ramps, make a list, for the moment individual
 	/*p2List<Cube> ramp_cubes; 
 	p2List<PhysBody3D*> ramps;*/
 	cubeObjects circuit_cubes;
+	// checkpoints, maybe its useful create another helper struct like circuit_cubes
+	p2DynArray<PhysBody3D*> check_point_body;
+	p2DynArray<Cube> check_point_prim;
 
 
 	Cube test_ramp; 
+
+	Timer test_timer;
 	
 
 

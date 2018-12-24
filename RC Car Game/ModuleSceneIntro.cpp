@@ -28,12 +28,17 @@ bool ModuleSceneIntro::Start()
 	App->camera->LookAt(vec3(0, 0, 0));
 
 
-	chaser_sph.radius = 5; 
-	chaser_sph.SetPos(10, 0, 10); 
-	chaser_sph.color = Green; 
-	chaser = App->physics->AddBody(chaser_sph, 6000.0f);
+	big_ball_prim.radius = 5; 
+	big_ball_prim.SetPos(10, 20, 50); 
+	big_ball_prim.color = Green; 
+	big_ball_body = App->physics->AddBody(big_ball_prim, 0.0f);//6000.0f);
+
+	//big_ball_body->Set_Speed(btVector3(0, 20, 0));
 	
 	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); 
+
+	// test timer
+	test_timer.Start();
 	
 
 	return ret;
@@ -53,8 +58,8 @@ update_status ModuleSceneIntro::Update(float dt)
 	p.axis = true;
 	p.Render();
 
-	chaser_sph.SetPos(chaser->GetPos().x, chaser->GetPos().y, chaser->GetPos().z); 
-	chaser_sph.Render(); 
+	big_ball_prim.SetPos(big_ball_body->GetPos().x, big_ball_body->GetPos().y, big_ball_body->GetPos().z); 
+	big_ball_prim.Render(); 
 	
 	// draw all circuit pieces
 	for (int i = 0; i < circuit_cubes.prims.Count(); ++i)
@@ -63,7 +68,19 @@ update_status ModuleSceneIntro::Update(float dt)
 	
 	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
 		float magnitude = 85000;
-		chaser->Push((App->player->vehicle->GetPos().x - chaser->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - chaser->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - chaser->GetPos().z)*magnitude);
+		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
+	}
+
+	// check timer and adds mass to test sphere
+	if (test_timer.Read() > 10000)
+	{
+		//check_point_body
+		LOG("reset timer");
+		test_timer.Start();
+		// test mass
+		//big_ball_body->SetBodyMass(500.0f);
+		App->physics->SetBodyMass(big_ball_body, 50.0f);
+		big_ball_body->Set_Speed(btVector3(0, -20, 0));
 	}
 
 	return UPDATE_CONTINUE;

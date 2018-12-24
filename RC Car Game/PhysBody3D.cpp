@@ -87,4 +87,12 @@ btRigidBody* PhysBody3D::Get_Rigid_Body() {
 	return body; 
 }
 
+// doesnt work, searched and found a solution: removes rigidbody from dynamics world/set/readds it
+//void PhysBody3D::SetBodyMass(float mass) 
+//{
+//	btVector3 inertia;
+//	body->getCollisionShape()->calculateLocalInertia(mass, inertia);
+//	body->setMassProps(mass, inertia);
+//}
+
 

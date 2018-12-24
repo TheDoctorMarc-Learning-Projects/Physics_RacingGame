@@ -23,6 +23,7 @@ public:
 	void Set_Speed(btVector3);
 	void Set_Orientation(float angle, vec3 axis); 
 	btRigidBody* Get_Rigid_Body(); 
+	//void SetBodyMass(float mass = 1.0f);
 
 	const vec3 GetPos() const;
 

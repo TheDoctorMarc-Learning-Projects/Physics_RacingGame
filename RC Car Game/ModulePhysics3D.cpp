@@ -365,6 +365,22 @@ void ModulePhysics3D::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, c
 	hinge->setDbgDrawSize(2.0f);
 }
 
+void ModulePhysics3D::SetBodyMass(PhysBody3D* pbody, float mass)
+{
+	// gets body from physbody
+	btRigidBody* b = pbody->Get_Rigid_Body();
+	//Remove the rigid body from the dynamics world
+	world->removeRigidBody(b);
+
+	btVector3 inertia(0,0,0);
+	b->getCollisionShape()->calculateLocalInertia(mass, inertia);
+	b->setMassProps(mass, inertia);
+
+	//Add the rigid body to the dynamics world
+	world->addRigidBody(b);
+	
+}
+
 // =============================================
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
 {
