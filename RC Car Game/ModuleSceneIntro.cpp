@@ -118,6 +118,13 @@ update_status ModuleSceneIntro::Update(float dt)
 		}
 	}
 
+	// Cannon ball primitives print
+	for (int i = 0; i < cannon_balls.count(); ++i)
+	{
+		cannon_balls[i].primitive.SetPos(cannon_balls[i].body->GetPos().x, cannon_balls[i].body->GetPos().y, cannon_balls[i].body->GetPos().z);
+		cannon_balls[i].primitive.Render();
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -149,7 +156,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 		}
 
 		// iterates all cannon sensors
-		for(int i = 0; i < cannon_sensors.Count(); ++i)
+		for(int i = 0; i < cannon_sensors.Count() && body2 == App->player->vehicle; ++i) // always that we are colliding with player
 		{
 			if (body1 == cannon_sensors[i].body && !cannon_sensors[i].collision)
 			{
@@ -157,6 +164,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 				// sets collision timer
 				cannon_sensors[i].timer.Start();
 				cannon_sensors[i].collision = true;
+				SpawnCannonBall(cannon_sensors[i].body->GetPos(), vec3(0, 0, 0));
 			}
 		}
 
@@ -166,6 +174,29 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 void ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
 {
 	// creates, adds and set timer to cannon balls, adds to list and push the ball
+	int offset = 7; // offset to far away the ball laterally
+	// creates sphere
+	Sphere ball_prim;
+	ball_prim.radius = 3;
+	// checks if we have even or not on the cannon balls list, for spawning this shot from left or right
+	int newXpos = 0;
+	if (cannon_balls.count() % 2 != 0) {
+		newXpos = origin.x + ball_prim.radius * 2 + offset;
+	}
+	else {
+		newXpos = origin.x - ball_prim.radius * 2 - offset;
+	}
+	ball_prim.SetPos(newXpos, origin.y + ball_prim.radius, origin.z);
+	ball_prim.color = Orange;
+	// creates the body for collision
+	PhysBody3D* b = App->physics->AddBody(ball_prim, 100.0f);
+	//b->SetPos(newXpos, origin.y, origin.z);
+	// creates new cannon ball data
+	cannonBalls newCannonBall;
+	newCannonBall.body = b;
+	newCannonBall.primitive = ball_prim;
+	// adds to cannonballs list
+	cannon_balls.add(newCannonBall);
 
 }
 
