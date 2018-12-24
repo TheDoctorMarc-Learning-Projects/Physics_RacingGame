@@ -56,7 +56,7 @@ bool ModuleSceneIntro::Start()
 	// tunnel
 	Create_Tunnel((100, 100, 100), (250, 300, 200));
 
-	Create_Side_Fence_Limit_Segment((0, 0, 0), (30, 30, 30)); 
+	Create_Side_Fence_Limit_Segment((0, 0, 0), (100, 100, 100)); 
 
 	// test timer
 	test_timer.Start();
@@ -338,46 +338,60 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 	float fence_height = 3; 
 	float separation = 0; 
 	float first_fence_offset = 0.15f; // fence depth / 2
-
-	Cube top, bottom; 
-	top.color = bottom.color = Black; 
-	vec3 dir = dest - origin; 
-	dir.y = 0.5f; 
-	dir.z = 0.5f; 
-	top.size = bottom.size = dir;
-
-	float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dir.z, 2)));  // 2D rot angle
-	float rot_angle_X = 90 - rot_angle_Z; 
 	
+
 	
-	top.SetPos(origin.x, fence_height, origin.z); 
-	PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
+
+	for (uint i = 1; i<=2; ++i) {       // do the same for both laterals of the circuit
+
+		Cube top, bottom;
+		top.color = bottom.color = Black;
+		vec3 dir = dest - origin;
+		dir.y = 0.5f;
+		dir.z = 0.5f;
+		top.size = bottom.size = dir;
+
+		/*float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dir.z, 2)));  // 2D rot angle
+		float rot_angle_X = 90 - rot_angle_Z;*/
 
 
-	bottom.SetPos(origin.x, 0, origin.z);
-	PhysBody3D* bottom_body = App->physics->AddBody(bottom, pow(10, 50));
+		if (i == 1) {
+			top.SetPos(origin.x, fence_height, origin.z);
+			bottom.SetPos(origin.x, 0, origin.z);
+		}
+		else {
+			separation = 0;   // reset separation 
+			top.SetPos(origin.x, fence_height, origin.z + TUNNEL_WIDTH);
+			bottom.SetPos(origin.x, 0, origin.z + TUNNEL_WIDTH);
+		}
+		
+		PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
+		PhysBody3D* bottom_body = App->physics->AddBody(bottom, pow(10, 50));
 
-	while (separation < top.size.x) {
+		while (separation < top.size.x) {
 
-		Cube vertical(0.3f, fence_height, 0.3f); 
-		vertical.color = Black; 
-		vertical.SetPos(first_fence_offset + bottom_body->GetPos().x - bottom.size.x / 2 + separation, fence_height / 2, bottom_body->GetPos().z);
-		PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
+			Cube vertical(0.3f, fence_height, 0.3f);
+			vertical.color = Black;
+			vertical.SetPos(first_fence_offset + bottom_body->GetPos().x - bottom.size.x / 2 + separation, fence_height / 2, bottom_body->GetPos().z);
+			PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
 
-		circuit_cubes.prims.PushBack(vertical);
-		circuit_cubes.bodies.PushBack(vertical_body);
+			circuit_cubes.prims.PushBack(vertical);
+			circuit_cubes.bodies.PushBack(vertical_body);
 
-		separation += 1; 
+			separation += 3;
+
+		}
+
+
+		circuit_cubes.prims.PushBack(top);
+		circuit_cubes.bodies.PushBack(top_body);
+
+
+		circuit_cubes.prims.PushBack(bottom);
+		circuit_cubes.bodies.PushBack(bottom_body);
 
 	}
 
-
-	circuit_cubes.prims.PushBack(top);
-	circuit_cubes.bodies.PushBack(top_body);
-
-
-	circuit_cubes.prims.PushBack(bottom);
-	circuit_cubes.bodies.PushBack(bottom_body);
 
 }
 
