@@ -50,6 +50,7 @@ public:
 	void CreateCheckSensor(const vec3 position, vec3 direction);
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position, vec3 direction);
+	void Create_Tunnel(vec3 origin, vec3 dest); 
 
 public:
 	/*
@@ -100,5 +101,6 @@ public:
 	p2DynArray<cannonSensors> cannon_sensors;
 
 
+	// cubeObjects* tunnel; 
 
 };

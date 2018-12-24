@@ -282,11 +282,13 @@ void ModulePlayer::Keys() {
 void ModulePlayer::CameraLogic()
 {
 	vec3 pos = vehicle->GetPos();
+	pos.y = vehicle->GetPos().y + 10; 
 	vec3 direction = vehicle->GetForwardVector();
 	direction = normalize(direction);
 	App->camera->Position = pos - direction * 20;
-	App->camera->Position.y = 10;
+	App->camera->Position.y = 17;
 	App->camera->LookAt(pos);
+
 }
 
 

@@ -27,7 +27,7 @@ bool ModuleSceneIntro::Start()
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
 
-	// indiana jones big ball ---
+	/*// indiana jones big ball ---
 	big_ball_prim.radius = 5; 
 	big_ball_prim.SetPos(10, 10, 70); 
 	big_ball_prim.color = Green; 
@@ -50,7 +50,12 @@ bool ModuleSceneIntro::Start()
 	
 	// ----------------------------------------------------------------------------------------
 	
-	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); 
+	// ramp
+	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); */
+
+	// tunnel
+	Create_Tunnel((10, 10, 10), (40, 40, 40));
+
 
 	// test timer
 	test_timer.Start();
@@ -62,10 +67,10 @@ bool ModuleSceneIntro::Start()
 	CreateCheckSensor({ 0,0,160 }, { 0,0,0 });*/
 
 	// cannon sensors test
-	CreateCannonSensor({ 0,0,40 }, { 0,0,0 });
+	/*CreateCannonSensor({ 0,0,40 }, { 0,0,0 });
 	CreateCannonSensor({ 0,0,80 }, { 0,0,0 });
 	CreateCannonSensor({ 0,0,120 }, { 0,0,0 });
-	CreateCannonSensor({ 0,0,160 }, { 0,0,0 });
+	CreateCannonSensor({ 0,0,160 }, { 0,0,0 });*/
 
 	return ret;
 }
@@ -90,12 +95,13 @@ update_status ModuleSceneIntro::Update(float dt)
 	p.axis = true;
 	p.Render();
 
-	big_ball_prim.SetPos(big_ball_body->GetPos().x, big_ball_body->GetPos().y, big_ball_body->GetPos().z); 
-	big_ball_prim.Render(); 
-	
+
 	// draw all circuit pieces
 	for (int i = 0; i < circuit_cubes.prims.Count(); ++i)
 		circuit_cubes.prims[i].Render();
+
+/*	big_ball_prim.SetPos(big_ball_body->GetPos().x, big_ball_body->GetPos().y, big_ball_body->GetPos().z); 
+	big_ball_prim.Render(); 
 	
 	
 	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
@@ -109,7 +115,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	}*/
 
 	// big ball reposition test
-	if (test_timer.Read() > 5000 && !big_ball_body->isStatic())
+	/*if (test_timer.Read() > 5000 && !big_ball_body->isStatic())
 	{
 		big_ball_body->SetPos(10, 10, 70);
 		big_ball_body->SetStatic(true);
@@ -155,7 +161,7 @@ update_status ModuleSceneIntro::Update(float dt)
 	//		//delete cannon_balls[i].body;
 	//		LOG("");
 	//	}
-	//}
+	//}*/
 
 	return UPDATE_CONTINUE;
 }
@@ -246,6 +252,59 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 	ramp_body->collision_listeners.add(this);
 
 	return ramp;
+}
+
+void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
+
+	vec2 junction_offset(0.6, 0.2); 
+
+	// three parts with commonalities
+	Cube top, left, right; 
+	top.color = left.color = right.color = Blue;
+	top.size = left.size = right.size = dest - origin; 
+	top.size.y = left.size.y = right.size.y = 0.5f; 
+
+
+	// top 
+	PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50)); 
+	top_body->SetStatic(true); 
+	top_body->SetPos(origin.x, origin.y + 2, origin.z); 
+	top.SetPos(origin.x, origin.y + 2, origin.z);
+
+	// left
+	left.size.z /= 2; 
+	PhysBody3D* left_body = App->physics->AddBody(left, pow(10, 50));
+	left_body->SetStatic(true);
+	left_body->SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z - left.size.z);
+	left.SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z - left.size.z);
+	left.SetRotation(90.0f, { 1,0,0 });
+	left_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 }); 
+
+	// right
+	right.size.z /= 2;
+	PhysBody3D* right_body = App->physics->AddBody(right, pow(10, 50));
+	right_body->SetStatic(true);
+	right_body->SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z + right.size.z);
+	right.SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z + right.size.z);
+	right.SetRotation(90.0f, { 1,0,0 });
+	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
+
+
+
+	/*cubeObjects* c = nullptr; 
+
+	c->bodies.PushBack(top_body); 
+	c->prims.PushBack(top);*/
+
+	circuit_cubes.prims.PushBack(top);
+	circuit_cubes.bodies.PushBack(top_body); 
+
+	circuit_cubes.prims.PushBack(left);
+	circuit_cubes.bodies.PushBack(left_body);
+
+	circuit_cubes.prims.PushBack(right);
+	circuit_cubes.bodies.PushBack(right_body);
+	
 }
 
 
