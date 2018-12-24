@@ -287,6 +287,7 @@ void ModulePlayer::CameraLogic()
 	direction = normalize(direction);
 	App->camera->Position = pos - direction * 20;
 	App->camera->Position.y = 17;
+	App->camera->Position.y = 7;
 	App->camera->LookAt(pos);
 
 }

@@ -54,7 +54,7 @@ bool ModuleSceneIntro::Start()
 	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); */
 
 	// tunnel
-	Create_Tunnel((10, 10, 10), (40, 40, 40));
+	Create_Tunnel((100, 100, 100), (200, 200, 200));
 
 
 	// test timer
@@ -257,35 +257,38 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	vec2 junction_offset(0.6, 0.2); 
+	float height = 11.5f; 
+	float width = 26.5f; 
 
 	// three parts with commonalities
 	Cube top, left, right; 
 	top.color = left.color = right.color = Blue;
 	top.size = left.size = right.size = dest - origin; 
 	top.size.y = left.size.y = right.size.y = 0.5f; 
-
+	
 
 	// top 
+	top.size.z = width;
 	PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50)); 
 	top_body->SetStatic(true); 
-	top_body->SetPos(origin.x, origin.y + 2, origin.z); 
-	top.SetPos(origin.x, origin.y + 2, origin.z);
+	top_body->SetPos(origin.x, height, origin.z);
+	top.SetPos(origin.x, height, origin.z);
 
 	// left
-	left.size.z /= 2; 
+	left.size.z = height; 
 	PhysBody3D* left_body = App->physics->AddBody(left, pow(10, 50));
 	left_body->SetStatic(true);
-	left_body->SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z - left.size.z);
-	left.SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z - left.size.z);
+	left_body->SetPos(top_body->GetPos().z, height / 2, top_body->GetPos().x - top.size.z / 2); 
+	left.SetPos(top_body->GetPos().z, height / 2 , top_body->GetPos().x - top.size.z / 2);
 	left.SetRotation(90.0f, { 1,0,0 });
 	left_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 }); 
 
 	// right
-	right.size.z /= 2;
+	right.size.z = height;
 	PhysBody3D* right_body = App->physics->AddBody(right, pow(10, 50));
 	right_body->SetStatic(true);
-	right_body->SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z + right.size.z);
-	right.SetPos(origin.x, origin.y / 2 - junction_offset.y, origin.z + right.size.z);
+	right_body->SetPos(top_body->GetPos().z, height / 2, top_body->GetPos().x + top.size.z / 2);
+	right.SetPos(top_body->GetPos().z, height / 2, top_body->GetPos().x + top.size.z / 2);
 	right.SetRotation(90.0f, { 1,0,0 });
 	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
 
@@ -306,6 +309,10 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	circuit_cubes.bodies.PushBack(right_body);
 	
 }
+
+
+
+
 
 
 cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
