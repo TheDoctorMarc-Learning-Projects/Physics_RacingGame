@@ -33,7 +33,7 @@ bool ModuleSceneIntro::Start()
 	chaser_sph.color = Green; 
 	chaser = App->physics->AddBody(chaser_sph, 6000.0f);
 	
-	test_ramp = SpawnRamp((0, 0, 0), (10, 30, 30)); 
+	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); 
 	
 
 	return ret;
@@ -56,12 +56,9 @@ update_status ModuleSceneIntro::Update(float dt)
 	chaser_sph.SetPos(chaser->GetPos().x, chaser->GetPos().y, chaser->GetPos().z); 
 	chaser_sph.Render(); 
 	
-
-	test_ramp.Render(); 
-
-	/*for (p2List_item<Cube>* c = ramp_cubes.start; c; c->next) {
-		c->data.Render(); 
-	}*/
+	// draw all circuit pieces
+	for (int i = 0; i < circuit_cubes.prims.Count(); ++i)
+		circuit_cubes.prims[i].Render();
 	
 	
 	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
@@ -76,9 +73,9 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
 }
 
-Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
+Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 
-	// create cube 
+	// create cube ----
 
 	Cube ramp; 
 	ramp.color = White;
@@ -95,15 +92,15 @@ Cube ModuleSceneIntro::SpawnRamp(vec3 origin, vec3 dest) {
 	ramp.SetPos(origin.x, height.y / 2, origin.z);
 	ramp.SetRotation(20.0f, { 1, 0, 0 });
 
-	// ramp_cubes.add(ramp); 
-
-	// create physbody 
+	// create physbody ----
 
 	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50)); 
 	ramp_body->Set_Orientation(angle, { 1, 0, 0 }); 
 	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
 	 
-	// ramps.add(ramp_body); 
+	// adds primitive and respective body to circuit pieces dynamic array
+	circuit_cubes.prims.PushBack(ramp);
+	circuit_cubes.bodies.PushBack(ramp_body);
 
 	return ramp; 
 }

@@ -11,6 +11,12 @@ struct PhysBody3D;
 struct PhysMotor3D;
 struct vec3; 
 
+struct cubeObjects
+{
+	p2DynArray<Cube> prims;
+	p2DynArray<PhysBody3D*> bodies;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -22,7 +28,7 @@ public:
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
-	Cube SpawnRamp(vec3 origin, vec3 dest);
+	Cube CreateRamp(vec3 origin, vec3 dest);
 
 public:
 	/*
@@ -51,8 +57,9 @@ public:
 
 
 	// ramps, make a list, for the moment individual
-	p2List<Cube> ramp_cubes; 
-	p2List<PhysBody3D*> ramps;
+	/*p2List<Cube> ramp_cubes; 
+	p2List<PhysBody3D*> ramps;*/
+	cubeObjects circuit_cubes;
 
 
 	Cube test_ramp; 

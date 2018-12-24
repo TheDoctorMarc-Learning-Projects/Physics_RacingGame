@@ -153,9 +153,9 @@ void PhysVehicle3D::Render()
 
 	// ground
 
-    Cube ground(5000, 0.05, 5000); 
+   /* Cube ground(5000, 0.05, 5000); 
 	ground.color = { 0.9f, 0.9f, 0.9f, 1.0f }; 
-	ground.Render(); 
+	ground.Render(); */
 
 }
 
