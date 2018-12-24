@@ -74,6 +74,12 @@ bool ModuleSceneIntro::Start()
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
+
+	for (int i = 0; i < cannon_sensors.Count(); ++i)
+	{
+		delete cannon_sensors[i].ball;
+	}
+
 	return true;
 }
 
