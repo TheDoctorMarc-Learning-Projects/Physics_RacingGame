@@ -24,6 +24,8 @@ public:
 	void Set_Orientation(float angle, vec3 axis); 
 	btRigidBody* Get_Rigid_Body(); 
 	//void SetBodyMass(float mass = 1.0f);
+	void SetStatic(bool newCondition);
+	bool isStatic();
 
 	const vec3 GetPos() const;
 
@@ -32,6 +34,7 @@ public:
 
 private:
 	btRigidBody* body = nullptr;
+	bool static_state = false;
 
 public:
 	p2List<Module*> collision_listeners;

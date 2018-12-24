@@ -27,13 +27,28 @@ bool ModuleSceneIntro::Start()
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
 
-
+	// indiana jones big ball ---
 	big_ball_prim.radius = 5; 
-	big_ball_prim.SetPos(10, 10, 70); 
+	big_ball_prim.SetPos(10, 20, 70); 
 	big_ball_prim.color = Green; 
-	big_ball_body = App->physics->AddBody(big_ball_prim, 0.0f);//6000.0f);
-
+	big_ball_body = App->physics->AddBody(big_ball_prim, 100.0f);//6000.0f);
+	big_ball_body->SetStatic(true);
 	//big_ball_body->Set_Speed(btVector3(0, 20, 0));
+	
+	// check point test TODO: make a specific function, actually unlocks the indiana ball ----
+
+	Cube checkCube(10, 10, 1);
+	checkCube.SetPos(10, 2, 60);
+	circuit_cubes.prims.PushBack(checkCube);
+	// physbody
+	//PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);
+	test_sensor = App->physics->AddBody(checkCube, 0.0f, true);
+	// listener
+	//b->collision_listeners.add(this);
+	test_sensor->collision_listeners.add(this);
+	check_point_bodies.PushBack(test_sensor);
+	
+	// ----------------------------------------------------------------------------------------
 	
 	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); 
 
@@ -71,24 +86,20 @@ update_status ModuleSceneIntro::Update(float dt)
 		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
 	}
 
-	// check timer and adds mass to test sphere
-	if (test_timer.Read() > 5000)
-	{
-		//check_point_body
-		LOG("reset timer");
-		test_timer.Start();
-		// test mass
-		//big_ball_body->SetBodyMass(500.0f);
-		App->physics->SetBodyMass(big_ball_body, 100.0f);
-		//big_ball_body->Set_Speed(btVector3(0, 20, 0));
-	}
-
 	return UPDATE_CONTINUE;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
-	LOG("collision");
+	//if (body2 == App->player->vehicle)
+	if(body1 == test_sensor)
+	{
+		if (big_ball_body->isStatic())
+		{
+			LOG("Indiana jones ball is coming");
+			big_ball_body->SetStatic(false);
+		}
+	}
 }
 
 Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {

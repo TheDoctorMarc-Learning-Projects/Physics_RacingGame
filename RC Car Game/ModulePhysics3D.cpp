@@ -365,6 +365,7 @@ void ModulePhysics3D::AddConstraintHinge(PhysBody3D& bodyA, PhysBody3D& bodyB, c
 	hinge->setDbgDrawSize(2.0f);
 }
 
+// USE ONLY outside oncollision callbacks, if you want to set static/dynamic, must use the setstatic method from physbody class to avoid problems
 void ModulePhysics3D::SetBodyMass(PhysBody3D* pbody, float mass)
 {
 	// gets body from physbody
@@ -381,6 +382,7 @@ void ModulePhysics3D::SetBodyMass(PhysBody3D* pbody, float mass)
 	// forces activation
 	//if(mass >= 0.f)
 		b->activate(true);
+	
 	
 }
 

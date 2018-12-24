@@ -61,8 +61,11 @@ public:
 	p2List<PhysBody3D*> ramps;*/
 	cubeObjects circuit_cubes;
 	// checkpoints, maybe its useful create another helper struct like circuit_cubes
-	p2DynArray<PhysBody3D*> check_point_body;
+	p2DynArray<PhysBody3D*> check_point_bodies;
 	p2DynArray<Cube> check_point_prim;
+
+	// individual useful check point
+	PhysBody3D* test_sensor;
 
 
 	Cube test_ramp; 

@@ -5,7 +5,9 @@
 
 // =================================================
 PhysBody3D::PhysBody3D(btRigidBody* body) : body(body)
-{}
+{
+	body->setUserPointer(this);
+}
 
 // ---------------------------------------------------------
 PhysBody3D::~PhysBody3D()
@@ -87,12 +89,32 @@ btRigidBody* PhysBody3D::Get_Rigid_Body() {
 	return body; 
 }
 
-// doesnt work, searched and found a solution: removes rigidbody from dynamics world/set/readds it
+//// doesnt work, searched and found a solution: removes rigidbody from dynamics world/set/readds it
 //void PhysBody3D::SetBodyMass(float mass) 
 //{
 //	btVector3 inertia;
 //	body->getCollisionShape()->calculateLocalInertia(mass, inertia);
 //	body->setMassProps(mass, inertia);
+//	body->activate(true);
 //}
 
+void PhysBody3D::SetStatic(bool newCondition)
+{
+	/* Make the body static without changing the mass property */
+	if (newCondition)
+		body->setCollisionFlags(body->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+	else
+	/* clear the static object flag */
+		body->setCollisionFlags(body->getCollisionFlags() & ~btCollisionObject::CF_STATIC_OBJECT);
+
+	// force body activation
+	body->activate(true);
+	// updates internal physbody state
+	static_state = newCondition;
+}
+
+bool PhysBody3D::isStatic()
+{
+	return static_state;
+}
 
