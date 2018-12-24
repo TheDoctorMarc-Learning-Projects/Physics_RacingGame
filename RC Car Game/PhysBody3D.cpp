@@ -18,6 +18,8 @@ PhysBody3D::~PhysBody3D()
 // ---------------------------------------------------------
 void PhysBody3D::Push(float x, float y, float z)
 {
+	// force body activation before impulse
+	body->activate(true);
 	body->applyCentralImpulse(btVector3(x, y, z));
 }
 

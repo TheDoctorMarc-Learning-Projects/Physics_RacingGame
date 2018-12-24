@@ -19,6 +19,7 @@ struct cubeObjects
 
 struct cannonBalls // helper struct, spawn balls and deletes by timer on scene
 {
+	vec3 original_pos;
 	Timer timer;
 	Sphere primitive;
 	PhysBody3D* body = nullptr;
