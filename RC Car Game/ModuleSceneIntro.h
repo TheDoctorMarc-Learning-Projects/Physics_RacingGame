@@ -5,6 +5,8 @@
 #include "Primitive.h"
 
 #define MAX_SNAKE 2
+#define TUNNEL_WIDTH 26.5f
+#define TUNNEL_HEIGHT 11.5f
 
 class btRigidBody;
 struct PhysBody3D;
@@ -51,6 +53,7 @@ public:
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position, vec3 direction);
 	void Create_Tunnel(vec3 origin, vec3 dest); 
+	void Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest);
 
 public:
 	/*
@@ -78,9 +81,7 @@ public:
 	Sphere big_ball_prim; 
 
 
-	// ramps, make a list, for the moment individual
-	/*p2List<Cube> ramp_cubes; 
-	p2List<PhysBody3D*> ramps;*/
+	// list of all cubes
 	cubeObjects circuit_cubes;
 	// checkpoints, maybe its useful create another helper struct like circuit_cubes
 	p2DynArray<PhysBody3D*> check_point_bodies;
@@ -89,10 +90,14 @@ public:
 	// individual useful check point
 	PhysBody3D* test_sensor;
 
-
+	// ramps
 	Cube test_ramp; 
 
+	// timers
 	Timer test_timer;
+
+	// tunnel
+	cubeObjects tunnel;
 	
 	// list of current cannonballs
 	p2List<cannonBalls> cannon_balls;
@@ -101,6 +106,11 @@ public:
 	p2DynArray<cannonSensors> cannon_sensors;
 
 
-	// cubeObjects* tunnel; 
 
+
+	// lights
+
+	Sphere test_light;
+	
+	
 };

@@ -54,8 +54,9 @@ bool ModuleSceneIntro::Start()
 	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); */
 
 	// tunnel
-	Create_Tunnel((100, 100, 100), (200, 200, 200));
+	Create_Tunnel((100, 100, 100), (250, 300, 200));
 
+	Create_Side_Fence_Limit_Segment((0, 0, 0), (30, 30, 30)); 
 
 	// test timer
 	test_timer.Start();
@@ -71,6 +72,15 @@ bool ModuleSceneIntro::Start()
 	CreateCannonSensor({ 0,0,80 }, { 0,0,0 });
 	CreateCannonSensor({ 0,0,120 }, { 0,0,0 });
 	CreateCannonSensor({ 0,0,160 }, { 0,0,0 });*/
+
+
+	// handle lights
+	/*App->renderer3D->lights[1].ref = GL_LIGHT1;
+	App->renderer3D->lights[1].Init(); 
+	App->renderer3D->lights[1].diffuse = Red; 
+	App->renderer3D->lights[1].ambient = Red; 
+	App->renderer3D->lights[1].SetPos(0, 3 , 0);
+	App->renderer3D->lights[1].Active(true);*/
 
 	return ret;
 }
@@ -99,6 +109,9 @@ update_status ModuleSceneIntro::Update(float dt)
 	// draw all circuit pieces
 	for (int i = 0; i < circuit_cubes.prims.Count(); ++i)
 		circuit_cubes.prims[i].Render();
+
+	/*// render test light object
+	test_light.Render();*/
 
 /*	big_ball_prim.SetPos(big_ball_body->GetPos().x, big_ball_body->GetPos().y, big_ball_body->GetPos().z); 
 	big_ball_prim.Render(); 
@@ -238,7 +251,7 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 	ramp.SetPos(origin.x, height.y / 2, origin.z);
 	ramp.SetRotation(20.0f, { 1, 0, 0 });
 
-	// create physbody ----
+	// create physbody 
 
 	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50));
 	ramp_body->Set_Orientation(angle, { 1, 0, 0 });
@@ -257,8 +270,6 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	float corner_junction = 0.25f;   // wall width / 2 
-	float height = 11.5f; 
-	float width = 26.5f; 
 
 	// three parts with commonalities
 	Cube top, left, right; 
@@ -266,39 +277,36 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	top.size = left.size = right.size = dest - origin; 
 	top.size.y = left.size.y = right.size.y = 0.5f; 
 	
+	// float rot_angle = asin((dest.x - origin.x) / sqrt(pow(dest.x, 2) + pow(dest.y, 2) + pow(dest.z, 2)));
 
 	// top 
-	top.size.z = width;
+	top.size.z = TUNNEL_WIDTH;
 	PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50)); 
 	top_body->SetStatic(true); 
-	top_body->SetPos(origin.x, height, origin.z);
-	top.SetPos(origin.x, height, origin.z);
+	top_body->SetPos(origin.x, TUNNEL_HEIGHT, origin.z);
+	top.SetPos(origin.x, TUNNEL_HEIGHT, origin.z);
 
 	// left
-	left.size.z = height; 
+	left.size.z = TUNNEL_HEIGHT;
 	PhysBody3D* left_body = App->physics->AddBody(left, pow(10, 50));
 	left_body->SetStatic(true);
-	left_body->SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
-	left.SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
+	left_body->SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
+	left.SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
 	left.SetRotation(90.0f, { 1,0,0 });
 	left_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 }); 
 
+
+	
 	// right
-	right.size.z = height;
+	right.size.z = TUNNEL_HEIGHT;
 	PhysBody3D* right_body = App->physics->AddBody(right, pow(10, 50));
 	right_body->SetStatic(true);
-	right_body->SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
-	right.SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
+	right_body->SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
+	right.SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
 	right.SetRotation(90.0f, { 1,0,0 });
 	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
 
-
-
-	/*cubeObjects* c = nullptr; 
-
-	c->bodies.PushBack(top_body); 
-	c->prims.PushBack(top);*/
-
+	// store objects
 	circuit_cubes.prims.PushBack(top);
 	circuit_cubes.bodies.PushBack(top_body); 
 
@@ -307,8 +315,72 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	circuit_cubes.prims.PushBack(right);
 	circuit_cubes.bodies.PushBack(right_body);
+
+
+	/*// lights
+	test_light.radius = 1;
+	test_light.color = Blue;
+	test_light.SetPos(0, 0, 0);
+
+	App->renderer3D->lights[1].Active(true);
+	App->renderer3D->lights[1].ambient = Red;
+	App->renderer3D->lights[1].diffuse = Red;
+	App->renderer3D->lights[1].Init();
+	App->renderer3D->lights[1].SetPos(2, 2, 2);
+	App->renderer3D->lights[1].on = true;
+	App->renderer3D->lights[1].ref = GL_LIGHT1;*/
+
 	
 }
+
+void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
+
+	float fence_height = 3; 
+	float separation = 0; 
+	float first_fence_offset = 0.15f; // fence depth / 2
+
+	Cube top, bottom; 
+	top.color = bottom.color = Black; 
+	vec3 dir = dest - origin; 
+	dir.y = 0.5f; 
+	dir.z = 0.5f; 
+	top.size = bottom.size = dir;
+
+	float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dir.z, 2)));  // 2D rot angle
+	float rot_angle_X = 90 - rot_angle_Z; 
+	
+	
+	top.SetPos(origin.x, fence_height, origin.z); 
+	PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
+
+
+	bottom.SetPos(origin.x, 0, origin.z);
+	PhysBody3D* bottom_body = App->physics->AddBody(bottom, pow(10, 50));
+
+	while (separation < top.size.x) {
+
+		Cube vertical(0.3f, fence_height, 0.3f); 
+		vertical.color = Black; 
+		vertical.SetPos(first_fence_offset + bottom_body->GetPos().x - bottom.size.x / 2 + separation, fence_height / 2, bottom_body->GetPos().z);
+		PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
+
+		circuit_cubes.prims.PushBack(vertical);
+		circuit_cubes.bodies.PushBack(vertical_body);
+
+		separation += 1; 
+
+	}
+
+
+	circuit_cubes.prims.PushBack(top);
+	circuit_cubes.bodies.PushBack(top_body);
+
+
+	circuit_cubes.prims.PushBack(bottom);
+	circuit_cubes.bodies.PushBack(bottom_body);
+
+}
+
 
 
 
