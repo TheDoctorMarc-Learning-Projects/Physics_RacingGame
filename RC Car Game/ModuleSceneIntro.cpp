@@ -54,7 +54,7 @@ bool ModuleSceneIntro::Start()
 	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); */
 
 	// tunnel
-	Create_Tunnel((100, 100, 100), (250, 300, 200));
+	Create_Tunnel((50, 50, 50), (300, 300, 300));
 
 	Create_Side_Fence_Limit_Segment((0, 0, 0), (100, 100, 100)); 
 
@@ -273,7 +273,7 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	// three parts with commonalities
 	Cube top, left, right; 
-	top.color = left.color = right.color = Blue;
+	top.color = left.color = right.color = Black;
 	top.size = left.size = right.size = dest - origin; 
 	top.size.y = left.size.y = right.size.y = 0.5f; 
 	
@@ -338,9 +338,6 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 	float fence_height = 3; 
 	float separation = 0; 
 	float first_fence_offset = 0.15f; // fence depth / 2
-	
-
-	
 
 	for (uint i = 1; i<=2; ++i) {       // do the same for both laterals of the circuit
 
@@ -382,6 +379,9 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 
 		}
 
+		// chop off the end if the vertical fences do not coincide
+
+		
 
 		circuit_cubes.prims.PushBack(top);
 		circuit_cubes.bodies.PushBack(top_body);

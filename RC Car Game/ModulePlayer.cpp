@@ -48,6 +48,7 @@ bool ModulePlayer::Start()
 	car.front_light_radius_height = (0.2, 0.4); 
 	car.front_light_offset = (1.5, 0, 3);*/
 
+
 	car.rear_wing_size.Set(4.8, 0.4, 0.3);
 	car.rear_wing_offset.Set(0, 2.6, -2.5);
 
@@ -139,6 +140,9 @@ bool ModulePlayer::Start()
 	car.wheels[3].drive = false;
 	car.wheels[3].brake = true;
 	car.wheels[3].steering = false;
+
+	car.rear_transm_size.Set(4, 0.3, 0.3);
+	car.rear_transm_offset.Set(car.wheels[3].connection.x + 2.2f, car.wheels[2].connection.y - rear_wheel_radius / 2, car.wheels[2].connection.z);
 
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetPos(0, 12, 10);
@@ -289,7 +293,6 @@ void ModulePlayer::CameraLogic()
 	App->camera->Position.y = 17;
 	App->camera->Position.y = 7;
 	App->camera->LookAt(pos);
-
 }
 
 

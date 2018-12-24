@@ -133,6 +133,20 @@ void PhysVehicle3D::Render()
 	rear_wing_flag_left.color = Red;
 	rear_wing_flag_left.Render();
 
+	// rear transmission
+
+
+	Cube rear_transm(info.rear_transm_size.x, info.rear_transm_size.y, info.rear_transm_size.z);
+
+	vehicle->getChassisWorldTransform().getOpenGLMatrix(&rear_transm.transform);
+	btVector3 offset_q_rear_transm(-info.rear_transm_offset.x, info.rear_transm_offset.y, info.rear_transm_offset.z);
+	offset_q_rear_transm = offset_q_rear_transm.rotate(q.getAxis(), q.getAngle());
+
+	rear_transm.transform.M[12] += offset_q_rear_transm.getX();
+	rear_transm.transform.M[13] += offset_q_rear_transm.getY();
+	rear_transm.transform.M[14] += offset_q_rear_transm.getZ();
+	rear_transm.color = Black;
+	rear_transm.Render();
 
 	/*// front light right
 	Cylinder front_light_right(info.front_light_radius_height.x, info.front_light_radius_height.y);
