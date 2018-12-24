@@ -186,16 +186,24 @@ update_status ModulePlayer::Update(float dt)
 	{
 		  App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
 
-			acceleration = MAX_ACCELERATION;
+		  if(acc_factor > 0.1)
+		  acc_factor -= 0.008; 
+
+		    if(vehicle->GetKmh() <= MAX_SPEED)
+			acceleration = MAX_ACCELERATION * acc_factor;
 
 			if (App->input->GetKey(SDL_SCANCODE_P) == KEY_REPEAT) {
 				vehicle->info.rear_wing_size.y = 0.05f;                   // open rear wing (DRS)
-				acceleration = MAX_ACC_DRS;
+
+				if (vehicle->GetKmh() <= MAX_SPEED_DRS)
+				acceleration = MAX_ACC_DRS * acc_factor;
 			}
 
 	}
 
 	else {
+		acc_factor = 1; 
+
 		App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
 
 		vehicle->info.rear_wing_size.y = 0.4f;  // close DRS
@@ -240,6 +248,7 @@ update_status ModulePlayer::Update(float dt)
 	else if (vehicle->GetKmh() < 0) {
 		acceleration += inertia / 4;
 	}*/
+
 
 	vehicle->ApplyEngineForce(acceleration);
 	vehicle->Turn(turn);

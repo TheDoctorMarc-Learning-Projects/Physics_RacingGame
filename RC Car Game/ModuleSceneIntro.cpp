@@ -212,6 +212,43 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	}
 }
 
+
+Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
+
+	// create cube ----
+
+	Cube ramp;
+	ramp.color = White;
+	float angle = 20.0f * _PI / 180;
+
+
+	vec3 floor_distance = dest - origin;
+	vec3 height = floor_distance * sin(angle) / sin(90 - angle);
+	vec3 dest_in_air = dest + height;
+	vec3 actual_Size = dest_in_air - origin;
+	ramp.size = actual_Size;
+	ramp.size.y = 0.5f;
+
+	ramp.SetPos(origin.x, height.y / 2, origin.z);
+	ramp.SetRotation(20.0f, { 1, 0, 0 });
+
+	// create physbody ----
+
+	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50));
+	ramp_body->Set_Orientation(angle, { 1, 0, 0 });
+	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
+
+	// adds primitive and respective body to circuit pieces dynamic array
+	circuit_cubes.prims.PushBack(ramp);
+	circuit_cubes.bodies.PushBack(ramp_body);
+
+	// adds listener
+	ramp_body->collision_listeners.add(this);
+
+	return ramp;
+}
+
+
 cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
 {
 	// creates, adds and set timer to cannon balls, adds to list and push the ball
@@ -286,38 +323,5 @@ void ModuleSceneIntro::CreateCannonSensor(const vec3 position, vec3 direction)
 	cannon_sensors.PushBack(newCannon);
 }
 
-Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 
-	// create cube ----
-
-	Cube ramp; 
-	ramp.color = White;
-	float angle = 20.0f * _PI / 180 ;
-	             
-
-	vec3 floor_distance = dest - origin; 
-	vec3 height = floor_distance * sin(angle) / sin(90 - angle); 
-	vec3 dest_in_air = dest + height; 
-	vec3 actual_Size = dest_in_air - origin; 
-	ramp.size = actual_Size;
-	ramp.size.y = 0.5f; 
-
-	ramp.SetPos(origin.x, height.y / 2, origin.z);
-	ramp.SetRotation(20.0f, { 1, 0, 0 });
-
-	// create physbody ----
-
-	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50)); 
-	ramp_body->Set_Orientation(angle, { 1, 0, 0 }); 
-	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
-	 
-	// adds primitive and respective body to circuit pieces dynamic array
-	circuit_cubes.prims.PushBack(ramp);
-	circuit_cubes.bodies.PushBack(ramp_body);
-
-	// adds listener
-	ramp_body->collision_listeners.add(this);
-
-	return ramp; 
-}
 
