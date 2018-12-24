@@ -30,6 +30,8 @@ struct cannonSensors
 	bool collision = false;
 	PhysBody3D* body = nullptr;
 	Cube cubePrim;
+	// each cannon sensor has their associate cannon ball // never delete individual bodies without a complete thinkered method, not do for now
+	cannonBalls* ball = nullptr;
 };
 
 class ModuleSceneIntro : public Module
@@ -45,7 +47,7 @@ public:
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	Cube CreateRamp(vec3 origin, vec3 dest);
 	void CreateCheckSensor(const vec3 position, vec3 direction);
-	void SpawnCannonBall(const vec3 origin, vec3 direction);
+	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position, vec3 direction);
 
 public:

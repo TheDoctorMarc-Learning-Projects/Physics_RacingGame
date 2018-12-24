@@ -97,6 +97,11 @@ update_status ModuleSceneIntro::Update(float dt)
 		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
 	}
 
+	/*if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+		float magnitude = 8500;
+		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
+	}*/
+
 	// big ball reposition test
 	if (test_timer.Read() > 5000 && !big_ball_body->isStatic())
 	{
@@ -114,16 +119,35 @@ update_status ModuleSceneIntro::Update(float dt)
 			{
 				// be ready for next collision
 				cannon_sensors[i].collision = false;
+				// reposition the associated ball
+				// ... //
 			}
 		}
+
+		// draw associated ball
+		cannon_sensors[i].ball->primitive.SetPos(cannon_sensors[i].ball->body->GetPos().x, cannon_sensors[i].ball->body->GetPos().y, cannon_sensors[i].ball->body->GetPos().z);
+		cannon_sensors[i].ball->primitive.Render();
 	}
 
-	// Cannon ball primitives print
-	for (int i = 0; i < cannon_balls.count(); ++i)
-	{
-		cannon_balls[i].primitive.SetPos(cannon_balls[i].body->GetPos().x, cannon_balls[i].body->GetPos().y, cannon_balls[i].body->GetPos().z);
-		cannon_balls[i].primitive.Render();
+	if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+		float magnitude = 8500;
+		//cannon_sensors[0].ball->body->SetPos(0, 0, 0);
+		cannon_sensors[0].ball->body->Push(1000, 1000, 10);
 	}
+
+	// Cannon ball primitives print // doesnt needs now, now draw associated fixed ball with each cannon sensor
+	//for (int i = 0; i < cannon_balls.count(); ++i)
+	//{
+	//	cannon_balls[i].primitive.SetPos(cannon_balls[i].body->GetPos().x, cannon_balls[i].body->GetPos().y, cannon_balls[i].body->GetPos().z);
+	//	cannon_balls[i].primitive.Render();
+
+	//	// deletes by timer
+	//	if (cannon_balls[i].timer.Read() > 5000) // test life value
+	//	{
+	//		//delete cannon_balls[i].body;
+	//		LOG("");
+	//	}
+	//}
 
 	return UPDATE_CONTINUE;
 }
@@ -164,14 +188,24 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 				// sets collision timer
 				cannon_sensors[i].timer.Start();
 				cannon_sensors[i].collision = true;
-				SpawnCannonBall(cannon_sensors[i].body->GetPos(), vec3(0, 0, 0));
+				//SpawnCannonBall(cannon_sensors[i].body->GetPos(), vec3(0, 0, 0));
+
+				// adds impulse
+				/*float force = 5000.0f;
+				int x = cannon_sensors[i].ball->body->GetPos().x;
+				vec3 newDir(App->player->vehicle->GetPos().x - cannon_sensors[i].ball->body->GetPos().x ,
+							App->player->vehicle->GetPos().y - cannon_sensors[i].ball->body->GetPos().y ,
+							App->player->vehicle->GetPos().z - cannon_sensors[i].ball->body->GetPos().z);
+				newDir = normalize(newDir);
+				cannon_sensors[i].ball->body->Push(-newDir.x * force, newDir.y * force, newDir.y * force);*/
+				//cannon_sensors[i].ball->body->Push(1000, 1000, 10);
 			}
 		}
 
 	}
 }
 
-void ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
+cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
 {
 	// creates, adds and set timer to cannon balls, adds to list and push the ball
 	int offset = 7; // offset to far away the ball laterally
@@ -179,8 +213,8 @@ void ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
 	Sphere ball_prim;
 	ball_prim.radius = 3;
 	// checks if we have even or not on the cannon balls list, for spawning this shot from left or right
-	int newXpos = 0;
-	if (cannon_balls.count() % 2 != 0) {
+	float newXpos = 0.f;
+	if (cannon_sensors.Count() % 2 != 0) {//cannon_balls.count() % 2 != 0) {
 		newXpos = origin.x + ball_prim.radius * 2 + offset;
 	}
 	else {
@@ -192,11 +226,19 @@ void ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
 	PhysBody3D* b = App->physics->AddBody(ball_prim, 100.0f);
 	//b->SetPos(newXpos, origin.y, origin.z);
 	// creates new cannon ball data
-	cannonBalls newCannonBall;
-	newCannonBall.body = b;
-	newCannonBall.primitive = ball_prim;
+	cannonBalls* newCannonBall = new cannonBalls();
+	newCannonBall->body = b;
+	newCannonBall->primitive = ball_prim;
 	// adds to cannonballs list
-	cannon_balls.add(newCannonBall);
+	//cannon_balls.add(newCannonBall);
+
+	// adds impulse
+	/*float force = 5000.0f;
+	vec3 newDir(newXpos - App->player->vehicle->GetPos().x, origin.y - App->player->vehicle->GetPos().y, origin.z - App->player->vehicle->GetPos().z);
+	newDir = normalize(newDir);
+	b->Push(-newDir.x * force, newDir.y * force, newDir.y * force);*/
+
+	return newCannonBall;
 
 }
 
@@ -223,11 +265,14 @@ void ModuleSceneIntro::CreateCannonSensor(const vec3 position, vec3 direction)
 	PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);
 	// listener
 	b->collision_listeners.add(this);
-	
+
 	// cannon sensor relative
 	cannonSensors newCannon;
 	newCannon.body = b;
 	newCannon.cubePrim = checkCube;
+
+	// adds a cannon ball associated
+	newCannon.ball = SpawnCannonBall({ b->GetPos().x, b->GetPos().y, b->GetPos().z }, { 0,0,0 });
 	
 	cannon_sensors.PushBack(newCannon);
 }
