@@ -29,7 +29,7 @@ bool ModuleSceneIntro::Start()
 
 
 	big_ball_prim.radius = 5; 
-	big_ball_prim.SetPos(10, 20, 50); 
+	big_ball_prim.SetPos(10, 10, 70); 
 	big_ball_prim.color = Green; 
 	big_ball_body = App->physics->AddBody(big_ball_prim, 0.0f);//6000.0f);
 
@@ -72,15 +72,15 @@ update_status ModuleSceneIntro::Update(float dt)
 	}
 
 	// check timer and adds mass to test sphere
-	if (test_timer.Read() > 10000)
+	if (test_timer.Read() > 5000)
 	{
 		//check_point_body
 		LOG("reset timer");
 		test_timer.Start();
 		// test mass
 		//big_ball_body->SetBodyMass(500.0f);
-		App->physics->SetBodyMass(big_ball_body, 50.0f);
-		big_ball_body->Set_Speed(btVector3(0, -20, 0));
+		App->physics->SetBodyMass(big_ball_body, 100.0f);
+		//big_ball_body->Set_Speed(btVector3(0, 20, 0));
 	}
 
 	return UPDATE_CONTINUE;

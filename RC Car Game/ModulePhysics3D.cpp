@@ -378,6 +378,9 @@ void ModulePhysics3D::SetBodyMass(PhysBody3D* pbody, float mass)
 
 	//Add the rigid body to the dynamics world
 	world->addRigidBody(b);
+	// forces activation
+	//if(mass >= 0.f)
+		b->activate(true);
 	
 }
 
