@@ -71,6 +71,7 @@ update_status ModuleSceneIntro::Update(float dt)
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
+	LOG("collision");
 }
 
 Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
@@ -101,6 +102,9 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 	// adds primitive and respective body to circuit pieces dynamic array
 	circuit_cubes.prims.PushBack(ramp);
 	circuit_cubes.bodies.PushBack(ramp_body);
+
+	// adds listener
+	ramp_body->collision_listeners.add(this);
 
 	return ramp; 
 }
