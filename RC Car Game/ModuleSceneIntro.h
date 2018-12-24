@@ -17,6 +17,21 @@ struct cubeObjects
 	p2DynArray<PhysBody3D*> bodies;
 };
 
+struct cannonBalls // helper struct, spawn balls and deletes by timer on scene
+{
+	Timer timer;
+	Sphere primitive;
+	PhysBody3D* body = nullptr;
+};
+
+struct cannonSensors
+{
+	Timer timer; // activate next collision with cooldown
+	bool collision = false;
+	PhysBody3D* body = nullptr;
+	Cube cubePrim;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -29,6 +44,9 @@ public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	Cube CreateRamp(vec3 origin, vec3 dest);
+	void CreateCheckSensor(const vec3 position, vec3 direction);
+	void SpawnCannonBall(const vec3 origin, vec3 direction);
+	void CreateCannonSensor(const vec3 position, vec3 direction);
 
 public:
 	/*
@@ -72,6 +90,11 @@ public:
 
 	Timer test_timer;
 	
+	// list of current cannonballs
+	p2List<cannonBalls> cannon_balls;
+	// check points for cannon zone
+	//cubeObjects cannon_sensors;
+	p2DynArray<cannonSensors> cannon_sensors;
 
 
 

@@ -29,7 +29,7 @@ bool ModuleSceneIntro::Start()
 
 	// indiana jones big ball ---
 	big_ball_prim.radius = 5; 
-	big_ball_prim.SetPos(10, 20, 70); 
+	big_ball_prim.SetPos(10, 10, 70); 
 	big_ball_prim.color = Green; 
 	big_ball_body = App->physics->AddBody(big_ball_prim, 100.0f);//6000.0f);
 	big_ball_body->SetStatic(true);
@@ -54,7 +54,18 @@ bool ModuleSceneIntro::Start()
 
 	// test timer
 	test_timer.Start();
-	
+
+	// sensors test
+	/*CreateCheckSensor({ 0,0,40 }, { 0,0,0 });
+	CreateCheckSensor({ 0,0,80 }, { 0,0,0 });
+	CreateCheckSensor({ 0,0,120 }, { 0,0,0 });
+	CreateCheckSensor({ 0,0,160 }, { 0,0,0 });*/
+
+	// cannon sensors test
+	CreateCannonSensor({ 0,0,40 }, { 0,0,0 });
+	CreateCannonSensor({ 0,0,80 }, { 0,0,0 });
+	CreateCannonSensor({ 0,0,120 }, { 0,0,0 });
+	CreateCannonSensor({ 0,0,160 }, { 0,0,0 });
 
 	return ret;
 }
@@ -86,20 +97,108 @@ update_status ModuleSceneIntro::Update(float dt)
 		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
 	}
 
+	// big ball reposition test
+	if (test_timer.Read() > 5000 && !big_ball_body->isStatic())
+	{
+		big_ball_body->SetPos(10, 10, 70);
+		big_ball_body->SetStatic(true);
+		test_timer.Start();
+	}
+
+	// Cannon sensors collision cooldown states
+	for (int i = 0; i < cannon_sensors.Count(); ++i)
+	{
+		if (cannon_sensors[i].collision) // if previous state is collision, checks timer cooldown
+		{
+			if (cannon_sensors[i].timer.Read() > 5000) // random value for testing
+			{
+				// be ready for next collision
+				cannon_sensors[i].collision = false;
+			}
+		}
+	}
+
 	return UPDATE_CONTINUE;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
 	//if (body2 == App->player->vehicle)
+
+	// specific sensors check
 	if(body1 == test_sensor)
 	{
 		if (big_ball_body->isStatic())
 		{
 			LOG("Indiana jones ball is coming");
 			big_ball_body->SetStatic(false);
+			test_timer.Start();
 		}
 	}
+
+	// if a collision is coming from a sensor call
+	if (body1->is_sensor)
+	{
+		// iterates all sensor array
+		for (int i = 0; i < check_point_bodies.Count(); ++i)
+		{
+			if (body1 == check_point_bodies[i])
+			{
+				LOG("basic check point collision");
+			}
+		}
+
+		// iterates all cannon sensors
+		for(int i = 0; i < cannon_sensors.Count(); ++i)
+		{
+			if (body1 == cannon_sensors[i].body && !cannon_sensors[i].collision)
+			{
+				LOG("cannon sensor collision");
+				// sets collision timer
+				cannon_sensors[i].timer.Start();
+				cannon_sensors[i].collision = true;
+			}
+		}
+
+	}
+}
+
+void ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
+{
+	// creates, adds and set timer to cannon balls, adds to list and push the ball
+
+}
+
+void ModuleSceneIntro::CreateCheckSensor(const vec3 position, vec3 direction)
+{
+	Cube checkCube(10, 3, 1);
+	checkCube.SetPos(position.x, position.y, position.z);
+	//checkCube.SetRotation();
+	circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
+	// physbody
+	PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);
+	// listener
+	b->collision_listeners.add(this);
+	check_point_bodies.PushBack(b); // this is a basic checkpoint
+}
+
+void ModuleSceneIntro::CreateCannonSensor(const vec3 position, vec3 direction)
+{
+	Cube checkCube(10, 3, 1);
+	checkCube.SetPos(position.x, position.y, position.z);
+	//checkCube.SetRotation();
+	circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
+	// physbody
+	PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);
+	// listener
+	b->collision_listeners.add(this);
+	
+	// cannon sensor relative
+	cannonSensors newCannon;
+	newCannon.body = b;
+	newCannon.cubePrim = checkCube;
+	
+	cannon_sensors.PushBack(newCannon);
 }
 
 Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
