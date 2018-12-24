@@ -256,7 +256,7 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 
 void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
-	vec2 junction_offset(0.6, 0.2); 
+	float corner_junction = 0.25f;   // wall width / 2 
 	float height = 11.5f; 
 	float width = 26.5f; 
 
@@ -278,8 +278,8 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	left.size.z = height; 
 	PhysBody3D* left_body = App->physics->AddBody(left, pow(10, 50));
 	left_body->SetStatic(true);
-	left_body->SetPos(top_body->GetPos().z, height / 2, top_body->GetPos().x - top.size.z / 2); 
-	left.SetPos(top_body->GetPos().z, height / 2 , top_body->GetPos().x - top.size.z / 2);
+	left_body->SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
+	left.SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
 	left.SetRotation(90.0f, { 1,0,0 });
 	left_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 }); 
 
@@ -287,8 +287,8 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	right.size.z = height;
 	PhysBody3D* right_body = App->physics->AddBody(right, pow(10, 50));
 	right_body->SetStatic(true);
-	right_body->SetPos(top_body->GetPos().z, height / 2, top_body->GetPos().x + top.size.z / 2);
-	right.SetPos(top_body->GetPos().z, height / 2, top_body->GetPos().x + top.size.z / 2);
+	right_body->SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
+	right.SetPos(top_body->GetPos().z, height / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
 	right.SetRotation(90.0f, { 1,0,0 });
 	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
 
