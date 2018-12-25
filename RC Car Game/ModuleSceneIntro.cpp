@@ -56,7 +56,7 @@ bool ModuleSceneIntro::Start()
 	// tunnel
 	// Create_Tunnel((50, 50, 50), (300, 300, 300));
 
-	Create_Side_Fence_Limit_Segment((0, 0, 0), (100, 100, 100)); 
+	Create_Side_Fence_Limit_Segment({ 50, 55, 160 }, { 130, 100, 190 });
 
 	// test timer
 	test_timer.Start();
@@ -363,8 +363,11 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
 		float rot_angle_X = 90 - rot_angle_Z;
 
-
+		/*vec3 left_pos(origin.x, 0, origin.z);
+		vec3 right_pos(origin.x - sin(rot_angle_X * _PI / 180) * TUNNEL_WIDTH, 0, origin.z + TUNNEL_WIDTH * sin(rot_angle_Z * _PI / 180));
+		vec3 d_between = right_pos - left_pos;*/
 		if (i == 1) {
+
 			top.SetPos(origin.x, fence_height, origin.z);
 			bottom.SetPos(origin.x, 0, origin.z);
 		}
