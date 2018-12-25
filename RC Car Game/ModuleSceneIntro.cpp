@@ -46,18 +46,18 @@ bool ModuleSceneIntro::Start()
 	// listener
 	//b->collision_listeners.add(this);
 	test_sensor->collision_listeners.add(this);
-	check_point_bodies.PushBack(test_sensor);
+	check_point_bodies.PushBack(test_sensor);*/
 	
 	// ----------------------------------------------------------------------------------------
 	
 	// ramp
-	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); */
+	// test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); 
 
 	// tunnel
-	// Create_Tunnel((50, 50, 50), (300, 300, 300));
+	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
-	Create_Side_Fence_Limit_Segment({ 50, 55, 160 }, { 130, 100, 190 });
-
+	Create_Side_Fence_Limit_Segment({ 50, 0, 50 }, { 150, 0, 150 });
+	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); 
 	// test timer
 	test_timer.Start();
 
@@ -109,6 +109,11 @@ update_status ModuleSceneIntro::Update(float dt)
 	// draw all circuit pieces
 	for (int i = 0; i < circuit_cubes.prims.Count(); ++i)
 		circuit_cubes.prims[i].Render();
+
+
+	for (int i = 0; i < circuit_cyls.prims.Count(); ++i)
+		circuit_cyls.prims[i].Render();
+
 
 	/*// render test light object
 	test_light.Render();*/
@@ -240,6 +245,9 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 	ramp.color = White;
 	float angle = 20.0f * _PI / 180;
 
+	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+	float rot_angle_X = 90 - rot_angle_Z;
+
 
 	vec3 floor_distance = dest - origin;
 	vec3 height = floor_distance * sin(angle) / sin(90 - angle);
@@ -248,7 +256,7 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 	ramp.size = actual_Size;
 	ramp.size.y = 0.5f;
 
-	ramp.SetPos(origin.x, height.y / 2, origin.z);
+	ramp.SetPos(origin.x, (actual_Size.z / 2) * sin(angle), origin.z);
 	ramp.SetRotation(20.0f, { 1, 0, 0 });
 
 	// create physbody 
@@ -256,6 +264,11 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50));
 	ramp_body->Set_Orientation(angle, { 1, 0, 0 });
 	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
+
+	/*// add rotation
+	ramp.SetRotation(rot_angle_Z, { 0, -1, 0 });
+	ramp_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });*/
+
 
 	// adds primitive and respective body to circuit pieces dynamic array
 	circuit_cubes.prims.PushBack(ramp);
@@ -345,7 +358,9 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	
 }
 
-void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
+vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
+
+	vec3 return_last_pos(0,0,0); 
 
 	float fence_height = 3; 
 	float separation = 0; 
@@ -364,10 +379,12 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		float rot_angle_X = 90 - rot_angle_Z;
 
 		/*vec3 left_pos(origin.x, 0, origin.z);
-		vec3 right_pos(origin.x - sin(rot_angle_X * _PI / 180) * TUNNEL_WIDTH, 0, origin.z + TUNNEL_WIDTH * sin(rot_angle_Z * _PI / 180));
-		vec3 d_between = right_pos - left_pos;*/
-		if (i == 1) {
 
+		float d_between_Z = TUNNEL_WIDTH * sin(rot_angle_X * _PI / 180);
+		float d_between_X = TUNNEL_WIDTH * sin(rot_angle_Z * _PI / 180);*/
+
+		if (i == 1) {
+			
 			top.SetPos(origin.x, fence_height, origin.z);
 			bottom.SetPos(origin.x, 0, origin.z);
 		}
@@ -375,6 +392,9 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 			separation = 0;   // reset separation 
 			top.SetPos(origin.x - sin(rot_angle_X * _PI / 180) * TUNNEL_WIDTH, fence_height, origin.z + TUNNEL_WIDTH * sin(rot_angle_Z * _PI / 180));
 			bottom.SetPos(origin.x - sin(rot_angle_X * _PI / 180) * TUNNEL_WIDTH, 0, origin.z + TUNNEL_WIDTH * sin(rot_angle_Z * _PI / 180));
+
+			/*/top.SetPos(left_pos.x + d_between_X, fence_height, left_pos.z + d_between_Z);
+			bottom.SetPos(left_pos.x + d_between_X, 0, left_pos.z + d_between_Z);*/
 		}
 		
 		PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
@@ -394,7 +414,6 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 
 			Cube vertical(0.3f, fence_height, 0.3f);
 			vertical.color = Black;
-			// nvertical.SetPos(first_fence_offset + bottom_body->GetPos().x - bottom.size.x / 2 + separation, fence_height / 2, bottom_body->GetPos().z);
 			vertical.SetPos(-first_fence_offset * sin(rot_angle_X * _PI / 180) + bottom_body->GetPos().x + (bottom.size.x / 2) * sin(rot_angle_X * _PI / 180) - separation * sin(rot_angle_X * _PI / 180), fence_height / 2, -first_fence_offset * sin(rot_angle_Z * _PI / 180) + bottom_body->GetPos().z + (bottom.size.x / 2) * sin(rot_angle_Z * _PI / 180) - separation * sin(rot_angle_Z * _PI / 180));
 			PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
 
@@ -406,14 +425,15 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 			circuit_cubes.bodies.PushBack(vertical_body);
 
 			separation += 3;
-
+			
+			// store return position
+			if (separation == 3) {
+				return_last_pos.x = vertical_body->GetPos().x;
+				return_last_pos.z = vertical_body->GetPos().z;
+			}
 		}
 
 		// chop off the end if the vertical fences do not coincide
-
-		
-	
-
 
 		circuit_cubes.prims.PushBack(top);
 		circuit_cubes.bodies.PushBack(top_body);
@@ -422,15 +442,62 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		circuit_cubes.prims.PushBack(bottom);
 		circuit_cubes.bodies.PushBack(bottom_body);
 
+
+		// store last position 
+
+		
+		last_positions_to_snap.add(return_last_pos); 
+
 	}
 
-
+	return return_last_pos; 
 }
 
+void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest) {
 
+	vec3 start_pos(0, 0, 0); 
+	vec3 start_offset(1, 0, 1); 
+	float separation = 10; 
+	uint counter = 0; 
 
+	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+	float rot_angle_X = 90 - rot_angle_Z;
 
+	// check if there is an element fairly close, then snap to it
 
+	for (uint i = 0; i < last_positions_to_snap.count(); ++i) {
+		if ((last_positions_to_snap.At(i)->data.x - origin.x) < 5 ) {   
+			start_pos = last_positions_to_snap.At(i)->data + start_offset; 
+		}
+    }
+
+	while (counter < 10) { // change this 
+		rot_angle_Z = asin((dest.x - (origin.x + separation * sin(rot_angle_X * _PI / 180))) / sqrt(pow(dest.x - (origin.x + separation), 2) + pow(dest.z - (origin.z + separation * sin(rot_angle_Z * _PI / 180)), 2))) * 180 / _PI;
+		rot_angle_X = 90 - rot_angle_Z;
+
+		Cylinder element(1, 3);
+		if(counter % 2 == 0){
+			element.color = Red; 
+		}
+		else {
+			element.color = White; 
+		}
+		element.SetPos(start_pos.x + separation * sin(rot_angle_X * _PI / 180), 0, start_pos.z + separation * sin(rot_angle_Z * _PI / 180));
+
+		PhysBody3D* element_body = App->physics->AddBody(element, pow(20, 50)); 
+
+		// add rotation
+		element.SetRotation(90.0f, { 0, 0, -1 });
+		element_body->Set_Orientation(90.0f * _PI / 180, { 0, 0, -1 });
+
+		circuit_cyls.prims.PushBack(element);
+		circuit_cyls.bodies.PushBack(element_body);
+
+		separation += 2; 
+		counter++; 
+	}
+
+}
 
 
 cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)

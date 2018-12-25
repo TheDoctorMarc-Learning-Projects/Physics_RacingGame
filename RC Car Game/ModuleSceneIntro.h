@@ -19,6 +19,13 @@ struct cubeObjects
 	p2DynArray<PhysBody3D*> bodies;
 };
 
+
+struct CylObjects
+{
+	p2DynArray<Cylinder> prims;
+	p2DynArray<PhysBody3D*> bodies;
+};
+
 struct cannonBalls // helper struct, spawn balls and deletes by timer on scene
 {
 	vec3 original_pos;
@@ -53,7 +60,8 @@ public:
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position, vec3 direction);
 	void Create_Tunnel(vec3 origin, vec3 dest); 
-	void Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest);
+	vec3 Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); // returns last point, so that we can snap other elements after
+	void Create_Curve(vec3 origin, vec3 dest); 
 
 public:
 	/*
@@ -83,6 +91,9 @@ public:
 
 	// list of all cubes
 	cubeObjects circuit_cubes;
+	// and cyls
+	CylObjects circuit_cyls; 
+
 	// checkpoints, maybe its useful create another helper struct like circuit_cubes
 	p2DynArray<PhysBody3D*> check_point_bodies;
 	p2DynArray<Cube> check_point_prim;
@@ -105,14 +116,13 @@ public:
 	//cubeObjects cannon_sensors;
 	p2DynArray<cannonSensors> cannon_sensors;
 
-
-
-
 	// lights
 
 	Sphere test_light;
 	
 
+	// list of last position elements
+	p2List<vec3> last_positions_to_snap; 
 
 	
 };
