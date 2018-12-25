@@ -370,8 +370,8 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		}
 		else {
 			separation = 0;   // reset separation 
-			top.SetPos(origin.x, fence_height, origin.z + TUNNEL_WIDTH);
-			bottom.SetPos(origin.x, 0, origin.z + TUNNEL_WIDTH);
+			top.SetPos(origin.x - sin(rot_angle_X * _PI / 180) * TUNNEL_WIDTH, fence_height, origin.z + TUNNEL_WIDTH * sin(rot_angle_Z * _PI / 180));
+			bottom.SetPos(origin.x - sin(rot_angle_X * _PI / 180) * TUNNEL_WIDTH, 0, origin.z + TUNNEL_WIDTH * sin(rot_angle_Z * _PI / 180));
 		}
 		
 		PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
