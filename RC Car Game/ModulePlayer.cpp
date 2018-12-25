@@ -145,7 +145,7 @@ bool ModulePlayer::Start()
 	car.rear_transm_offset.Set(car.wheels[3].connection.x + 2.2f, car.wheels[2].connection.y - rear_wheel_radius / 2, car.wheels[2].connection.z);
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 12, 10);
+	vehicle->SetPos(0, 0, 0);
 
 	 
 	

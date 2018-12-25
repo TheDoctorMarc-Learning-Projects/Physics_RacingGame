@@ -56,7 +56,7 @@ bool ModuleSceneIntro::Start()
 	// tunnel
 	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
-	Create_Side_Fence_Limit_Segment({ 50, 0, 50 }, { 150, 0, 150 });
+	Create_Side_Fence_Limit_Segment({ 75, 0, 75 }, { 225, 0, 225 });
 	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); 
 	// test timer
 	test_timer.Start();
@@ -456,8 +456,8 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest) {
 
 	vec3 start_pos(0, 0, 0); 
-	vec3 start_offset(1, 0, 1); 
-	float separation = 10; 
+	vec3 start_offset(-1.3f, 0, -1.3f); 
+	float separation = 0; 
 	uint counter = 0; 
 
 	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
@@ -467,9 +467,10 @@ void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest) {
 
 	for (uint i = 0; i < last_positions_to_snap.count(); ++i) {
 		if ((last_positions_to_snap.At(i)->data.x - origin.x) < 5 ) {   
-			start_pos = last_positions_to_snap.At(i)->data + start_offset; 
+			start_pos = last_positions_to_snap.At(i)->data - start_offset; 
 		}
     }
+
 
 	while (counter < 10) { // change this 
 		rot_angle_Z = asin((dest.x - (origin.x + separation * sin(rot_angle_X * _PI / 180))) / sqrt(pow(dest.x - (origin.x + separation), 2) + pow(dest.z - (origin.z + separation * sin(rot_angle_Z * _PI / 180)), 2))) * 180 / _PI;
@@ -482,8 +483,8 @@ void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest) {
 		else {
 			element.color = White; 
 		}
-		element.SetPos(start_pos.x + separation * sin(rot_angle_X * _PI / 180), 0, start_pos.z + separation * sin(rot_angle_Z * _PI / 180));
-
+		element.SetPos(start_pos.x + separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z + separation * sin(rot_angle_Z * _PI / 180));
+	
 		PhysBody3D* element_body = App->physics->AddBody(element, pow(20, 50)); 
 
 		// add rotation
@@ -493,8 +494,9 @@ void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest) {
 		circuit_cyls.prims.PushBack(element);
 		circuit_cyls.bodies.PushBack(element_body);
 
-		separation += 2; 
+		separation += 3; 
 		counter++; 
+		LOG("_____________________________________________________________ %i", counter); 
 	}
 
 }
