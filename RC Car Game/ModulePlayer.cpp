@@ -190,8 +190,10 @@ update_status ModulePlayer::Update(float dt)
 	{
 		  App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
 
-		  if(acc_factor > 0.1)
-		  acc_factor -= 0.008; 
+		 if(acc_factor > 0.1)
+		  acc_factor -= 0.008;
+
+		  // acc_factor = 1 / (pow(vehicle->GetKmh(), 2) * (1 / vehicle->GetKmh()));
 
 		    if(vehicle->GetKmh() <= MAX_SPEED)
 			acceleration = MAX_ACCELERATION * acc_factor;
@@ -202,11 +204,11 @@ update_status ModulePlayer::Update(float dt)
 				if (vehicle->GetKmh() <= MAX_SPEED_DRS)
 				acceleration = MAX_ACC_DRS * acc_factor;
 			}
-
+		
 	}
 
 	else {
-		acc_factor = 1; 
+		acc_factor = 1;
 
 		App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
 
@@ -290,8 +292,7 @@ void ModulePlayer::CameraLogic()
 	vec3 direction = vehicle->GetForwardVector();
 	direction = normalize(direction);
 	App->camera->Position = pos - direction * 20;
-	App->camera->Position.y = 17;
-	App->camera->Position.y = 7;
+	App->camera->Position.y = 5;
 	App->camera->LookAt(pos);
 }
 

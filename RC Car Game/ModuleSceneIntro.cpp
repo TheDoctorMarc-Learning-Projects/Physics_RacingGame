@@ -54,7 +54,7 @@ bool ModuleSceneIntro::Start()
 	test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); */
 
 	// tunnel
-	Create_Tunnel((50, 50, 50), (300, 300, 300));
+	// Create_Tunnel((50, 50, 50), (300, 300, 300));
 
 	Create_Side_Fence_Limit_Segment((0, 0, 0), (100, 100, 100)); 
 
@@ -270,14 +270,15 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	float corner_junction = 0.25f;   // wall width / 2 
+	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+	float rot_angle_X = 90 - rot_angle_Z;
+
 
 	// three parts with commonalities
 	Cube top, left, right; 
 	top.color = left.color = right.color = Black;
 	top.size = left.size = right.size = dest - origin; 
 	top.size.y = left.size.y = right.size.y = 0.5f; 
-	
-	// float rot_angle = asin((dest.x - origin.x) / sqrt(pow(dest.x, 2) + pow(dest.y, 2) + pow(dest.z, 2)));
 
 	// top 
 	top.size.z = TUNNEL_WIDTH;
@@ -295,8 +296,6 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	left.SetRotation(90.0f, { 1,0,0 });
 	left_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 }); 
 
-
-	
 	// right
 	right.size.z = TUNNEL_HEIGHT;
 	PhysBody3D* right_body = App->physics->AddBody(right, pow(10, 50));
@@ -305,6 +304,19 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	right.SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
 	right.SetRotation(90.0f, { 1,0,0 });
 	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
+
+    // add rotation 
+
+	/*top.SetRotation(rot_angle_Z * 180 / _PI, {0, -1, 0});
+	top_body->Set_Orientation(rot_angle_Z, { 0, -1, 0 });
+
+	left.SetRotation(rot_angle_Z * 180 / _PI, { 0, -1, 0 });
+	left_body->Set_Orientation(rot_angle_Z, { 0, -1, 0 });
+
+	right.SetRotation(rot_angle_Z * 180 / _PI, { 0, -1, 0 });
+	right_body->Set_Orientation(rot_angle_Z, { 0, -1, 0 });*/
+
+
 
 	// store objects
 	circuit_cubes.prims.PushBack(top);
@@ -348,8 +360,8 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		dir.z = 0.5f;
 		top.size = bottom.size = dir;
 
-		/*float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dir.z, 2)));  // 2D rot angle
-		float rot_angle_X = 90 - rot_angle_Z;*/
+		float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+		float rot_angle_X = 90 - rot_angle_Z;
 
 
 		if (i == 1) {
@@ -365,12 +377,27 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
 		PhysBody3D* bottom_body = App->physics->AddBody(bottom, pow(10, 50));
 
+
+
+		// add rotation
+		top.SetRotation(rot_angle_Z, { 0, -1, 0 });
+		top_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
+
+		bottom.SetRotation(rot_angle_Z, { 0, -1, 0 });
+		bottom_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
+
+
 		while (separation < top.size.x) {
 
 			Cube vertical(0.3f, fence_height, 0.3f);
 			vertical.color = Black;
-			vertical.SetPos(first_fence_offset + bottom_body->GetPos().x - bottom.size.x / 2 + separation, fence_height / 2, bottom_body->GetPos().z);
+			// nvertical.SetPos(first_fence_offset + bottom_body->GetPos().x - bottom.size.x / 2 + separation, fence_height / 2, bottom_body->GetPos().z);
+			vertical.SetPos(-first_fence_offset * sin(rot_angle_X * _PI / 180) + bottom_body->GetPos().x + (bottom.size.x / 2) * sin(rot_angle_X * _PI / 180) - separation * sin(rot_angle_X * _PI / 180), fence_height / 2, -first_fence_offset * sin(rot_angle_Z * _PI / 180) + bottom_body->GetPos().z + (bottom.size.x / 2) * sin(rot_angle_Z * _PI / 180) - separation * sin(rot_angle_Z * _PI / 180));
 			PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
+
+			// add rotation
+			vertical.SetRotation(rot_angle_Z, { 0, -1, 0 });
+			vertical_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
 
 			circuit_cubes.prims.PushBack(vertical);
 			circuit_cubes.bodies.PushBack(vertical_body);
@@ -382,6 +409,8 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		// chop off the end if the vertical fences do not coincide
 
 		
+	
+
 
 		circuit_cubes.prims.PushBack(top);
 		circuit_cubes.bodies.PushBack(top_body);
