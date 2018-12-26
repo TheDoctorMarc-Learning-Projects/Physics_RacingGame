@@ -75,6 +75,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
+    <ClInclude Include="circuitSegments.h" />
     <ClInclude Include="Color.h" />
     <ClInclude Include="glmath.h" />
     <ClInclude Include="Globals.h" />

@@ -9,6 +9,7 @@
 #include <math.h>
 #include <gl/GL.h>
 #include <gl/GLU.h>
+#include "circuitSegments.h"
 
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
@@ -105,33 +106,15 @@ bool ModuleSceneIntro::Start()
 	-200, 200
 	};
 
-	int circuitSketch[30] = {
-	-79, -135,
-	-62, -135,
-	-29, -135,
-	2, -135,
-	37, -135,
-	71, -135,
-	82, -135,
-	82, -110,
-	57, -110,
-	21, -110,
-	-13, -110,
-	-38, -110,
-	-80, -110
-	};
-
-	for (int i = 0; i < 8; i+=2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
+	//for (int i = 0; i < 8; i+=2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
+	//{
+	//	//CreateFence(&exteriorFences[i]);
+	//	CreateBar(&circuitBoundaries[i]);
+	//}
+	for (int i = 0; i < 294; i += 2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
 	{
-		//CreateFence(&exteriorFences[i]);
-		CreateBar(&circuitBoundaries[i]);
+		CreateBar(&circuitSketch_segmentPG[i]);
 	}
-	for (int i = 0; i < 28; i += 2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
-	{
-		//CreateFence(&exteriorFences[i]);
-		CreateBar(&circuitSketch[i]);
-	}
-
 	//CreateFence(&exteriorFences[0]);
 
 	//CreateBar();
