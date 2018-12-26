@@ -56,9 +56,13 @@ bool ModuleSceneIntro::Start()
 	// tunnel
 	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
-
-	Create_Curve({ 160, 0, -180 }, {220, 0, -100 }, 20.0f);
-	Create_Curve({ 140, 0, -170 + TUNNEL_WIDTH }, { 200, 0, -100 + TUNNEL_WIDTH }, 35.0f, 6);
+	
+	Create_Curve({ 160, 0, -180 }, {220, 0, -100 }, 15.0f);
+	// Create_Curve({ 140, 0, -170 + TUNNEL_WIDTH }, { 200, 0, -100 + TUNNEL_WIDTH }, 35.0f, 6);
+	Create_Side_Fence_Limit_Segment({ 180, 0, -140 }, { 260, 0, -175});
+	Create_Side_Fence_Limit_Segment({ 195, 0, -80 }, { 250, 0, -80 });
+	Create_Tunnel({ 100, 0, 100 } , { 200, 0, 200 });
+	CreateRamp({200, 0, 200} , { 250, 0 , 250});
 
 	// Create_Curve({ 153, 0, 153 }, { 190, 0, 200 }); 
 
@@ -479,9 +483,9 @@ Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
 	ramp_body->Set_Orientation(angle, { 1, 0, 0 });
 	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
 
-	/*// add rotation
+	// add rotation
 	ramp.SetRotation(rot_angle_Z, { 0, -1, 0 });
-	ramp_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });*/
+	ramp_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
 
 
 	// adds primitive and respective body to circuit pieces dynamic array
@@ -582,7 +586,7 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 
 	vec3 original_dir = dest - origin; 
 
-	for (uint i = 1; i<=2; ++i) {       // do the same for both laterals of the circuit
+	// for (uint i = 1; i<=2; ++i) {       // do the same for both laterals of the circuit
 
 		Cube top, bottom;
 		top.color = bottom.color = Black;
@@ -601,17 +605,17 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		float real_dist_x = sqrt((pow(TUNNEL_WIDTH, 2) / (1 + proportion))); 
 		float real_dist_z = proportion * real_dist_x; 
 
-		if (i == 1) {
+	//	if (i == 1) {
 			
 			top.SetPos(origin.x, fence_height, origin.z);
 			bottom.SetPos(origin.x, 0, origin.z);
-		}
+		/*}
 		else {
 			separation = 0;   // reset separation 
 			top.SetPos(origin.x - real_dist_x , fence_height, origin.z + real_dist_z );
 			bottom.SetPos(origin.x - real_dist_x , 0, origin.z + real_dist_z);
 
-		}
+		}*/
 		
 		PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
 		PhysBody3D* bottom_body = App->physics->AddBody(bottom, pow(10, 50));
@@ -647,7 +651,7 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 				return_last_pos.x = vertical_body->GetPos().x;
 				return_last_pos.z = vertical_body->GetPos().z;
 			}
-		}
+	//	}
 
 		// chop off the end if the vertical fences do not coincide
 
