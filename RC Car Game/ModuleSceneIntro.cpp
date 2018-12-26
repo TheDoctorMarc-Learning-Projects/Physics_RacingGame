@@ -56,13 +56,13 @@ bool ModuleSceneIntro::Start()
 	// tunnel
 	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
-<<<<<<< HEAD
-	// Create_Side_Fence_Limit_Segment({ 75, 0, 75 }, { 225, 0, 225 });
-	Create_Curve({ 153, 0, 153 }, { 190, 0, 250 }); 
-=======
+
+	Create_Side_Fence_Limit_Segment({ 75, 0, 75 }, { 160, 0, 180 });
+	Create_Curve({ 153, 0, 153 }, { 190, 0, 200 }); 
+
 	/*Create_Side_Fence_Limit_Segment({ 0, 0, 0 }, { 90, 0, 90 });
-	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); */
->>>>>>> b68018f4c1d09122063dcfa2e903afb1a4eddc48
+	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); 
+
 	// test timer
 	test_timer.Start();
 
@@ -91,7 +91,7 @@ bool ModuleSceneIntro::Start()
 
 	// create individual fence items from array
 	// similar way from how we use vertexBox2d ric app
-	int exteriorFences[98] = {
+	/*int exteriorFences[98] = {
 	2, -38,
 	13, -37,
 	28, -31,
@@ -147,7 +147,7 @@ bool ModuleSceneIntro::Start()
 	{
 		//CreateFence(&exteriorFences[i]);
 		CreateBar(&exteriorFences[i]);
-	}
+	}*/
 
 	//CreateFence(&exteriorFences[0]);
 
@@ -156,6 +156,7 @@ bool ModuleSceneIntro::Start()
 	return ret;
 }
 
+/*
 void ModuleSceneIntro::CreateBar(int* arrayDir)
 {
 	vec3 origin;
@@ -196,7 +197,7 @@ void ModuleSceneIntro::CreateBar(int* arrayDir)
 
 	circuit_cubes.prims.PushBack(cube);
 	circuit_cubes.bodies.PushBack(b);
-}
+}*/
 
 // wip idea to create individual fences from orig,dest and size and concadenate them
 //void ModuleSceneIntro::CreateFence(int* arrayDir)
@@ -384,7 +385,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 }
 
 // test method, doesnt works properly
-void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
+/*void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
 {
 	Cube cube;
 
@@ -413,7 +414,7 @@ void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
 	/*float rotx = atan2f(direction.getY(), direction.getZ());
 	float roty = atan2f(direction.getX() * cos(rotx), direction.getZ());
 	float rotz = atan2f(cosf(rotx), sinf(rotx) * sinf(roty));*/
-	PhysBody3D* b = App->physics->AddBody(cube, 0.0f);
+	/*PhysBody3D* b = App->physics->AddBody(cube, 0.0f);
 
 	//float angle = originPoint.angle(destinationPoint);
 
@@ -445,7 +446,7 @@ void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
 	circuit_cubes.prims.PushBack(cube);
 	circuit_cubes.bodies.PushBack(b);
 
-}
+}*/
 
 
 Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
@@ -573,11 +574,11 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 
 	vec3 return_last_pos(0,0,0); 
 
-	/*float fence_height = 3; 
+	float fence_height = 3; 
 	float separation = 0; 
 	float first_fence_offset = 0.15f; // fence depth / 2
 
-	
+	vec3 original_dir = dest - origin; 
 
 	for (uint i = 1; i<=2; ++i) {       // do the same for both laterals of the circuit
 
@@ -591,16 +592,22 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
 		float rot_angle_X = 90 - rot_angle_Z;
 
+		float z_in_world = original_dir.z / cos(rot_angle_Z * _PI / 180);
+		float x_in_world = original_dir.x * sin(rot_angle_X);
+
+		float proportion = z_in_world / x_in_world; 
+		float real_dist_x = sqrt((pow(TUNNEL_WIDTH, 2) / (1 + proportion))); 
+		float real_dist_z = proportion * real_dist_x; 
+
 		if (i == 1) {
 			
 			top.SetPos(origin.x, fence_height, origin.z);
 			bottom.SetPos(origin.x, 0, origin.z);
-			vec3 orthogonal(top.);
 		}
 		else {
 			separation = 0;   // reset separation 
-			top.SetPos(origin.x + , fence_height, origin.z + );
-			bottom.SetPos(origin.x + , 0, origin.z +);
+			top.SetPos(origin.x - real_dist_x , fence_height, origin.z + real_dist_z );
+			bottom.SetPos(origin.x - real_dist_x , 0, origin.z + real_dist_z);
 
 		}
 		
@@ -654,7 +661,7 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		
 		last_positions_to_snap.add(return_last_pos); 
 
-	}*/
+	}
 
 	return return_last_pos; 
 }
