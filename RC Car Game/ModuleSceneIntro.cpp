@@ -97,62 +97,39 @@ bool ModuleSceneIntro::Start()
 
 	// create individual fence items from array
 	// similar way from how we use vertexBox2d ric app
-	int exteriorFences[98] = {
-	2, -38,
-	13, -37,
-	28, -31,
-	41, -28,
-	56, -22,
-	74, -15,
-	87, -9,
-	102, 0,
-	115, 11,
-	128, 27,
-	137, 40,
-	143, 54,
-	145, 67,
-	145, 81,
-	146, 96,
-	144, 112,
-	140, 127,
-	131, 145,
-	120, 159,
-	106, 163,
-	84, 164,
-	64, 159,
-	44, 148,
-	31, 133,
-	21, 115,
-	15, 98,
-	4, 80,
-	-10, 73,
-	-28, 73,
-	-38, 76,
-	-47, 43,
-	-20, 38,
-	11, 43,
-	28, 59,
-	43, 74,
-	57, 96,
-	64, 114,
-	72, 124,
-	98, 128,
-	116, 108,
-	123, 81,
-	116, 59,
-	105, 39,
-	89, 23,
-	71, 14,
-	34, 3,
-	18, 0,
-	-1, -6,
-	-10, -9
+	int circuitBoundaries[10] = {
+	-200, 200,
+	200, 200,
+	200, -200,
+	-200, -200,
+	-200, 200
 	};
 
-	for (int i = 0; i < 96; i+=2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
+	int circuitSketch[30] = {
+	-79, -135,
+	-62, -135,
+	-29, -135,
+	2, -135,
+	37, -135,
+	71, -135,
+	82, -135,
+	82, -110,
+	57, -110,
+	21, -110,
+	-13, -110,
+	-38, -110,
+	-80, -110
+	};
+
+	for (int i = 0; i < 8; i+=2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
 	{
 		//CreateFence(&exteriorFences[i]);
-		CreateBar(&exteriorFences[i]);
+		CreateBar(&circuitBoundaries[i]);
+	}
+	for (int i = 0; i < 28; i += 2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
+	{
+		//CreateFence(&exteriorFences[i]);
+		CreateBar(&circuitSketch[i]);
 	}
 
 	//CreateFence(&exteriorFences[0]);
@@ -193,12 +170,12 @@ void ModuleSceneIntro::CreateBar(int* arrayDir)
 	cube.size.y = 2;
 	// TODO: test color, needs special fence list to do this
 	cube.color = (circuit_cubes.prims.Count() % 2 == 0) ? White : Red;
-	cube.SetPos(midPoint.x, cube.size.y, midPoint.z); 
+	cube.SetPos(midPoint.x, cube.size.y / 2, midPoint.z); 
 	cube.SetRotation(angle * 180 / _PI, {0,-1, 0});
 
 	// physic body
 	PhysBody3D* b = App->physics->AddBody(cube, 0.f);
-	b->SetPos(midPoint.x, cube.size.y, midPoint.z);
+	b->SetPos(midPoint.x, cube.size.y / 2, midPoint.z);
 	b->Set_Orientation(angle, { 0,-1,0 });
 
 	circuit_cubes.prims.PushBack(cube);
