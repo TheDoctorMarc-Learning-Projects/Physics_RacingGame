@@ -58,7 +58,7 @@ bool ModuleSceneIntro::Start()
 
 
 	Create_Side_Fence_Limit_Segment({ 75, 0, 75 }, { 160, 0, 180 });
-	Create_Curve({ 153, 0, 153 }, { 190, 0, 200 }); 
+	// Create_Curve({ 153, 0, 153 }, { 190, 0, 200 }); 
 
 	/*Create_Side_Fence_Limit_Segment({ 0, 0, 0 }, { 90, 0, 90 });
 	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); 

@@ -39,8 +39,8 @@ bool ModulePlayer::Start()
 
 
 	// Car properties ----------------------------------------
-	car.chassis_size.Set(2.5, 1, 4.5);
-	car.chassis_offset.Set(0, 1.0, 0);
+	car.chassis_size.Set(1.875, 0.75, 3.375);
+	car.chassis_offset.Set(0, 0.75, 0);
 
 	/*car.cabin_size.Set(2.0, 0.3, 2); 
 	car.cabin_offset.Set(0, 1.8, -1);
@@ -49,33 +49,33 @@ bool ModulePlayer::Start()
 	car.front_light_offset = (1.5, 0, 3);*/
 
 
-	car.rear_wing_size.Set(4.8, 0.4, 0.3);
-	car.rear_wing_offset.Set(0, 2.6, -2.5);
+	car.rear_wing_size.Set(3.6, 0.3, 0.225);
+	car.rear_wing_offset.Set(0, 1.95, -1.875);
 
-	car.rear_wing_support_size.Set(0.2, 1.0, 0.2); 
-	car.rear_wing_support_offset.Set(0, 1.9, -2.45); 
+	car.rear_wing_support_size.Set(0.15, 0.75, 0.15); 
+	car.rear_wing_support_offset.Set(0, 0.95, -1.225); 
 
-	car.rear_wing_flag_size.Set(0.1, 1.1, 1.1); 
-	car.rear_wing_flag_offset.Set(2.5, 2.3, -2.5); 
+	car.rear_wing_flag_size.Set(0.075, 0.825, 0.825); 
+	car.rear_wing_flag_offset.Set(1.875, 1.725, -1.875); 
 
-	car.mass = 500.0f;
+	car.mass = 250.0f;
 	car.suspensionStiffness = 8.0f;  // 15.88f;
 	car.suspensionCompression = 0.83f;
 	car.suspensionDamping = 0.3f;  // 0.88f;
-	car.maxSuspensionTravelCm = 200.0f;
+	car.maxSuspensionTravelCm = 150.0f;
 	car.frictionSlip = 10; // 50.5;
-	car.maxSuspensionForce = 6000.0f;
+	car.maxSuspensionForce = 3000.0f;
 
 	// Wheel properties ---------------------------------------
-	float front_connection_height = 0.75f;
-	float front_wheel_radius = 0.75f;
-	float front_wheel_width = 0.65f;
-	float front_suspensionRestLength = 0.4f;
+	float front_connection_height = 0.5625f;
+	float front_wheel_radius = 0.5625f;
+	float front_wheel_width = 0.5325f;
+	float front_suspensionRestLength = 0.3f;
 
-	float rear_connection_height = 0.8f;
-	float rear_wheel_radius = 0.8f;
-	float rear_wheel_width = 0.75f;
-	float rear_suspensionRestLength = 0.8f; 
+	float rear_connection_height = 0.6f;
+	float rear_wheel_radius = 0.6f;
+	float rear_wheel_width = 0.5625f;
+	float rear_suspensionRestLength = 0.6f; 
 
 	// lights
 
@@ -141,8 +141,8 @@ bool ModulePlayer::Start()
 	car.wheels[3].brake = true;
 	car.wheels[3].steering = false;
 
-	car.rear_transm_size.Set(4, 0.3, 0.3);
-	car.rear_transm_offset.Set(car.wheels[3].connection.x + 2.2f, car.wheels[2].connection.y - rear_wheel_radius / 2, car.wheels[2].connection.z);
+	car.rear_transm_size.Set(2, 0.15, 0.15);
+	car.rear_transm_offset.Set(car.wheels[3].connection.x + 1.65f, car.wheels[2].connection.y - rear_wheel_radius / 2, car.wheels[2].connection.z);
 
 	vehicle = App->physics->AddVehicle(car);
 	vehicle->SetPos(0, 0, -16);
