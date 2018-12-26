@@ -82,10 +82,145 @@ bool ModuleSceneIntro::Start()
 	App->renderer3D->lights[1].SetPos(0, 3 , 0);
 	App->renderer3D->lights[1].Active(true);*/
 
-	Create_Fence({ 10,0,10 }, { -10,5,40 });
+	//Create_Fence({ 10,0,10 }, { 60,5,40 });
+
+	// create individual fence items from array
+	// similar way from how we use vertexBox2d ric app
+	int exteriorFences[98] = {
+	2, -38,
+	13, -37,
+	28, -31,
+	41, -28,
+	56, -22,
+	74, -15,
+	87, -9,
+	102, 0,
+	115, 11,
+	128, 27,
+	137, 40,
+	143, 54,
+	145, 67,
+	145, 81,
+	146, 96,
+	144, 112,
+	140, 127,
+	131, 145,
+	120, 159,
+	106, 163,
+	84, 164,
+	64, 159,
+	44, 148,
+	31, 133,
+	21, 115,
+	15, 98,
+	4, 80,
+	-10, 73,
+	-28, 73,
+	-38, 76,
+	-47, 43,
+	-20, 38,
+	11, 43,
+	28, 59,
+	43, 74,
+	57, 96,
+	64, 114,
+	72, 124,
+	98, 128,
+	116, 108,
+	123, 81,
+	116, 59,
+	105, 39,
+	89, 23,
+	71, 14,
+	34, 3,
+	18, 0,
+	-1, -6,
+	-10, -9
+	};
+
+	for (int i = 0; i < 96; i+=2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
+	{
+		//CreateFence(&exteriorFences[i]);
+		CreateBar(&exteriorFences[i]);
+	}
+
+	//CreateFence(&exteriorFences[0]);
+
+	//CreateBar();
 
 	return ret;
 }
+
+void ModuleSceneIntro::CreateBar(int* arrayDir)
+{
+	vec3 origin;
+	vec3 dest;
+	origin.Set(10, 0, 10);
+	dest.Set(-10, 0, 30);
+
+	// x,z
+	origin.x = *arrayDir;
+	arrayDir++;
+	origin.z = *arrayDir;
+	arrayDir++;
+	dest.x = *arrayDir;
+	arrayDir++;
+	dest.z = *arrayDir;
+
+	vec3 u = origin - dest;
+	//u = normalize(u);
+	float angle = atan2f(u.z, u.x);
+
+	// cube primitive
+	Cube cube;
+	cube.size.x = length(u);
+	cube.size.y = 2;
+	// TODO: test color, needs special fence list to do this
+	cube.color = (circuit_cubes.prims.Count() % 2 == 0) ? White : Red;
+
+	//find midpoint to sum to origin coords.
+	vec3 midPoint;
+	midPoint.Set((origin.x + dest.x) * 0.5f, 0, (origin.z + dest.z) * 0.5f);
+
+	cube.SetPos(midPoint.x, cube.size.y, midPoint.z); 
+	cube.SetRotation(angle * 180 / _PI, {0,-1, 0});
+
+	circuit_cubes.prims.PushBack(cube);
+}
+
+// wip idea to create individual fences from orig,dest and size and concadenate them
+//void ModuleSceneIntro::CreateFence(int* arrayDir)
+//{
+//	vec2 startPoint;
+//	vec2 finalPoint;
+//
+//	// x,z
+//	startPoint.x = *arrayDir;
+//	arrayDir++;
+//	startPoint.y = *arrayDir;
+//	arrayDir++;
+//	finalPoint.x = *arrayDir;
+//	arrayDir++;
+//	finalPoint.y = *arrayDir;
+//
+//	// create cube
+//	Cube barCube;
+//	//top.color  = Black;
+//	vec2 dir = normalize(finalPoint - startPoint);
+//	vec2 dist = length(finalPoint - startPoint);
+//
+//	barCube.size.x = dist.x;
+//
+//	float angle = atan2f(dir.y, dir.x);
+//	//LOG("");
+//
+//	barCube.SetPos(startPoint.x, 0, startPoint.y);
+//	barCube.SetRotation(angle * 180 / _PI, { 0, -1, 0 });
+//	
+//	circuit_cubes.prims.PushBack(barCube);
+//	//circuit_cubes.bodies.PushBack(top_body);
+//
+//}
 
 // Load assets
 bool ModuleSceneIntro::CleanUp()
@@ -238,6 +373,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	}
 }
 
+// test method, doesnt works properly
 void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
 {
 	Cube cube;

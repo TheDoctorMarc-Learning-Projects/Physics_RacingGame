@@ -66,6 +66,9 @@ public:
 
 	void Create_Fence(vec3 origin, vec3 dest);
 
+	//void CreateFence(int*);
+	void CreateBar(int*);
+
 public:
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];
