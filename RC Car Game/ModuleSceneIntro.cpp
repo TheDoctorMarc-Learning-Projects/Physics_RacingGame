@@ -57,12 +57,12 @@ bool ModuleSceneIntro::Start()
 	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
 	
-	Create_Curve({ 160, 0, -180 }, {220, 0, -100 }, 15.0f);
-	// Create_Curve({ 140, 0, -170 + TUNNEL_WIDTH }, { 200, 0, -100 + TUNNEL_WIDTH }, 35.0f, 6);
-	Create_Side_Fence_Limit_Segment({ 180, 0, -140 }, { 260, 0, -175});
-	Create_Side_Fence_Limit_Segment({ 195, 0, -80 }, { 250, 0, -80 });
-	Create_Tunnel({ 100, 0, 100 } , { 200, 0, 200 });
-	CreateRamp({200, 0, 200} , { 250, 0 , 250});
+	//Create_Curve({ 160, 0, -180 }, {220, 0, -100 }, 15.0f);
+	//// Create_Curve({ 140, 0, -170 + TUNNEL_WIDTH }, { 200, 0, -100 + TUNNEL_WIDTH }, 35.0f, 6);
+	//Create_Side_Fence_Limit_Segment({ 180, 0, -140 }, { 260, 0, -175});
+	//Create_Side_Fence_Limit_Segment({ 195, 0, -80 }, { 250, 0, -80 });
+	//Create_Tunnel({ 100, 0, 100 } , { 200, 0, 200 });
+	//CreateRamp({200, 0, 200} , { 250, 0 , 250});
 
 	// Create_Curve({ 153, 0, 153 }, { 190, 0, 200 }); 
 
@@ -97,7 +97,7 @@ bool ModuleSceneIntro::Start()
 
 	// create individual fence items from array
 	// similar way from how we use vertexBox2d ric app
-	/*int exteriorFences[98] = {
+	int exteriorFences[98] = {
 	2, -38,
 	13, -37,
 	28, -31,
@@ -153,7 +153,7 @@ bool ModuleSceneIntro::Start()
 	{
 		//CreateFence(&exteriorFences[i]);
 		CreateBar(&exteriorFences[i]);
-	}*/
+	}
 
 	//CreateFence(&exteriorFences[0]);
 
@@ -162,7 +162,7 @@ bool ModuleSceneIntro::Start()
 	return ret;
 }
 
-/*
+
 void ModuleSceneIntro::CreateBar(int* arrayDir)
 {
 	vec3 origin;
@@ -203,7 +203,7 @@ void ModuleSceneIntro::CreateBar(int* arrayDir)
 
 	circuit_cubes.prims.PushBack(cube);
 	circuit_cubes.bodies.PushBack(b);
-}*/
+}
 
 // wip idea to create individual fences from orig,dest and size and concadenate them
 //void ModuleSceneIntro::CreateFence(int* arrayDir)
