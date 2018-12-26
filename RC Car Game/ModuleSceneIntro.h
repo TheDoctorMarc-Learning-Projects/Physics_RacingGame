@@ -9,6 +9,7 @@
 #define TUNNEL_HEIGHT 11.5f
 
 class btRigidBody;
+class btVector3;
 struct PhysBody3D;
 struct PhysMotor3D;
 struct vec3; 
@@ -62,6 +63,11 @@ public:
 	void Create_Tunnel(vec3 origin, vec3 dest); 
 	vec3 Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); // returns last point, so that we can snap other elements after
 	void Create_Curve(vec3 origin, vec3 dest); 
+
+	void Create_Fence(vec3 origin, vec3 dest);
+
+	//void CreateFence(int*);
+	void CreateBar(int*);
 
 public:
 	/*

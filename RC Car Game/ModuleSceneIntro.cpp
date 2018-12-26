@@ -56,8 +56,13 @@ bool ModuleSceneIntro::Start()
 	// tunnel
 	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
+<<<<<<< HEAD
 	// Create_Side_Fence_Limit_Segment({ 75, 0, 75 }, { 225, 0, 225 });
 	Create_Curve({ 153, 0, 153 }, { 190, 0, 250 }); 
+=======
+	/*Create_Side_Fence_Limit_Segment({ 0, 0, 0 }, { 90, 0, 90 });
+	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); */
+>>>>>>> b68018f4c1d09122063dcfa2e903afb1a4eddc48
 	// test timer
 	test_timer.Start();
 
@@ -82,8 +87,150 @@ bool ModuleSceneIntro::Start()
 	App->renderer3D->lights[1].SetPos(0, 3 , 0);
 	App->renderer3D->lights[1].Active(true);*/
 
+	//Create_Fence({ 10,0,10 }, { 60,5,40 });
+
+	// create individual fence items from array
+	// similar way from how we use vertexBox2d ric app
+	int exteriorFences[98] = {
+	2, -38,
+	13, -37,
+	28, -31,
+	41, -28,
+	56, -22,
+	74, -15,
+	87, -9,
+	102, 0,
+	115, 11,
+	128, 27,
+	137, 40,
+	143, 54,
+	145, 67,
+	145, 81,
+	146, 96,
+	144, 112,
+	140, 127,
+	131, 145,
+	120, 159,
+	106, 163,
+	84, 164,
+	64, 159,
+	44, 148,
+	31, 133,
+	21, 115,
+	15, 98,
+	4, 80,
+	-10, 73,
+	-28, 73,
+	-38, 76,
+	-47, 43,
+	-20, 38,
+	11, 43,
+	28, 59,
+	43, 74,
+	57, 96,
+	64, 114,
+	72, 124,
+	98, 128,
+	116, 108,
+	123, 81,
+	116, 59,
+	105, 39,
+	89, 23,
+	71, 14,
+	34, 3,
+	18, 0,
+	-1, -6,
+	-10, -9
+	};
+
+	for (int i = 0; i < 96; i+=2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
+	{
+		//CreateFence(&exteriorFences[i]);
+		CreateBar(&exteriorFences[i]);
+	}
+
+	//CreateFence(&exteriorFences[0]);
+
+	//CreateBar();
+
 	return ret;
 }
+
+void ModuleSceneIntro::CreateBar(int* arrayDir)
+{
+	vec3 origin;
+	vec3 dest;
+	origin.Set(10, 0, 10);
+	dest.Set(-10, 0, 30);
+
+	// x,z
+	origin.x = *arrayDir;
+	arrayDir++;
+	origin.z = *arrayDir;
+	arrayDir++;
+	dest.x = *arrayDir;
+	arrayDir++;
+	dest.z = *arrayDir;
+
+	vec3 u = origin - dest;
+	//u = normalize(u);
+	float angle = atan2f(u.z, u.x);
+
+	//find midpoint to sum to origin coords.
+	vec3 midPoint;
+	midPoint.Set((origin.x + dest.x) * 0.5f, 0, (origin.z + dest.z) * 0.5f);
+
+	// cube primitive
+	Cube cube;
+	cube.size.x = length(u);
+	cube.size.y = 2;
+	// TODO: test color, needs special fence list to do this
+	cube.color = (circuit_cubes.prims.Count() % 2 == 0) ? White : Red;
+	cube.SetPos(midPoint.x, cube.size.y, midPoint.z); 
+	cube.SetRotation(angle * 180 / _PI, {0,-1, 0});
+
+	// physic body
+	PhysBody3D* b = App->physics->AddBody(cube, 0.f);
+	b->SetPos(midPoint.x, cube.size.y, midPoint.z);
+	b->Set_Orientation(angle, { 0,-1,0 });
+
+	circuit_cubes.prims.PushBack(cube);
+	circuit_cubes.bodies.PushBack(b);
+}
+
+// wip idea to create individual fences from orig,dest and size and concadenate them
+//void ModuleSceneIntro::CreateFence(int* arrayDir)
+//{
+//	vec2 startPoint;
+//	vec2 finalPoint;
+//
+//	// x,z
+//	startPoint.x = *arrayDir;
+//	arrayDir++;
+//	startPoint.y = *arrayDir;
+//	arrayDir++;
+//	finalPoint.x = *arrayDir;
+//	arrayDir++;
+//	finalPoint.y = *arrayDir;
+//
+//	// create cube
+//	Cube barCube;
+//	//top.color  = Black;
+//	vec2 dir = normalize(finalPoint - startPoint);
+//	vec2 dist = length(finalPoint - startPoint);
+//
+//	barCube.size.x = dist.x;
+//
+//	float angle = atan2f(dir.y, dir.x);
+//	//LOG("");
+//
+//	barCube.SetPos(startPoint.x, 0, startPoint.y);
+//	barCube.SetRotation(angle * 180 / _PI, { 0, -1, 0 });
+//	
+//	circuit_cubes.prims.PushBack(barCube);
+//	//circuit_cubes.bodies.PushBack(top_body);
+//
+//}
 
 // Load assets
 bool ModuleSceneIntro::CleanUp()
@@ -234,6 +381,70 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 		}
 
 	}
+}
+
+// test method, doesnt works properly
+void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
+{
+	Cube cube;
+
+	cube.size.x = 10;
+	cube.size.y = 3;
+	cube.size.z = 1;
+
+	// calculate needed rotations
+	btVector3 originPoint;
+	originPoint.setValue(origin.x, origin.y, origin.z);
+	btVector3 destinationPoint;
+	destinationPoint.setValue(destination.x, destination.y, destination.z);
+	//
+	btVector3 direction = originPoint - destinationPoint;
+	//direction.normalize();
+	
+	// get distance
+	float dist = originPoint.distance(destinationPoint);
+	cube.size.x = dist;
+	// get inclination (roll angle) between orig y / dest y and dist
+	float heightDiff = destination.y - origin.y;
+
+	float rollAngle = atan2f(direction.getY(), direction.getX());
+	float yawAngle = atan2f(direction.getX() * cosf(rollAngle), direction.getZ());
+
+	/*float rotx = atan2f(direction.getY(), direction.getZ());
+	float roty = atan2f(direction.getX() * cos(rotx), direction.getZ());
+	float rotz = atan2f(cosf(rotx), sinf(rotx) * sinf(roty));*/
+	PhysBody3D* b = App->physics->AddBody(cube, 0.0f);
+
+	//float angle = originPoint.angle(destinationPoint);
+
+	// set rigidbody rotation transform ----------- test here
+	btRigidBody * rigidBody = b->Get_Rigid_Body();
+	btTransform tr;
+	tr.setIdentity();
+	btQuaternion quat;
+	// yaw,pitch,roll
+	//quat.setEuler(90 * _PI / 180, 0, 0);//90 * _PI / 180);
+	quat.setEuler(yawAngle  * 0.5f, 0, rollAngle);//45 * _PI / 180);
+	//quat.setEuler(rotx, 0, rotz);//45 * _PI / 180);
+	tr.setRotation(quat);
+
+	rigidBody->setCenterOfMassTransform(tr);
+	// --------------------------------------------
+
+	b->SetPos(origin.x + destination.x, origin.y + heightDiff, origin.z);
+
+	btQuaternion v = tr.getRotation();
+
+	float a = v.getAngle();
+
+	btVector3 axis = v.getAxis();
+
+	cube.SetPos(b->GetPos().x, b->GetPos().y, b->GetPos().z);
+	cube.SetRotation(v.getAngle() * 180 / _PI, { axis.getX(), axis.getY(), axis.getZ() });
+
+	circuit_cubes.prims.PushBack(cube);
+	circuit_cubes.bodies.PushBack(b);
+
 }
 
 
