@@ -115,6 +115,10 @@ bool ModuleSceneIntro::Start()
 	{
 		CreateBar(&circuitSketch_segmentPG[i]);
 	}
+	for (int i = 0; i < 404; i += 2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
+	{
+		CreateBar(&circuitSketch_segmentPR[i]);
+	}
 	//CreateFence(&exteriorFences[0]);
 
 	//CreateBar();
