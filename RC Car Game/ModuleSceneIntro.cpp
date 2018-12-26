@@ -171,21 +171,26 @@ void ModuleSceneIntro::CreateBar(int* arrayDir)
 	//u = normalize(u);
 	float angle = atan2f(u.z, u.x);
 
+	//find midpoint to sum to origin coords.
+	vec3 midPoint;
+	midPoint.Set((origin.x + dest.x) * 0.5f, 0, (origin.z + dest.z) * 0.5f);
+
 	// cube primitive
 	Cube cube;
 	cube.size.x = length(u);
 	cube.size.y = 2;
 	// TODO: test color, needs special fence list to do this
 	cube.color = (circuit_cubes.prims.Count() % 2 == 0) ? White : Red;
-
-	//find midpoint to sum to origin coords.
-	vec3 midPoint;
-	midPoint.Set((origin.x + dest.x) * 0.5f, 0, (origin.z + dest.z) * 0.5f);
-
 	cube.SetPos(midPoint.x, cube.size.y, midPoint.z); 
 	cube.SetRotation(angle * 180 / _PI, {0,-1, 0});
 
+	// physic body
+	PhysBody3D* b = App->physics->AddBody(cube, 0.f);
+	b->SetPos(midPoint.x, cube.size.y, midPoint.z);
+	b->Set_Orientation(angle, { 0,-1,0 });
+
 	circuit_cubes.prims.PushBack(cube);
+	circuit_cubes.bodies.PushBack(b);
 }
 
 // wip idea to create individual fences from orig,dest and size and concadenate them
