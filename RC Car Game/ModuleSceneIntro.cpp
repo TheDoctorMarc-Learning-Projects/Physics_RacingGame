@@ -56,8 +56,8 @@ bool ModuleSceneIntro::Start()
 	// tunnel
 	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
-	Create_Side_Fence_Limit_Segment({ 75, 0, 75 }, { 225, 0, 225 });
-	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); 
+	/*Create_Side_Fence_Limit_Segment({ 0, 0, 0 }, { 90, 0, 90 });
+	Create_Curve({ 153, 0, 153 }, { 180, 0, 190 }); */
 	// test timer
 	test_timer.Start();
 
@@ -81,6 +81,8 @@ bool ModuleSceneIntro::Start()
 	App->renderer3D->lights[1].ambient = Red; 
 	App->renderer3D->lights[1].SetPos(0, 3 , 0);
 	App->renderer3D->lights[1].Active(true);*/
+
+	Create_Fence({ 10,0,10 }, { -10,5,40 });
 
 	return ret;
 }
@@ -234,6 +236,69 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 		}
 
 	}
+}
+
+void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
+{
+	Cube cube;
+
+	cube.size.x = 10;
+	cube.size.y = 3;
+	cube.size.z = 1;
+
+	// calculate needed rotations
+	btVector3 originPoint;
+	originPoint.setValue(origin.x, origin.y, origin.z);
+	btVector3 destinationPoint;
+	destinationPoint.setValue(destination.x, destination.y, destination.z);
+	//
+	btVector3 direction = originPoint - destinationPoint;
+	//direction.normalize();
+	
+	// get distance
+	float dist = originPoint.distance(destinationPoint);
+	cube.size.x = dist;
+	// get inclination (roll angle) between orig y / dest y and dist
+	float heightDiff = destination.y - origin.y;
+
+	float rollAngle = atan2f(direction.getY(), direction.getX());
+	float yawAngle = atan2f(direction.getX() * cosf(rollAngle), direction.getZ());
+
+	/*float rotx = atan2f(direction.getY(), direction.getZ());
+	float roty = atan2f(direction.getX() * cos(rotx), direction.getZ());
+	float rotz = atan2f(cosf(rotx), sinf(rotx) * sinf(roty));*/
+	PhysBody3D* b = App->physics->AddBody(cube, 0.0f);
+
+	//float angle = originPoint.angle(destinationPoint);
+
+	// set rigidbody rotation transform ----------- test here
+	btRigidBody * rigidBody = b->Get_Rigid_Body();
+	btTransform tr;
+	tr.setIdentity();
+	btQuaternion quat;
+	// yaw,pitch,roll
+	//quat.setEuler(90 * _PI / 180, 0, 0);//90 * _PI / 180);
+	quat.setEuler(yawAngle  * 0.5f, 0, rollAngle);//45 * _PI / 180);
+	//quat.setEuler(rotx, 0, rotz);//45 * _PI / 180);
+	tr.setRotation(quat);
+
+	rigidBody->setCenterOfMassTransform(tr);
+	// --------------------------------------------
+
+	b->SetPos(origin.x + destination.x, origin.y + heightDiff, origin.z);
+
+	btQuaternion v = tr.getRotation();
+
+	float a = v.getAngle();
+
+	btVector3 axis = v.getAxis();
+
+	cube.SetPos(b->GetPos().x, b->GetPos().y, b->GetPos().z);
+	cube.SetRotation(v.getAngle() * 180 / _PI, { axis.getX(), axis.getY(), axis.getZ() });
+
+	circuit_cubes.prims.PushBack(cube);
+	circuit_cubes.bodies.PushBack(b);
+
 }
 
 
