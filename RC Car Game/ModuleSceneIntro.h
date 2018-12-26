@@ -62,7 +62,7 @@ public:
 	void CreateCannonSensor(const vec3 position, vec3 direction);
 	void Create_Tunnel(vec3 origin, vec3 dest); 
 	vec3 Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); // returns last point, so that we can snap other elements after
-	void Create_Curve(vec3 origin, vec3 dest); 
+	void Create_Curve(vec3 origin, vec3 dest, float factor = 0.0f, uint elems = 10); 
 
 	void Create_Fence(vec3 origin, vec3 dest);
 
