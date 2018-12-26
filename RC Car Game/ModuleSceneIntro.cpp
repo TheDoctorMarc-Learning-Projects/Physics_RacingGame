@@ -57,7 +57,9 @@ bool ModuleSceneIntro::Start()
 	//Create_Tunnel((50, 50, 50), (300, 300, 300));
 
 
-	Create_Side_Fence_Limit_Segment({ 75, 0, 75 }, { 160, 0, 180 });
+	Create_Curve({ 160, 0, -180 }, {220, 0, -100 });
+
+
 	// Create_Curve({ 153, 0, 153 }, { 190, 0, 200 }); 
 
 	/*Create_Side_Fence_Limit_Segment({ 0, 0, 0 }, { 90, 0, 90 });
@@ -623,6 +625,7 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		bottom_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
 
 
+
 		while (separation < top.size.x) {
 
 			Cube vertical(0.3f, fence_height, 0.3f);
@@ -678,14 +681,17 @@ void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest) {
 
 	// check if there is an element fairly close, then snap to it
 
-	for (uint i = 0; i < last_positions_to_snap.count(); ++i) {
+	/*for (uint i = 0; i < last_positions_to_snap.count(); ++i) {
 		if ((last_positions_to_snap.At(i)->data.x - origin.x) < 5 ) {   
 			start_pos = last_positions_to_snap.At(i)->data - start_offset; 
 		}
-    }
-	vec3 actual_pos(0, 0, 0); 
+    }*/
 
-	while (actual_pos.x < origin.x && actual_pos.z < origin.z) { // change this 
+	start_pos = origin; 
+	vec3 actual_pos(0, 0, 0); 
+ 
+
+	while (counter < 10){ // change this 
 		rot_angle_Z = asin((dest.x - (origin.x + separation * sin(rot_angle_X * _PI / 180))) / sqrt(pow(dest.x - (origin.x + separation), 2) + pow(dest.z - (origin.z + separation * sin(rot_angle_Z * _PI / 180)), 2))) * 180 / _PI;
 		rot_angle_X = 90 - rot_angle_Z;
 
@@ -696,7 +702,13 @@ void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest) {
 		else {
 			element.color = White; 
 		}
-		element.SetPos(start_pos.x + separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z + separation * sin(rot_angle_Z * _PI / 180));
+
+		if (dest.z < origin.z) {
+			element.SetPos(start_pos.x - separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z + separation * sin(rot_angle_Z * _PI / 180));
+		}
+		else {
+			element.SetPos(start_pos.x - separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z - separation * sin(rot_angle_Z * _PI / 180));
+		}
 	   
 		PhysBody3D* element_body = App->physics->AddBody(element, pow(20, 50)); 
 		actual_pos = element_body->GetPos(); 

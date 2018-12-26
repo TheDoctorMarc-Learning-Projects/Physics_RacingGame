@@ -141,12 +141,12 @@ bool ModulePlayer::Start()
 	car.wheels[3].brake = true;
 	car.wheels[3].steering = false;
 
-	car.rear_transm_size.Set(2, 0.15, 0.15);
+	car.rear_transm_size.Set(3, 0.15, 0.15);
 	car.rear_transm_offset.Set(car.wheels[3].connection.x + 1.65f, car.wheels[2].connection.y - rear_wheel_radius / 2, car.wheels[2].connection.z);
 
 	vehicle = App->physics->AddVehicle(car);
-	vehicle->SetPos(0, 0, -16);
-
+	vehicle->SetPos(0, 0, -180);
+	vehicle->Set_Orientation(_PI / 2, {0, 1, 0});
 	 
 	
 	return true;
@@ -190,8 +190,8 @@ update_status ModulePlayer::Update(float dt)
 	{
 		  App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
 
-		 if(acc_factor > 0.1)
-		  acc_factor -= 0.008;
+		 /*if(acc_factor > 0.1)
+		  acc_factor -= 0.008;*/
 
 		  // acc_factor = 1 / (pow(vehicle->GetKmh(), 2) * (1 / vehicle->GetKmh()));
 
