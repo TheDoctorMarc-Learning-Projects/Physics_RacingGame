@@ -268,7 +268,7 @@ update_status ModulePlayer::Update(float dt)
 	App->window->SetTitle(title);
 
 	if(lock_camera)
-		CameraLogic();
+		CameraLogic(dt);
 
 
 	return UPDATE_CONTINUE;
@@ -292,15 +292,26 @@ void ModulePlayer::Keys() {
 
 }
 
-void ModulePlayer::CameraLogic()
+void ModulePlayer::CameraLogic(float dt)
 {
-	vec3 pos = vehicle->GetPos();
-	pos.y = vehicle->GetPos().y + 10; 
-	vec3 direction = vehicle->GetForwardVector();
-	direction = normalize(direction);
-	App->camera->Position = pos - direction * 20;
-	App->camera->Position.y = 5;
-	App->camera->LookAt(pos);
+	vec3 currCarPos = vehicle->GetPos();
+	vec3 forwardDir = vehicle->GetForwardVector();
+	vec3 desiredCamDistance = currCarPos - (forwardDir * 7.f);
+
+	float wantedHeight =currCarPos.y + 4.f;
+
+	float damp = 5.0f;
+	btVector3 currentCam;
+	currentCam.setValue(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+	btVector3 desiredCamDist;
+	desiredCamDist.setValue(desiredCamDistance.x, desiredCamDistance.y + wantedHeight, desiredCamDistance.z);
+
+	btVector3 newCamera = lerp(currentCam, desiredCamDist, damp * dt);
+	
+	App->camera->Position = { newCamera.getX(), newCamera.getY(), newCamera.getZ() };
+	currCarPos.y += 3.f; // tweaks a little upper from car position to look at with some inclination
+	App->camera->LookAt(currCarPos);
+	
 }
 
 

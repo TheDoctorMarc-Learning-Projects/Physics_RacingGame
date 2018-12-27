@@ -24,7 +24,7 @@ public:
 	void Keys();
 	bool CleanUp();
 
-	void CameraLogic();
+	void CameraLogic(float dt);
 	
 
 public:
