@@ -58,19 +58,19 @@ bool ModulePlayer::Start()
 	car.rear_wing_flag_size.Set(0.075, 0.825, 0.825); 
 	car.rear_wing_flag_offset.Set(1.875, 1.725, -1.875); 
 
-	car.mass = 250.0f;
-	car.suspensionStiffness = 8.0f;  // 15.88f;
+	car.mass = 550.0f;
+	car.suspensionStiffness = 18.0f;  // 15.88f;
 	car.suspensionCompression = 0.83f;
 	car.suspensionDamping = 0.3f;  // 0.88f;
 	car.maxSuspensionTravelCm = 150.0f;
-	car.frictionSlip = 10; // 50.5;
+	car.frictionSlip = 7.5f; // 50.5;
 	car.maxSuspensionForce = 3000.0f;
 
 	// Wheel properties ---------------------------------------
 	float front_connection_height = 0.5625f;
 	float front_wheel_radius = 0.5625f;
 	float front_wheel_width = 0.5325f;
-	float front_suspensionRestLength = 0.3f;
+	float front_suspensionRestLength = 0.5f;
 
 	float rear_connection_height = 0.6f;
 	float rear_wheel_radius = 0.6f;
