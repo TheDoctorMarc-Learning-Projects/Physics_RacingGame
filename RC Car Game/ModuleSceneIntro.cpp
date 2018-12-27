@@ -315,7 +315,7 @@ void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_s
 	circuit_cubes.prims.PushBack(c);
 	circuit_cubes.bodies.PushBack(b);
 
-	ramps.PushBack(c); 
+	// ramps.PushBack(c); 
 	// Create_Ramp_Sensor(b->GetPos()); 
 
 	/*// Create sensor 

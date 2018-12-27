@@ -246,14 +246,14 @@ update_status ModulePlayer::Update(float dt)
 	{
 		if(turn < TURN_DEGREES)
 			turn +=  TURN_DEGREES;
-		acceleration /= 4;   // nerf
+	//	acceleration /= 4;   // nerf
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 	{
 		if(turn > -TURN_DEGREES)
 			turn -= TURN_DEGREES;
-		acceleration /= 4;
+	//	acceleration /= 4;
 	}
 
 	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
