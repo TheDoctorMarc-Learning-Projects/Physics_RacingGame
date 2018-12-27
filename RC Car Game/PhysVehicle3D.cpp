@@ -52,7 +52,7 @@ void PhysVehicle3D::Render()
 	chassis.transform.M[12] += offset.getX();
 	chassis.transform.M[13] += offset.getY();
 	chassis.transform.M[14] += offset.getZ();
-	chassis.color = Red; 
+	chassis.color = Violet;
 
 	chassis.Render();
 
@@ -82,7 +82,7 @@ void PhysVehicle3D::Render()
 	rear_wing.transform.M[12] += offset_q_rw.getX();
 	rear_wing.transform.M[13] += offset_q_rw.getY();
 	rear_wing.transform.M[14] += offset_q_rw.getZ();
-	rear_wing.color = Black; 
+	rear_wing.color = Black;
 	rear_wing.Render(); 
 
 	// rear wing support
@@ -115,7 +115,7 @@ void PhysVehicle3D::Render()
 	rear_wing_flag_right.transform.M[12] += offset_q_rw_flag_r.getX();
 	rear_wing_flag_right.transform.M[13] += offset_q_rw_flag_r.getY();
 	rear_wing_flag_right.transform.M[14] += offset_q_rw_flag_r.getZ();
-	rear_wing_flag_right.color = Red;
+	rear_wing_flag_right.color = Violet;
 	rear_wing_flag_right.Render();
 
 
@@ -130,7 +130,7 @@ void PhysVehicle3D::Render()
 	rear_wing_flag_left.transform.M[12] += offset_q_rw_flag_l.getX();
 	rear_wing_flag_left.transform.M[13] += offset_q_rw_flag_l.getY();
 	rear_wing_flag_left.transform.M[14] += offset_q_rw_flag_l.getZ();
-	rear_wing_flag_left.color = Red;
+	rear_wing_flag_left.color = Violet;
 	rear_wing_flag_left.Render();
 
 	// rear transmission

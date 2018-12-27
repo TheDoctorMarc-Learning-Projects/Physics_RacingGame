@@ -53,7 +53,7 @@ bool ModulePlayer::Start()
 	car.rear_wing_offset.Set(0, 1.95, -1.875);
 
 	car.rear_wing_support_size.Set(0.15, 0.75, 0.15); 
-	car.rear_wing_support_offset.Set(0, 0.95, -1.225); 
+	car.rear_wing_support_offset.Set(0, 1.425, -1.8375); 
 
 	car.rear_wing_flag_size.Set(0.075, 0.825, 0.825); 
 	car.rear_wing_flag_offset.Set(1.875, 1.725, -1.875); 
@@ -77,9 +77,7 @@ bool ModulePlayer::Start()
 	float rear_wheel_width = 0.5625f;
 	float rear_suspensionRestLength = 0.6f; 
 
-	// lights
-
-
+	
 	// car properties
 
 	float half_rear_width = car.chassis_size.x*1.0f;
