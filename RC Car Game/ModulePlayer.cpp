@@ -66,13 +66,6 @@ bool ModulePlayer::Start()
 	car.frictionSlip = 5.f; //4.5f; // 50.5; // defaults to 10.5 / friction with the ground. 0.8 should be good but high values feels better (kart 1000.0)
 	car.maxSuspensionForce = 6000.0f; // defaults to 6000 / max force to the chassis
 
-	
-	
-	
-	
-	
-	
-
 	// Wheel properties ---------------------------------------
 	float front_connection_height = 0.5625f;
 	float front_wheel_radius = 0.5625f;
@@ -193,27 +186,27 @@ update_status ModulePlayer::Update(float dt)
 
 	// in the air 
 
-	if (App->input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
-	{
-		vehicle->Get_Rigid_Body()->applyImpulse({ 0,10000,0 }, {0, 0, 0});
-	}
+	//if (App->input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
+	//{
+	//	vehicle->Get_Rigid_Body()->applyImpulse({ 0,10000,0 }, {0, 0, 0});
+	//}
 
-	if (vehicle->GetPos().y > 3) {
-		vec3 pos = vehicle->GetForwardVector();
-		btScalar force = 3; 
-		btScalar offset = 5; 
+	//if (vehicle->GetPos().y > 3) {
+	//	vec3 pos = vehicle->GetForwardVector();
+	//	btScalar force = 3; 
+	//	btScalar offset = 5; 
 
-		// vehicle->Get_Rigid_Body()->applyImpulse(btVector3{0, 100, 0}, {central_pos.x, central_pos.y, central_pos.z});
-		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-		{
-			force = 3; 
-			vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
-		}
-		else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
-			force = -3;
-			vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
-		}
-	}
+	//	// vehicle->Get_Rigid_Body()->applyImpulse(btVector3{0, 100, 0}, {central_pos.x, central_pos.y, central_pos.z});
+	//	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	//	{
+	//		force = 3; 
+	//		vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
+	//	}
+	//	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
+	//		force = -3;
+	//		vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
+	//	}
+	//}
 
 
 
