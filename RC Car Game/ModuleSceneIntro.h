@@ -71,6 +71,10 @@ public:
 	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
 
 public:
+
+	// list of last position elements
+	p2List<vec3> last_positions_to_snap; // 
+
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];
 	Sphere s_snake[MAX_SNAKE];
@@ -79,22 +83,21 @@ public:
 	Sphere s_snake2[MAX_SNAKE];
 	*/
 
-	PhysBody3D* pb_chassis;
-	Cube p_chassis;
+	//PhysBody3D* pb_chassis;
+	//Cube p_chassis;
 
-	PhysBody3D* pb_wheel;
-	Cylinder p_wheel;
+	//PhysBody3D* pb_wheel;
+	//Cylinder p_wheel;
 
-	PhysBody3D* pb_wheel2;
-	Cylinder p_wheel2;
+	//PhysBody3D* pb_wheel2;
+	//Cylinder p_wheel2;
 
-	PhysMotor3D* left_wheel;
-	PhysMotor3D* right_wheel;
+	//PhysMotor3D* left_wheel;
+	//PhysMotor3D* right_wheel;
 
 
 	PhysBody3D* big_ball_body; 
 	Sphere big_ball_prim; 
-
 
 	// list of all cubes
 	cubeObjects circuit_cubes;
@@ -108,9 +111,6 @@ public:
 	// individual useful check point
 	PhysBody3D* test_sensor;
 
-	// ramps
-	Cube test_ramp; 
-
 	// timers
 	Timer test_timer;
 
@@ -120,18 +120,10 @@ public:
 	// list of current cannonballs
 	p2List<cannonBalls> cannon_balls;
 	// check points for cannon zone
-	//cubeObjects cannon_sensors;
 	p2DynArray<cannonSensors> cannon_sensors;
 
 
-	// lights
-
+	// primitive "lights"
 	Sphere test_light;
-	
-
-	// list of last position elements
-	p2List<vec3> last_positions_to_snap; 
-
-
 	
 };
