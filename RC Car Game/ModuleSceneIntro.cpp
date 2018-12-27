@@ -304,7 +304,7 @@ void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_s
 
 	PhysBody3D* b = App->physics->AddBody(c, 0.0f);
 	b->SetEuler(yawAngle, rollAngle);
-	b->SetPos(mapPositionXZ.x, mapPositionXZ.y + 0.5f, mapPositionXZ.z);
+	b->SetPos(mapPositionXZ.x, mapPositionXZ.y, mapPositionXZ.z);
 
 	const btQuaternion _q = *b->GetRotQuat();
 	const btVector3 _axis = _q.getAxis();
