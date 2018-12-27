@@ -182,31 +182,55 @@ update_status ModulePlayer::Update(float dt)
 	
 	// handle movement
 
+	
+
+	// in the air 
+
+	if (App->input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
+	{
+		vehicle->Get_Rigid_Body()->applyImpulse({ 0,10000,0 }, {0, 0, 0});
+	}
+
+	if (vehicle->GetPos().y > 3) {
+		vec3 pos = vehicle->GetForwardVector();
+		btScalar force = 3; 
+		btScalar offset = 5; 
+
+		// vehicle->Get_Rigid_Body()->applyImpulse(btVector3{0, 100, 0}, {central_pos.x, central_pos.y, central_pos.z});
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+		{
+			force = 3; 
+			vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
+		}
+		else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
+			force = -3;
+			vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
+		}
+	}
+
+
+
+	// in the ground
+
 	inertia = (-vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
 
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
 		  App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
-
-		 /*if(acc_factor > 0.1)
-		  acc_factor -= 0.008;*/
-
-		  // acc_factor = 1 / (pow(vehicle->GetKmh(), 2) * (1 / vehicle->GetKmh()));
-
-		    if(vehicle->GetKmh() <= MAX_SPEED)
-			acceleration = MAX_ACCELERATION * acc_factor;
-
-			if (App->input->GetKey(SDL_SCANCODE_P) == KEY_REPEAT) {
-				vehicle->info.rear_wing_size.y = 0.05f;                   // open rear wing (DRS)
-
-				if (vehicle->GetKmh() <= MAX_SPEED_DRS)
-				acceleration = MAX_ACC_DRS * acc_factor;
-			}
 		
+
+			  if (vehicle->GetKmh() <= MAX_SPEED)
+				  acceleration = MAX_ACCELERATION;
+
+			  if (App->input->GetKey(SDL_SCANCODE_P) == KEY_REPEAT) {
+				  vehicle->info.rear_wing_size.y = 0.05f;                   // open rear wing (DRS)
+
+				  if (vehicle->GetKmh() <= MAX_SPEED_DRS)
+					  acceleration = MAX_ACC_DRS;
+			  }
 	}
 
 	else {
-		acc_factor = 1;
 
 		App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
 
