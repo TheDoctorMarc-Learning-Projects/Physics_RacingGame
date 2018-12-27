@@ -79,13 +79,6 @@ bool ModuleSceneIntro::Start()
 	CreateCheckSensor({ 0,0,120 }, { 0,0,0 });
 	CreateCheckSensor({ 0,0,160 }, { 0,0,0 });*/
 
-	// cannon sensors test
-	/*CreateCannonSensor({ 0,0,40 }, { 0,0,0 });
-	CreateCannonSensor({ 0,0,80 }, { 0,0,0 });
-	CreateCannonSensor({ 0,0,120 }, { 0,0,0 });
-	CreateCannonSensor({ 0,0,160 }, { 0,0,0 });*/
-
-
 	// handle lights
 	/*App->renderer3D->lights[1].ref = GL_LIGHT1;
 	App->renderer3D->lights[1].Init(); 
@@ -126,6 +119,15 @@ bool ModuleSceneIntro::Start()
 	CreateRampV2({ -130, 2, 37 }, { 15, 20 }, -60.f, 15.0f);
 	CreateRampV2({ -113, 2, 69 }, { 15, 15 }, -60.f, -15.0f);
 
+	// create cannon sensors with balls
+	CreateCannonSensor({ -150,0,-179 });
+	CreateCannonSensor({ -130,0,-179 });
+	CreateCannonSensor({ -115,0,-179 });
+	CreateCannonSensor({ -100,0,-179 });
+	CreateCannonSensor({ -90,0,-179 });
+	CreateCannonSensor({ -85,0,-179 });
+	CreateCannonSensor({ -80,0,-179 });
+
 	return ret;
 }
 
@@ -141,10 +143,10 @@ void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_s
 	b->SetPos(mapPositionXZ.x, mapPositionXZ.y, mapPositionXZ.z);
 
 	const btQuaternion _q = *b->GetRotQuat();
-	const btVector3 axis = _q.getAxis();
+	const btVector3 _axis = _q.getAxis();
 
 	c.SetPos(b->GetPos().x, b->GetPos().y, b->GetPos().z);
-	c.SetRotation(_q.getAngle() * 180 / _PI, { axis.getX(), axis.getY(), axis.getZ() });
+	c.SetRotation(_q.getAngle() * 180 / _PI, { _axis.getX(), _axis.getY(), _axis.getZ() });
 
 	circuit_cubes.prims.PushBack(c);
 	circuit_cubes.bodies.PushBack(b);
@@ -152,7 +154,7 @@ void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_s
 }
 
 
-void ModuleSceneIntro::CreateBar(int* arrayDir)
+void ModuleSceneIntro::CreateBar(const int* arrayDir)
 {
 	vec3 origin;
 	vec3 dest;
@@ -261,14 +263,14 @@ update_status ModuleSceneIntro::Update(float dt)
 	/*// render test light object
 	test_light.Render();*/
 
-/*	big_ball_prim.SetPos(big_ball_body->GetPos().x, big_ball_body->GetPos().y, big_ball_body->GetPos().z); 
+	/*big_ball_prim.SetPos(big_ball_body->GetPos().x, big_ball_body->GetPos().y, big_ball_body->GetPos().z); 
 	big_ball_prim.Render(); 
 	
 	
 	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
 		float magnitude = 85000;
 		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
-	}
+	}*/
 
 	/*if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
 		float magnitude = 8500;
@@ -281,7 +283,7 @@ update_status ModuleSceneIntro::Update(float dt)
 		big_ball_body->SetPos(10, 10, 70);
 		big_ball_body->SetStatic(true);
 		test_timer.Start();
-	}
+	}*/
 
 	// Cannon sensors collision cooldown states
 	for (int i = 0; i < cannon_sensors.Count(); ++i)
@@ -304,11 +306,11 @@ update_status ModuleSceneIntro::Update(float dt)
 		cannon_sensors[i].ball->primitive.Render();
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-		float magnitude = 8500;
-		//cannon_sensors[0].ball->body->SetPos(0, 0, 0);
-		cannon_sensors[0].ball->body->Push(1000, 1000, 10);
-	}
+	//if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
+	//	float magnitude = 8500;
+	//	//cannon_sensors[0].ball->body->SetPos(0, 0, 0);
+	//	cannon_sensors[0].ball->body->Push(1000, 1000, 10);
+	//}
 
 	// Cannon ball primitives print // doesnt needs now, now draw associated fixed ball with each cannon sensor
 	//for (int i = 0; i < cannon_balls.count(); ++i)
@@ -444,48 +446,48 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 }*/
 
 
-Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
-
-	// create cube ----
-
-	Cube ramp;
-	ramp.color = White;
-	float angle = 20.0f * _PI / 180;
-
-	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
-	float rot_angle_X = 90 - rot_angle_Z;
-
-
-	vec3 floor_distance = dest - origin;
-	vec3 height = floor_distance * sin(angle) / sin(90 - angle);
-	vec3 dest_in_air = dest + height;
-	vec3 actual_Size = dest_in_air - origin;
-	ramp.size = actual_Size;
-	ramp.size.y = 0.5f;
-
-	ramp.SetPos(origin.x, (actual_Size.z / 2) * sin(angle), origin.z);
-	ramp.SetRotation(20.0f, { 1, 0, 0 });
-
-	// create physbody 
-
-	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50));
-	ramp_body->Set_Orientation(angle, { 1, 0, 0 });
-	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
-
-	// add rotation
-	ramp.SetRotation(rot_angle_Z, { 0, -1, 0 });
-	ramp_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
-
-
-	// adds primitive and respective body to circuit pieces dynamic array
-	circuit_cubes.prims.PushBack(ramp);
-	circuit_cubes.bodies.PushBack(ramp_body);
-
-	// adds listener
-	ramp_body->collision_listeners.add(this);
-
-	return ramp;
-}
+//Cube ModuleSceneIntro::CreateRamp(vec3 origin, vec3 dest) {
+//
+//	// create cube ----
+//
+//	Cube ramp;
+//	ramp.color = White;
+//	float angle = 20.0f * _PI / 180;
+//
+//	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+//	float rot_angle_X = 90 - rot_angle_Z;
+//
+//
+//	vec3 floor_distance = dest - origin;
+//	vec3 height = floor_distance * sin(angle) / sin(90 - angle);
+//	vec3 dest_in_air = dest + height;
+//	vec3 actual_Size = dest_in_air - origin;
+//	ramp.size = actual_Size;
+//	ramp.size.y = 0.5f;
+//
+//	ramp.SetPos(origin.x, (actual_Size.z / 2) * sin(angle), origin.z);
+//	ramp.SetRotation(20.0f, { 1, 0, 0 });
+//
+//	// create physbody 
+//
+//	PhysBody3D* ramp_body = App->physics->AddBody(ramp, pow(10, 50));
+//	ramp_body->Set_Orientation(angle, { 1, 0, 0 });
+//	ramp_body->Get_Rigid_Body()->setGravity({ 0, 0, 0 });
+//
+//	// add rotation
+//	ramp.SetRotation(rot_angle_Z, { 0, -1, 0 });
+//	ramp_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
+//
+//
+//	// adds primitive and respective body to circuit pieces dynamic array
+//	circuit_cubes.prims.PushBack(ramp);
+//	circuit_cubes.bodies.PushBack(ramp_body);
+//
+//	// adds listener
+//	ramp_body->collision_listeners.add(this);
+//
+//	return ramp;
+//}
 
 void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
@@ -662,87 +664,88 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 	return return_last_pos; 
 }
 
-void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest, float factor, uint elems) {
-
-	vec3 start_pos(0, 0, 0); 
-	vec3 start_offset(-1.3f, 0, -1.3f); 
-	float separation = 0; 
-	uint counter = 0; 
-
-	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
-	float rot_angle_X = 90 - rot_angle_Z;
-
-	// check if there is an element fairly close, then snap to it
-
-	/*for (uint i = 0; i < last_positions_to_snap.count(); ++i) {
-		if ((last_positions_to_snap.At(i)->data.x - origin.x) < 5 ) {   
-			start_pos = last_positions_to_snap.At(i)->data - start_offset; 
-		}
-    }*/
-
-	start_pos = origin; 
-	vec3 actual_pos(0, 0, 0); 
- 
-	PhysBody3D* element_body = nullptr; 
-
-	while (counter < elems){ 
-
-		rot_angle_Z = asin((dest.x - (origin.x + separation * sin(rot_angle_X * _PI / 180))) / sqrt(pow(dest.x - (origin.x + separation), 2) + pow(dest.z - (origin.z + separation * sin(rot_angle_Z * _PI / 180)), 2))) * 180 / _PI;
-		rot_angle_X = 90 - rot_angle_Z;
-
-		Cylinder element(1, 3);
-		if(counter % 2 == 0){
-			element.color = Red; 
-		}
-		else {
-			element.color = White; 
-		}
-
-		if (dest.z < origin.z) {
-			element.SetPos(start_pos.x - separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z + separation * sin(rot_angle_Z * _PI / 180));
-		}
-		else {
-			element.SetPos(start_pos.x - separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z - separation * sin(rot_angle_Z * _PI / 180));
-		}
-
-		rot_angle_Z += factor;
-
-		element_body = App->physics->AddBody(element, pow(20, 50)); 
-		actual_pos = element_body->GetPos(); 
-
-		// add rotation
-		element.SetRotation(90.0f, { 0, 0, -1 });
-		element_body->Set_Orientation(90.0f * _PI / 180, { 0, 0, -1 });
-
-		circuit_cyls.prims.PushBack(element);
-		circuit_cyls.bodies.PushBack(element_body);
-
-		separation += 4; 
-		counter++; 
-		
-		
-	}
-	
-	last_positions_to_snap.add(element_body->GetPos().x);
-}
+//void ModuleSceneIntro::Create_Curve(vec3 origin, vec3 dest, float factor, uint elems) {
+//
+//	vec3 start_pos(0, 0, 0); 
+//	vec3 start_offset(-1.3f, 0, -1.3f); 
+//	float separation = 0; 
+//	uint counter = 0; 
+//
+//	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+//	float rot_angle_X = 90 - rot_angle_Z;
+//
+//	// check if there is an element fairly close, then snap to it
+//
+//	/*for (uint i = 0; i < last_positions_to_snap.count(); ++i) {
+//		if ((last_positions_to_snap.At(i)->data.x - origin.x) < 5 ) {   
+//			start_pos = last_positions_to_snap.At(i)->data - start_offset; 
+//		}
+//    }*/
+//
+//	start_pos = origin; 
+//	vec3 actual_pos(0, 0, 0); 
+// 
+//	PhysBody3D* element_body = nullptr; 
+//
+//	while (counter < elems){ 
+//
+//		rot_angle_Z = asin((dest.x - (origin.x + separation * sin(rot_angle_X * _PI / 180))) / sqrt(pow(dest.x - (origin.x + separation), 2) + pow(dest.z - (origin.z + separation * sin(rot_angle_Z * _PI / 180)), 2))) * 180 / _PI;
+//		rot_angle_X = 90 - rot_angle_Z;
+//
+//		Cylinder element(1, 3);
+//		if(counter % 2 == 0){
+//			element.color = Red; 
+//		}
+//		else {
+//			element.color = White; 
+//		}
+//
+//		if (dest.z < origin.z) {
+//			element.SetPos(start_pos.x - separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z + separation * sin(rot_angle_Z * _PI / 180));
+//		}
+//		else {
+//			element.SetPos(start_pos.x - separation * sin(rot_angle_X * _PI / 180), 1.5f, start_pos.z - separation * sin(rot_angle_Z * _PI / 180));
+//		}
+//
+//		rot_angle_Z += factor;
+//
+//		element_body = App->physics->AddBody(element, pow(20, 50)); 
+//		actual_pos = element_body->GetPos(); 
+//
+//		// add rotation
+//		element.SetRotation(90.0f, { 0, 0, -1 });
+//		element_body->Set_Orientation(90.0f * _PI / 180, { 0, 0, -1 });
+//
+//		circuit_cyls.prims.PushBack(element);
+//		circuit_cyls.bodies.PushBack(element_body);
+//
+//		separation += 4; 
+//		counter++; 
+//		
+//		
+//	}
+//	
+//	last_positions_to_snap.add(element_body->GetPos().x);
+//}
 
 
 cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
 {
 	// creates, adds and set timer to cannon balls, adds to list and push the ball
-	int offset = 7; // offset to far away the ball laterally
+	int offsetX = 9; // offset to far away the ball laterally
+	int offsetY = 6;
 	// creates sphere
 	Sphere ball_prim;
 	ball_prim.radius = 3;
 	// checks if we have even or not on the cannon balls list, for spawning this shot from left or right
-	float newXpos = 0.f;
-	if (cannon_sensors.Count() % 2 != 0) {//cannon_balls.count() % 2 != 0) {
-		newXpos = origin.x + ball_prim.radius * 2 + offset;
+	float newZpos = 0.f;
+	if (cannon_sensors.Count() % 2 != 0) {
+		newZpos = origin.z + ball_prim.radius * 2 + offsetX;
 	}
 	else {
-		newXpos = origin.x - ball_prim.radius * 2 - offset;
+		newZpos = origin.z - ball_prim.radius * 2 - offsetX;
 	}
-	ball_prim.SetPos(newXpos, origin.y + ball_prim.radius, origin.z);
+	ball_prim.SetPos(origin.x, origin.y + ball_prim.radius + offsetY, newZpos);
 	ball_prim.color = Orange;
 	// creates the body for collision
 	PhysBody3D* b = App->physics->AddBody(ball_prim, 100.0f);
@@ -779,11 +782,11 @@ void ModuleSceneIntro::CreateCheckSensor(const vec3 position, vec3 direction)
 	check_point_bodies.PushBack(b); // this is a basic checkpoint
 }
 
-void ModuleSceneIntro::CreateCannonSensor(const vec3 position, vec3 direction)
+void ModuleSceneIntro::CreateCannonSensor(const vec3 position)
 {
-	Cube checkCube(10, 3, 1);
+	Cube checkCube(24, 3, 1);
 	checkCube.SetPos(position.x, position.y, position.z);
-	//checkCube.SetRotation();
+	checkCube.SetRotation(90, { 0,-1,0 });
 	circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
 	// physbody
 	PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);

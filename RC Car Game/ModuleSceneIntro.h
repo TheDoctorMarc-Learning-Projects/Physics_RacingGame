@@ -56,18 +56,18 @@ public:
 	bool CleanUp();
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
-	Cube CreateRamp(vec3 origin, vec3 dest);
+	//Cube CreateRamp(vec3 origin, vec3 dest);
 	void CreateCheckSensor(const vec3 position, vec3 direction);
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
-	void CreateCannonSensor(const vec3 position, vec3 direction);
+	void CreateCannonSensor(const vec3 position);
 	void Create_Tunnel(vec3 origin, vec3 dest); 
 	vec3 Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); // returns last point, so that we can snap other elements after
-	void Create_Curve(vec3 origin, vec3 dest, float factor = 0.0f, uint elems = 10); 
+	//void Create_Curve(vec3 origin, vec3 dest, float factor = 0.0f, uint elems = 10); 
 
 	//void Create_Fence(vec3 origin, vec3 dest);
 
 	//void CreateFence(int*);
-	void CreateBar(int*);
+	void CreateBar(const int*);
 	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
 
 public:
