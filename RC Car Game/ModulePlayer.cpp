@@ -58,10 +58,10 @@ bool ModulePlayer::Start()
 	car.rear_wing_flag_size.Set(0.075, 0.825, 0.825); 
 	car.rear_wing_flag_offset.Set(1.875, 1.725, -1.875); 
 
-	car.mass = 550.0f;
+	car.mass = 250.0f;
 	car.suspensionStiffness = 18.0f;  // 15.88f;
 	car.suspensionCompression = 0.83f;
-	car.suspensionDamping = 0.3f;  // 0.88f;
+	car.suspensionDamping = 0.2f;  // 0.88f;
 	car.maxSuspensionTravelCm = 150.0f;
 	car.frictionSlip = 4.5f; // 50.5;
 	car.maxSuspensionForce = 3000.0f;
