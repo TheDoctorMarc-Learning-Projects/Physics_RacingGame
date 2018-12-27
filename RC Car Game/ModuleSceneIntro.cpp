@@ -113,6 +113,9 @@ bool ModuleSceneIntro::Start()
 		CreateBar(&circuitSketch_segmentPR[i]);
 	}
 
+	// create tunnel
+	Create_Tunnel({ -32, 0, 177} , { 110, 0, 269 });
+
 	// create ramps ---
 	CreateRampV2({49, 2, -69}, { 15, 15 }, -50.f, 15.0f);
 	CreateRampV2({70, 2, -45 }, { 15, 15 }, -45.f, -15.0f);
@@ -492,19 +495,19 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	float corner_junction = 0.25f;   // wall width / 2 
-	float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
-	float rot_angle_X = 90 - rot_angle_Z;
+	//float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+	//float rot_angle_X = 90 - rot_angle_Z;
 
 
 	// three parts with commonalities
 	Cube top, left, right; 
-	top.color = left.color = right.color = Black;
+	top.color = left.color = right.color = White;
 	top.size = left.size = right.size = dest - origin; 
-	top.size.y = left.size.y = right.size.y = 0.5f; 
+	top.size.y = left.size.y = right.size.y = 3.0f; 
 
 	// top 
 	top.size.z = TUNNEL_WIDTH;
-	PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50)); 
+	PhysBody3D* top_body = App->physics->AddBody(top); 
 	top_body->SetStatic(true); 
 	top_body->SetPos(origin.x, TUNNEL_HEIGHT, origin.z);
 	top.SetPos(origin.x, TUNNEL_HEIGHT, origin.z);
@@ -513,8 +516,8 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	left.size.z = TUNNEL_HEIGHT;
 	PhysBody3D* left_body = App->physics->AddBody(left, pow(10, 50));
 	left_body->SetStatic(true);
-	left_body->SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
-	left.SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x - top.size.z / 2 + corner_junction);
+	left_body->SetPos(origin.x, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().z - top.size.z / 2 + corner_junction);
+	left.SetPos(origin.x, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().z - top.size.z / 2 + corner_junction);
 	left.SetRotation(90.0f, { 1,0,0 });
 	left_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 }); 
 
@@ -522,8 +525,8 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	right.size.z = TUNNEL_HEIGHT;
 	PhysBody3D* right_body = App->physics->AddBody(right, pow(10, 50));
 	right_body->SetStatic(true);
-	right_body->SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
-	right.SetPos(top_body->GetPos().z, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().x + top.size.z / 2 - corner_junction);
+	right_body->SetPos(origin.x, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().z + top.size.z / 2 - corner_junction);
+	right.SetPos(origin.x, TUNNEL_HEIGHT / 2 - corner_junction, top_body->GetPos().z + top.size.z / 2 - corner_junction);
 	right.SetRotation(90.0f, { 1,0,0 });
 	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
 
