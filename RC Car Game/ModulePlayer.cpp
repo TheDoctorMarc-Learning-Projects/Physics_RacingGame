@@ -59,12 +59,19 @@ bool ModulePlayer::Start()
 	car.rear_wing_flag_offset.Set(1.875, 1.725, -1.875); 
 
 	car.mass = 250.0f;
-	car.suspensionStiffness = 18.0f;  // 15.88f;
-	car.suspensionCompression = 0.83f;
-	car.suspensionDamping = 0.2f;  // 0.88f;
-	car.maxSuspensionTravelCm = 150.0f;
-	car.frictionSlip = 4.5f; // 50.5;
-	car.maxSuspensionForce = 3000.0f;
+	car.suspensionStiffness = 10.f;//18.0f;  // 15.88f; // default to 5.88 / 10.0 offroad / 50.0 sports car / 200.0 F1 car
+	car.suspensionCompression = 0.4f;//0.83f; // default to 0.83
+	car.suspensionDamping = 0.5f;  // 0.88f; // default to 0.88 / 0..1 0 bounces / 1 rigid / recommended 0.1...0.3
+	car.maxSuspensionTravelCm = 150.0f;		 // default to 500 cm suspension can be compressed
+	car.frictionSlip = 5.f; //4.5f; // 50.5; // defaults to 10.5 / friction with the ground. 0.8 should be good but high values feels better (kart 1000.0)
+	car.maxSuspensionForce = 6000.0f; // defaults to 6000 / max force to the chassis
+
+	
+	
+	
+	
+	
+	
 
 	// Wheel properties ---------------------------------------
 	float front_connection_height = 0.5625f;
