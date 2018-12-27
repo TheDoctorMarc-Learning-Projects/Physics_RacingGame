@@ -119,16 +119,36 @@ bool ModuleSceneIntro::Start()
 	{
 		CreateBar(&circuitSketch_segmentPR[i]);
 	}
-	//CreateFence(&exteriorFences[0]);
 
-	//CreateBar();
-
-	Cube c;
-	//App->physics->AddBody(c);
-	c.SetPos(49, 0, -69);
-	circuit_cubes.prims.PushBack(c);
+	// create ramps ---
+	CreateRampV2({49, 2, -69}, { 15, 15 }, -50.f, 15.0f);
+	CreateRampV2({70, 2, -45 }, { 15, 15 }, -45.f, -15.0f);
+	CreateRampV2({ -130, 2, 37 }, { 15, 20 }, -60.f, 15.0f);
+	CreateRampV2({ -113, 2, 69 }, { 15, 15 }, -60.f, -15.0f);
 
 	return ret;
+}
+
+void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size,const float yawAngle,const float rollAngle)
+{
+	Cube c;
+	c.size.x = plane_size.x; // width
+	c.size.z = plane_size.y; // "height"
+	c.size.y = 0.4f;
+
+	PhysBody3D* b = App->physics->AddBody(c, 0.0f);
+	b->SetEuler(yawAngle, rollAngle);
+	b->SetPos(mapPositionXZ.x, mapPositionXZ.y, mapPositionXZ.z);
+
+	const btQuaternion _q = *b->GetRotQuat();
+	const btVector3 axis = _q.getAxis();
+
+	c.SetPos(b->GetPos().x, b->GetPos().y, b->GetPos().z);
+	c.SetRotation(_q.getAngle() * 180 / _PI, { axis.getX(), axis.getY(), axis.getZ() });
+
+	circuit_cubes.prims.PushBack(c);
+	circuit_cubes.bodies.PushBack(b);
+
 }
 
 

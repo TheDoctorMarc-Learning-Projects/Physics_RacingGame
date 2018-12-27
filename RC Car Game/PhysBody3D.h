@@ -2,11 +2,13 @@
 #define __PhysBody3D_H__
 
 #include "p2List.h"
+#include "Globals.h"
 
 class btRigidBody;
 class Module;
 class vec3; 
 class btVector3; 
+class btQuaternion;
 
 // =================================================
 struct PhysBody3D
@@ -26,6 +28,8 @@ public:
 	//void SetBodyMass(float mass = 1.0f);
 	void SetStatic(bool newCondition);
 	bool isStatic();
+	void SetEuler(float yaw, float roll);
+	const btQuaternion* GetRotQuat() const;
 
 	const vec3 GetPos() const;
 

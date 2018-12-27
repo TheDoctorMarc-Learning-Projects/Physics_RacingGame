@@ -64,10 +64,11 @@ public:
 	vec3 Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); // returns last point, so that we can snap other elements after
 	void Create_Curve(vec3 origin, vec3 dest, float factor = 0.0f, uint elems = 10); 
 
-	void Create_Fence(vec3 origin, vec3 dest);
+	//void Create_Fence(vec3 origin, vec3 dest);
 
 	//void CreateFence(int*);
 	void CreateBar(int*);
+	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
 
 public:
 	/*

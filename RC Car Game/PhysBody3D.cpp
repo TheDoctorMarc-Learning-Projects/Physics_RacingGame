@@ -120,3 +120,20 @@ bool PhysBody3D::isStatic()
 	return static_state;
 }
 
+void PhysBody3D::SetEuler(float yawAngle, float rollAngle)
+{
+	// set rigidbody rotation transform 
+	btTransform tr;
+	tr.setIdentity();
+	btQuaternion quat;
+	// yaw,pitch,roll
+	quat.setEuler(yawAngle * _PI / 180, 0, rollAngle * _PI / 180);
+	tr.setRotation(quat);
+
+	body->setCenterOfMassTransform(tr);
+}
+
+const btQuaternion* PhysBody3D::GetRotQuat() const
+{
+	return &body->getCenterOfMassTransform().getRotation();
+}
