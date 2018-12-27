@@ -123,6 +123,11 @@ bool ModuleSceneIntro::Start()
 
 	//CreateBar();
 
+	Cube c;
+	//App->physics->AddBody(c);
+	c.SetPos(49, 0, -69);
+	circuit_cubes.prims.PushBack(c);
+
 	return ret;
 }
 

@@ -38,5 +38,7 @@ public:
 	// fxs
 	uint engine_fx; 
 	Light focus; 
+	// lock camera
+	bool lock_camera = true;
 
 };

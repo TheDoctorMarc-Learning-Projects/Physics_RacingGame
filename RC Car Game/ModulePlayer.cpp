@@ -267,7 +267,8 @@ update_status ModulePlayer::Update(float dt)
 	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
 	App->window->SetTitle(title);
 
-	CameraLogic();
+	if(lock_camera)
+		CameraLogic();
 
 
 	return UPDATE_CONTINUE;
@@ -276,6 +277,10 @@ update_status ModulePlayer::Update(float dt)
 
 void ModulePlayer::Keys() {
 
+	// locks / unlocks camera to vehicle
+	if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
+		lock_camera = !lock_camera;
+	}
 	// reset player position
 
 	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
