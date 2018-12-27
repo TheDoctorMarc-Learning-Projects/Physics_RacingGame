@@ -122,6 +122,7 @@ bool ModuleSceneIntro::Start()
 	CreateRampV2({ -130, 2, 37 }, { 15, 20 }, -60.f, 15.0f);
 	CreateRampV2({ -113, 2, 69 }, { 15, 15 }, -60.f, -15.0f);
 
+
 	// create cannon sensors with balls
 	CreateCannonSensor({ -150,0,-179 });
 	CreateCannonSensor({ -130,0,-179 });
@@ -134,104 +135,6 @@ bool ModuleSceneIntro::Start()
 	return ret;
 }
 
-void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size,const float yawAngle,const float rollAngle)
-{
-	Cube c;
-	c.size.x = plane_size.x; // width
-	c.size.z = plane_size.y; // "height"
-	c.size.y = 0.4f;
-
-	PhysBody3D* b = App->physics->AddBody(c, 0.0f);
-	b->SetEuler(yawAngle, rollAngle);
-	b->SetPos(mapPositionXZ.x, mapPositionXZ.y, mapPositionXZ.z);
-
-	const btQuaternion _q = *b->GetRotQuat();
-	const btVector3 _axis = _q.getAxis();
-
-	c.SetPos(b->GetPos().x, b->GetPos().y, b->GetPos().z);
-	c.SetRotation(_q.getAngle() * 180 / _PI, { _axis.getX(), _axis.getY(), _axis.getZ() });
-
-	circuit_cubes.prims.PushBack(c);
-	circuit_cubes.bodies.PushBack(b);
-
-}
-
-
-void ModuleSceneIntro::CreateBar(const int* arrayDir)
-{
-	vec3 origin;
-	vec3 dest;
-	origin.Set(10, 0, 10);
-	dest.Set(-10, 0, 30);
-
-	// x,z
-	origin.x = *arrayDir;
-	arrayDir++;
-	origin.z = *arrayDir;
-	arrayDir++;
-	dest.x = *arrayDir;
-	arrayDir++;
-	dest.z = *arrayDir;
-
-	vec3 u = origin - dest;
-	//u = normalize(u);
-	float angle = atan2f(u.z, u.x);
-
-	//find midpoint to sum to origin coords.
-	vec3 midPoint;
-	midPoint.Set((origin.x + dest.x) * 0.5f, 0, (origin.z + dest.z) * 0.5f);
-
-	// cube primitive
-	Cube cube;
-	cube.size.x = length(u);
-	cube.size.y = 2;
-	// TODO: test color, needs special fence list to do this
-	cube.color = (circuit_cubes.prims.Count() % 2 == 0) ? White : Red;
-	cube.SetPos(midPoint.x, cube.size.y / 2, midPoint.z); 
-	cube.SetRotation(angle * 180 / _PI, {0,-1, 0});
-
-	// physic body
-	PhysBody3D* b = App->physics->AddBody(cube, 0.f);
-	b->SetPos(midPoint.x, cube.size.y / 2, midPoint.z);
-	b->Set_Orientation(angle, { 0,-1,0 });
-
-	circuit_cubes.prims.PushBack(cube);
-	circuit_cubes.bodies.PushBack(b);
-}
-
-// wip idea to create individual fences from orig,dest and size and concadenate them
-//void ModuleSceneIntro::CreateFence(int* arrayDir)
-//{
-//	vec2 startPoint;
-//	vec2 finalPoint;
-//
-//	// x,z
-//	startPoint.x = *arrayDir;
-//	arrayDir++;
-//	startPoint.y = *arrayDir;
-//	arrayDir++;
-//	finalPoint.x = *arrayDir;
-//	arrayDir++;
-//	finalPoint.y = *arrayDir;
-//
-//	// create cube
-//	Cube barCube;
-//	//top.color  = Black;
-//	vec2 dir = normalize(finalPoint - startPoint);
-//	vec2 dist = length(finalPoint - startPoint);
-//
-//	barCube.size.x = dist.x;
-//
-//	float angle = atan2f(dir.y, dir.x);
-//	//LOG("");
-//
-//	barCube.SetPos(startPoint.x, 0, startPoint.y);
-//	barCube.SetRotation(angle * 180 / _PI, { 0, -1, 0 });
-//	
-//	circuit_cubes.prims.PushBack(barCube);
-//	//circuit_cubes.bodies.PushBack(top_body);
-//
-//}
 
 // Load assets
 bool ModuleSceneIntro::CleanUp()
@@ -336,6 +239,10 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
 	//if (body2 == App->player->vehicle)
 
+	
+
+
+
 	// specific sensors check
 	if(body1 == test_sensor)
 	{
@@ -357,6 +264,8 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 			{
 				LOG("basic check point collision");
 			}
+
+			
 		}
 
 		// iterates all cannon sensors
@@ -383,6 +292,145 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 
 	}
 }
+
+
+
+void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle, const float rollAngle)
+{
+	Cube c;
+	c.size.x = plane_size.x; // width
+	c.size.z = plane_size.y; // "height"
+	c.size.y = 0.4f;
+
+	PhysBody3D* b = App->physics->AddBody(c, 0.0f);
+	b->SetEuler(yawAngle, rollAngle);
+	b->SetPos(mapPositionXZ.x, mapPositionXZ.y + 0.5f, mapPositionXZ.z);
+
+	const btQuaternion _q = *b->GetRotQuat();
+	const btVector3 _axis = _q.getAxis();
+
+	c.SetPos(b->GetPos().x, b->GetPos().y, b->GetPos().z);
+	c.SetRotation(_q.getAngle() * 180 / _PI, { _axis.getX(), _axis.getY(), _axis.getZ() });
+
+	circuit_cubes.prims.PushBack(c);
+	circuit_cubes.bodies.PushBack(b);
+
+	ramps.PushBack(c); 
+	// Create_Ramp_Sensor(b->GetPos()); 
+
+	/*// Create sensor 
+
+	Cube checkCube;
+	checkCube.size.x = 0.4f; // width
+	checkCube.size.z = plane_size.y; // "height"
+	checkCube.size.y = 0.4f;
+	float y_pos = plane_size.x * sin(rollAngle * _PI / 180);
+	float x_pos = plane_size.x * sin(yawAngle * _PI / 180);
+
+	// physbody
+	PhysBody3D* sens_b = App->physics->AddBody(checkCube, 0.0f, true);
+	// listener
+	sens_b->collision_listeners.add(this);
+	sens_b->SetEuler(yawAngle, rollAngle);
+	sens_b->SetPos(mapPositionXZ.x, y_pos, mapPositionXZ.z);
+
+	const btQuaternion sens_q = *sens_b->GetRotQuat();
+	const btVector3 sens_axis = _q.getAxis();
+
+
+	checkCube.SetPos(sens_b->GetPos().x, 0, sens_b->GetPos().z);
+	checkCube.color = Gold;
+
+	checkCube.SetPos(sens_b->GetPos().x + plane_size.x / 2, plane_size.x + checkCube.size.y, sens_b->GetPos().z + plane_size.x / 2);
+	checkCube.SetRotation(sens_q.getAngle() * 180 / _PI, { sens_axis.getX(), sens_axis.getY(), sens_axis.getZ() });
+
+
+	circuit_cubes.prims.PushBack(checkCube);
+	circuit_cubes.bodies.PushBack(sens_b);*/
+
+}
+
+
+
+
+
+
+void ModuleSceneIntro::CreateBar(const int* arrayDir)
+{
+	vec3 origin;
+	vec3 dest;
+	origin.Set(10, 0, 10);
+	dest.Set(-10, 0, 30);
+
+	// x,z
+	origin.x = *arrayDir;
+	arrayDir++;
+	origin.z = *arrayDir;
+	arrayDir++;
+	dest.x = *arrayDir;
+	arrayDir++;
+	dest.z = *arrayDir;
+
+	vec3 u = origin - dest;
+	//u = normalize(u);
+	float angle = atan2f(u.z, u.x);
+
+	//find midpoint to sum to origin coords.
+	vec3 midPoint;
+	midPoint.Set((origin.x + dest.x) * 0.5f, 0, (origin.z + dest.z) * 0.5f);
+
+	// cube primitive
+	Cube cube;
+	cube.size.x = length(u);
+	cube.size.y = 2;
+	// TODO: test color, needs special fence list to do this
+	cube.color = (circuit_cubes.prims.Count() % 2 == 0) ? White : Red;
+	cube.SetPos(midPoint.x, cube.size.y / 2, midPoint.z);
+	cube.SetRotation(angle * 180 / _PI, { 0,-1, 0 });
+
+	// physic body
+	PhysBody3D* b = App->physics->AddBody(cube, 0.f);
+	b->SetPos(midPoint.x, cube.size.y / 2, midPoint.z);
+	b->Set_Orientation(angle, { 0,-1,0 });
+
+	circuit_cubes.prims.PushBack(cube);
+	circuit_cubes.bodies.PushBack(b);
+}
+
+// wip idea to create individual fences from orig,dest and size and concadenate them
+//void ModuleSceneIntro::CreateFence(int* arrayDir)
+//{
+//	vec2 startPoint;
+//	vec2 finalPoint;
+//
+//	// x,z
+//	startPoint.x = *arrayDir;
+//	arrayDir++;
+//	startPoint.y = *arrayDir;
+//	arrayDir++;
+//	finalPoint.x = *arrayDir;
+//	arrayDir++;
+//	finalPoint.y = *arrayDir;
+//
+//	// create cube
+//	Cube barCube;
+//	//top.color  = Black;
+//	vec2 dir = normalize(finalPoint - startPoint);
+//	vec2 dist = length(finalPoint - startPoint);
+//
+//	barCube.size.x = dist.x;
+//
+//	float angle = atan2f(dir.y, dir.x);
+//	//LOG("");
+//
+//	barCube.SetPos(startPoint.x, 0, startPoint.y);
+//	barCube.SetRotation(angle * 180 / _PI, { 0, -1, 0 });
+//	
+//	circuit_cubes.prims.PushBack(barCube);
+//	//circuit_cubes.bodies.PushBack(top_body);
+//
+//}
+
 
 // test method, doesnt works properly
 /*void ModuleSceneIntro::Create_Fence(vec3 origin, vec3 destination)
@@ -503,7 +551,7 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	Cube top, left, right; 
 	top.color = left.color = right.color = White;
 	top.size = left.size = right.size = dest - origin; 
-	top.size.y = left.size.y = right.size.y = 3.0f; 
+	top.size.y = left.size.y = right.size.y = 1.5f; 
 
 	// top 
 	top.size.z = TUNNEL_WIDTH;
@@ -806,6 +854,10 @@ void ModuleSceneIntro::CreateCannonSensor(const vec3 position)
 	
 	cannon_sensors.PushBack(newCannon);
 }
+
+
+
+
 
 
 

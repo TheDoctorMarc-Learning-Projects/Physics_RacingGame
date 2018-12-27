@@ -63,7 +63,7 @@ bool ModulePlayer::Start()
 	car.suspensionCompression = 0.83f;
 	car.suspensionDamping = 0.3f;  // 0.88f;
 	car.maxSuspensionTravelCm = 150.0f;
-	car.frictionSlip = 7.5f; // 50.5;
+	car.frictionSlip = 4.5f; // 50.5;
 	car.maxSuspensionForce = 3000.0f;
 
 	// Wheel properties ---------------------------------------
@@ -335,6 +335,8 @@ void ModulePlayer::CameraLogic(float dt)
 	App->camera->LookAt(currCarPos);
 	
 }
+
+
 
 
 

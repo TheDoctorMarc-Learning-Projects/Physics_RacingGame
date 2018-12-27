@@ -5,7 +5,7 @@
 #include "Primitive.h"
 
 #define MAX_SNAKE 2
-#define TUNNEL_WIDTH 26.5f
+#define TUNNEL_WIDTH 28.5f
 #define TUNNEL_HEIGHT 11.5f
 
 class btRigidBody;
@@ -123,6 +123,7 @@ public:
 	//cubeObjects cannon_sensors;
 	p2DynArray<cannonSensors> cannon_sensors;
 
+
 	// lights
 
 	Sphere test_light;
@@ -130,6 +131,7 @@ public:
 
 	// list of last position elements
 	p2List<vec3> last_positions_to_snap; 
+
 
 	
 };
