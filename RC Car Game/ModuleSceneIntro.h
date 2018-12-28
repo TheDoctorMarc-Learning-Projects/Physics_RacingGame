@@ -45,6 +45,14 @@ struct cannonSensors
 	cannonBalls* ball = nullptr;
 };
 
+struct checkPoints
+{
+	bool active = false;
+	PhysBody3D* body = nullptr;
+	Cube bodyPrim;
+	Cube visualIndicator;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -105,8 +113,9 @@ public:
 	CylObjects circuit_cyls; 
 
 	// checkpoints, maybe its useful create another helper struct like circuit_cubes
-	p2DynArray<PhysBody3D*> check_point_bodies;
-	p2DynArray<Cube> check_point_prim;
+	/*p2DynArray<PhysBody3D*> check_point_bodies;
+	p2DynArray<Cube> check_point_prim;*/
+	p2DynArray<checkPoints> check_points;
 
 	// individual useful check point
 	PhysBody3D* test_sensor;

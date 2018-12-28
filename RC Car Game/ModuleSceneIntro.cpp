@@ -121,7 +121,11 @@ bool ModuleSceneIntro::Start()
 	// check points
 	CreateCheckSensor({ 13,0,-192 }, {13,0,-165});
 	CreateCheckSensor({ 132,0,-176 }, { 115,0,-159 });
-	
+	CreateCheckSensor({ 45,0,-108 }, { 20,0,-100 });
+	CreateCheckSensor({ 72,0, 18 }, { 68,0,42 });
+	CreateCheckSensor({ -146,0,188 }, { -145,0, 164 });
+	CreateCheckSensor({ -138,0,68 }, { -147,0, 52 });
+	CreateCheckSensor({ -172,0,15 }, { -158,0, 0 });
 
 	return ret;
 }
@@ -156,6 +160,9 @@ update_status ModuleSceneIntro::Update(float dt)
 	for (int i = 0; i < circuit_cyls.prims.Count(); ++i)
 		circuit_cyls.prims[i].Render();
 
+	// draw all checkPoints primitives, debug draw purposes
+	for (int i = 0; i < check_points.Count(); ++i)
+		check_points[i].bodyPrim.Render();
 
 	/*// render test light object
 	test_light.Render();*/
@@ -232,11 +239,29 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	if (body1->is_sensor)
 	{
 		// iterates all sensor array
-		for (int i = 0; i < check_point_bodies.Count(); ++i)
+		for (int i = 0; i < check_points.Count(); ++i)
 		{
-			if (body1 == check_point_bodies[i])
+			if (body1 == check_points[i].body && !check_points[i].active)
 			{
 				LOG("basic check point collision");
+				check_points[i].active = true;
+				check_points[i].bodyPrim.color = Green;
+				// if this is the last checkpoint, reset the first
+				if (i > 0 && i == check_points.Count() - 1)
+				{
+					LOG("last checkpoint");
+					check_points[0].active = false;
+					check_points[0].bodyPrim.color = White;
+				}
+				// if this is the first checkpoint, deactivate the rest, for lap reset
+				if (i == 0 && check_points.Count() > 1)
+				{
+					for (int j = 1; j < check_points.Count(); ++j)
+					{
+						check_points[j].active = false;
+						check_points[j].bodyPrim.color = White;
+					}
+				}
 			}
 
 			
@@ -566,8 +591,12 @@ void ModuleSceneIntro::CreateCheckSensor(const vec3 origin, vec3 destination)
 	b->collision_listeners.add(this);
 	
 	// adds to lists
-	circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
-	check_point_bodies.PushBack(b); // this is a basic checkpoint
+	//circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
+	checkPoints newCheckPoint;
+	newCheckPoint.body = b;
+	newCheckPoint.bodyPrim = checkCube;
+	check_points.PushBack(newCheckPoint);
+	//check_point_bodies.PushBack(b); // this is a basic checkpoint
 }
 
 void ModuleSceneIntro::CreateCannonSensor(const vec3 position)

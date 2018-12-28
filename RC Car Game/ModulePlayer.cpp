@@ -312,6 +312,25 @@ void ModulePlayer::Keys() {
 
 	// reset overturned car
 
+	// returns to last reached checkpoint, if any
+	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
+	{
+		if (App->scene_intro->check_points.Count() > 0)
+		{
+			for (int i = App->scene_intro->check_points.Count() - 1; i >= 0; --i)
+			{
+				if (App->scene_intro->check_points[i].active)
+				{
+					mat4x4 trm;
+					App->scene_intro->check_points[i].body->GetTransform(&trm);
+					vehicle->SetTransform(&trm);
+					vehicle->Set_Speed({ 0,0,0 });
+					break;
+				}
+			}
+		}
+	}
+
 }
 
 void ModulePlayer::CameraLogic(float dt)
