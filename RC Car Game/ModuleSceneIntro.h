@@ -27,6 +27,13 @@ struct CylObjects
 	p2DynArray<PhysBody3D*> bodies;
 };
 
+
+struct SphObjects
+{
+	p2DynArray<Sphere> prims;
+	p2DynArray<PhysBody3D*> bodies;
+};
+
 struct cannonBalls // helper struct, spawn balls and deletes by timer on scene
 {
 	vec3 original_pos;
@@ -112,11 +119,12 @@ public:
 	// list of all cubes
 	cubeObjects circuit_cubes;
 
-
-
-
 	// and cyls
 	CylObjects circuit_cyls; 
+
+	// and spheres
+	SphObjects circuit_sphrs; 
+
 
 	// checkpoints, maybe its useful create another helper struct like circuit_cubes
 	/*p2DynArray<PhysBody3D*> check_point_bodies;

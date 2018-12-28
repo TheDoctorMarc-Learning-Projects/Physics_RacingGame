@@ -215,6 +215,11 @@ update_status ModulePlayer::Update(float dt)
 	}
 
 	
+	if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN) {
+
+		vehicle->SetPos(-10, 0, 177);
+
+	}
 
 	// in the ground
 

@@ -159,6 +159,10 @@ update_status ModuleSceneIntro::Update(float dt)
 	for (int i = 0; i < circuit_cyls.prims.Count(); ++i)
 		circuit_cyls.prims[i].Render();
 
+
+	for (int i = 0; i < circuit_sphrs.prims.Count(); ++i)
+		circuit_sphrs.prims[i].Render();
+
 	// draw all checkPoints primitives, debug draw purposes
 	for (int i = 0; i < check_points.Count(); ++i)
 		check_points[i].bodyPrim.Render();
@@ -450,6 +454,19 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	right.SetPos(origin.x, TUNNEL_HEIGHT / 2, top_body->GetPos().z + top.size.z / 2 - corner_junction);
 	right.SetRotation(90.0f, { 1,0,0 });
 	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
+	
+	// light speheres;
+
+	float intial_offset = 60; 
+	float sph_separation = 0; 
+
+	for (int i = 0; i < 8; ++i) {
+
+		Sphere s(1); 
+		s.SetPos(origin.x + intial_offset - sph_separation, TUNNEL_HEIGHT, origin.z);
+		sph_separation += 18; 
+		circuit_sphrs.prims.PushBack(s); 
+	}
 
 	// store objects
 	circuit_cubes.prims.PushBack(top);
@@ -477,13 +494,11 @@ void ModuleSceneIntro::Create_Tunnel_Sensors(const vec3 pos) {
 	start.SetPos(pos.x + 150, pos.y + start.size.y / 2, pos.z); 
 	end.SetPos(pos.x, pos.y + start.size.y / 2, pos.z);
 
-	PhysBody3D* s_body = App->physics->AddBody(start, 0.0f);
-	PhysBody3D* e_body = App->physics->AddBody(end, 0.0f);
+	PhysBody3D* s_body = App->physics->AddBody(start, 0.0f, true);
+	PhysBody3D* e_body = App->physics->AddBody(end, 0.0f, true);
 
 	s_body->_first_of_a_pair = true; 
 	e_body->_first_of_a_pair = false;
-	s_body->is_sensor = true; 
-	e_body->is_sensor = true;
 
 	// listener
 	s_body->collision_listeners.add(this);
