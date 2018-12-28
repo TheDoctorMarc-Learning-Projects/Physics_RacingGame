@@ -71,8 +71,8 @@ bool ModuleSceneIntro::Start()
 	//Create_Fence({ 10,0,10 }, { 60,5,40 });
 
 	Create_Finish_Line_Elements({ 10, 0, -179 }); 
-	Create_Side_Fence_Limit_Segment({ 10, 0. - 193 }, { 50, 0, -193});
-	Create_Side_Fence_Limit_Segment({ 10, 0. - 193 + TUNNEL_WIDTH + 0.5F }, { 50, 0, -193 + TUNNEL_WIDTH + 0.5f});
+	Create_Side_Fence_Limit_Segment({ -50, 0. - 193 }, { 55, 0, -193});
+	Create_Side_Fence_Limit_Segment({ -50, 0. - 193 + TUNNEL_WIDTH + 0.5f }, { 55, 0, -193 + TUNNEL_WIDTH + 0.5f});
 
 
 	// create individual fence items from array
@@ -504,16 +504,14 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 	vec3 return_last_pos(0,0,0); 
 
 	float fence_height = 3; 
-	float above_element_offset = 1; 
+	float above_element_offset = 1.75f; 
 	float separation = 0; 
 	float first_fence_offset = 0.15f; // fence depth / 2
 
 	vec3 original_dir = dest - origin; 
 
-	// for (uint i = 1; i<=2; ++i) {       // do the same for both laterals of the circuit
-
 		Cube top, bottom;
-		top.color = bottom.color = Black;
+		top.color = bottom.color = {0.2f, 0.2f, 0.2f};
 		vec3 dir = dest - origin;
 		dir.y = 0.5f;
 		dir.z = 0.5f;
@@ -540,16 +538,16 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		while (separation < top.size.x) {
 
 			Cube vertical(0.3f, fence_height, 0.3f);
-			vertical.color = Black;
+			vertical.color = { 0.2f, 0.2f, 0.2f };
 			vertical.SetPos(-first_fence_offset * sin(rot_angle_X * _PI / 180) + bottom_body->GetPos().x + (bottom.size.x / 2) * sin(rot_angle_X * _PI / 180) - separation * sin(rot_angle_X * _PI / 180), fence_height / 2 + above_element_offset, -first_fence_offset * sin(rot_angle_Z * _PI / 180) + bottom_body->GetPos().z + (bottom.size.x / 2) * sin(rot_angle_Z * _PI / 180) - separation * sin(rot_angle_Z * _PI / 180));
-			PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
+			// PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
 
 			// add rotation
 			vertical.SetRotation(rot_angle_Z, { 0, -1, 0 });
-			vertical_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
+			// vertical_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
 
 			circuit_cubes.prims.PushBack(vertical);
-			circuit_cubes.bodies.PushBack(vertical_body);
+			// circuit_cubes.bodies.PushBack(vertical_body);
 
 			separation += 3; 
 		}
