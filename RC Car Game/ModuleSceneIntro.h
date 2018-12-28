@@ -66,6 +66,7 @@ public:
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	//Cube CreateRamp(vec3 origin, vec3 dest);
 	void CreateCheckSensor(const vec3 position, vec3 direction);
+	void Create_Tunnel_Sensors(const vec3 position); 
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position);
 	void Create_Tunnel(vec3 origin, vec3 dest); 

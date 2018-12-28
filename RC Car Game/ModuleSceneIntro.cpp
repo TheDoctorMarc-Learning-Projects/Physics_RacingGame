@@ -66,13 +66,6 @@ bool ModuleSceneIntro::Start()
 	CreateCheckSensor({ 0,0,120 }, { 0,0,0 });
 	CreateCheckSensor({ 0,0,160 }, { 0,0,0 });*/
 
-	// handle lights
-	App->renderer3D->lights[1].ref = GL_LIGHT1;
-	App->renderer3D->lights[1].Init(); 
-	App->renderer3D->lights[1].diffuse = Red; 
-	App->renderer3D->lights[1].ambient = Red; 
-	App->renderer3D->lights[1].SetPos(-34, 2 , 190);
-	App->renderer3D->lights[1].Active(true);
 
 
 	//Create_Fence({ 10,0,10 }, { 60,5,40 });
@@ -227,6 +220,7 @@ update_status ModuleSceneIntro::Update(float dt)
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
 
+
 	// specific sensors check
 	if(body1 == test_sensor)
 	{
@@ -241,6 +235,14 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	// if a collision is coming from a sensor call
 	if (body1->is_sensor)
 	{
+		// activate tunnel light
+		if (body1->_first_of_a_pair) {
+			App->renderer3D->tunnel_light_active = true; 
+		}
+		else {
+			App->renderer3D->tunnel_light_active = false;
+		}
+
 		// iterates all sensor array
 		for (int i = 0; i < check_points.Count(); ++i)
 		{
@@ -414,13 +416,10 @@ void ModuleSceneIntro::CreateBar(const int* arrayDir)
 void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	float corner_junction = 0.75f;   // wall width / 2 
-	//float rot_angle_Z = asin((dest.x - origin.x) / sqrt(pow(dest.x - origin.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
-	//float rot_angle_X = 90 - rot_angle_Z;
-
 
 	// three parts with commonalities
 	Cube top, left, right; 
-	top.color = left.color = right.color = White;
+	top.color = left.color = right.color = {0.2f, 0.2f, 0.2f};
 	top.size = left.size = right.size = dest - origin; 
 	top.size.y = left.size.y = right.size.y = 1.5f; 
 
@@ -428,8 +427,8 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	top.size.z = TUNNEL_WIDTH;
 	PhysBody3D* top_body = App->physics->AddBody(top); 
 	top_body->SetStatic(true); 
-	top_body->SetPos(origin.x, TUNNEL_HEIGHT + corner_junction / 2, origin.z);
-	top.SetPos(origin.x, TUNNEL_HEIGHT + corner_junction / 2, origin.z);
+	top_body->SetPos(origin.x, TUNNEL_HEIGHT + corner_junction , origin.z);
+	top.SetPos(origin.x, TUNNEL_HEIGHT + corner_junction, origin.z);
 
 	// left
 	left.size.z = TUNNEL_HEIGHT;
@@ -449,19 +448,6 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	right.SetRotation(90.0f, { 1,0,0 });
 	right_body->Set_Orientation(90.0f * _PI / 180, { 1,0,0 });
 
-    // add rotation 
-
-	/*top.SetRotation(rot_angle_Z * 180 / _PI, {0, -1, 0});
-	top_body->Set_Orientation(rot_angle_Z, { 0, -1, 0 });
-
-	left.SetRotation(rot_angle_Z * 180 / _PI, { 0, -1, 0 });
-	left_body->Set_Orientation(rot_angle_Z, { 0, -1, 0 });
-
-	right.SetRotation(rot_angle_Z * 180 / _PI, { 0, -1, 0 });
-	right_body->Set_Orientation(rot_angle_Z, { 0, -1, 0 });*/
-
-
-
 	// store objects
 	circuit_cubes.prims.PushBack(top);
 	circuit_cubes.bodies.PushBack(top_body); 
@@ -472,22 +458,43 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 	circuit_cubes.prims.PushBack(right);
 	circuit_cubes.bodies.PushBack(right_body);
 
+	// create sensors
 
-	/*// lights
-	test_light.radius = 1;
-	test_light.color = Blue;
-	test_light.SetPos(0, 0, 0);
-
-	App->renderer3D->lights[1].Active(true);
-	App->renderer3D->lights[1].ambient = Red;
-	App->renderer3D->lights[1].diffuse = Red;
-	App->renderer3D->lights[1].Init();
-	App->renderer3D->lights[1].SetPos(2, 2, 2);
-	App->renderer3D->lights[1].on = true;
-	App->renderer3D->lights[1].ref = GL_LIGHT1;*/
-
+	Create_Tunnel_Sensors(origin - vec3{75,0,0});
 	
 }
+
+
+void ModuleSceneIntro::Create_Tunnel_Sensors(const vec3 pos) {
+
+	Cube start, end;
+	start.size.x = start.size.y = end.size.x = end.size.y = 0.5f;
+	start.size.z = end.size.z = TUNNEL_WIDTH;
+
+	start.SetPos(pos.x + 150, pos.y + start.size.y / 2, pos.z); 
+	end.SetPos(pos.x, pos.y + start.size.y / 2, pos.z);
+
+	PhysBody3D* s_body = App->physics->AddBody(start, 0.0f);
+	PhysBody3D* e_body = App->physics->AddBody(end, 0.0f);
+
+	s_body->_first_of_a_pair = true; 
+	e_body->_first_of_a_pair = false;
+	s_body->is_sensor = true; 
+	e_body->is_sensor = true;
+
+	// listener
+	s_body->collision_listeners.add(this);
+	e_body->collision_listeners.add(this);
+
+	// add to list 
+	circuit_cubes.prims.PushBack(start);
+	circuit_cubes.prims.PushBack(end);
+	circuit_cubes.bodies.PushBack(s_body);
+	circuit_cubes.bodies.PushBack(e_body);
+
+}
+
+
 
 vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 
@@ -674,6 +681,7 @@ void ModuleSceneIntro::CreateCannonSensor(const vec3 position)
 	
 	cannon_sensors.PushBack(newCannon);
 }
+
 
 
 

@@ -43,6 +43,7 @@ private:
 public:
 	p2List<Module*> collision_listeners;
 	bool is_sensor = false;
+	bool _first_of_a_pair = NULL; 
 };
 
 #endif // __PhysBody3D_H__

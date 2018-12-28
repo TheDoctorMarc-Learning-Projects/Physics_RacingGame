@@ -82,6 +82,15 @@ bool ModuleRenderer3D::Init()
 		lights[0].diffuse.Set(0.75f, 0.75f, 0.75f, 1.0f);
 		lights[0].SetPos(0.0f, 0.0f, 2.5f);
 		lights[0].Init();
+
+
+		lights[1].ref = GL_LIGHT1;
+		lights[1].ambient = Gold; 
+		// lights[1].diffuse.Set(0.85f, 0.65f, 0.65f, 1.0f);
+		lights[1].diffuse = Gold; 
+		lights[1].SetPos(100.0f, 0.0f, 100.5f);
+		lights[1].Init();
+		
 		
 		GLfloat MaterialAmbient[] = {1.0f, 1.0f, 1.0f, 1.0f};
 		glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MaterialAmbient);
@@ -92,6 +101,7 @@ bool ModuleRenderer3D::Init()
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		lights[0].Active(true);
+		lights[1].Active(false);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
 	}
@@ -112,7 +122,20 @@ update_status ModuleRenderer3D::PreUpdate(float dt)
 	glLoadMatrixf(App->camera->GetViewMatrix());
 
 	// light 0 on cam pos
-	lights[0].SetPos(App->camera->Position.x, App->camera->Position.y, App->camera->Position.z);
+	lights[0].SetPos(App->camera->Position.x , App->camera->Position.y, App->camera->Position.z);
+
+	if (tunnel_light_active) {
+		lights[1].ref = GL_LIGHT1;
+		lights[1].ambient = Gold; 
+		lights[1].diffuse = Gold; 
+		lights[1].Active(true);
+		lights[1].SetPos(App->camera->Position.x + 10, App->camera->Position.y + 30, App->camera->Position.z);
+	}
+	else {
+		lights[1].Active(false);
+	}
+
+ 	// lights[1].SetPos(-32, 0, 177);
 
 	for(uint i = 0; i < MAX_LIGHTS; ++i)
 		lights[i].Render();
