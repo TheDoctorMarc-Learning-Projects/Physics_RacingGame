@@ -29,9 +29,6 @@ void PhysVehicle3D::Render()
 
 	for(int i = 0; i < vehicle->getNumWheels(); ++i)
 	{
-		// wheel.radius = info.wheels[0].radius;
-		// wheel.height = info.wheels[0].width;
-
 		wheel.radius = info.wheels[i].radius;
 		wheel.height = info.wheels[i].width;
 
@@ -55,20 +52,6 @@ void PhysVehicle3D::Render()
 	chassis.color = Violet;
 
 	chassis.Render();
-
-	// cabin
-	/*Cube cabin(info.cabin_size.x, info.cabin_size.y, info.cabin_size.z);
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&cabin.transform); 
-	btVector3 offset_C(info.cabin_offset.x, info.cabin_offset.y, info.cabin_offset.z);
-	offset_C = offset_C.rotate(q.getAxis(), q.getAngle());
-
-	cabin.transform.M[12] += offset_C.getX();
-	cabin.transform.M[13] += offset_C.getY();
-	cabin.transform.M[14] += offset_C.getZ();
-	cabin.color = Red; 
-
-	cabin.Render();*/
-
 
 
 	// rear wing 
@@ -148,28 +131,6 @@ void PhysVehicle3D::Render()
 	rear_transm.color = Black;
 	rear_transm.Render();
 
-	/*// front light right
-	Cylinder front_light_right(info.front_light_radius_height.x, info.front_light_radius_height.y);
-
-
-	vehicle->getChassisWorldTransform().getOpenGLMatrix(&front_light_right.transform);
-	btVector3 offset_f_lig_r(-info.front_light_offset.x, info.front_light_offset.y, info.front_light_offset.z);
-	offset_f_lig_r = offset_f_lig_r.rotate(q.getAxis(), q.getAngle());
-	
-	
-
-	front_light_right.transform.M[12] += offset_f_lig_r.getX();
-	front_light_right.transform.M[13] += offset_f_lig_r.getY();
-	front_light_right.transform.M[14] += offset_f_lig_r.getZ();
-	front_light_right.color = Red;
-	front_light_right.Render();*/
-
-
-	// ground
-
-    /*Cube ground(5000, 0.05, 5000); 
-	ground.color = { 0.2f, 0.2f, 0.2f, 1.0f }; 
-	ground.Render();*/
 
 }
 

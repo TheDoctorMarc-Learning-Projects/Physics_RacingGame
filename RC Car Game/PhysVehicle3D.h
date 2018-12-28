@@ -52,9 +52,6 @@ struct VehicleInfo
 	vec3 rear_wing_flag_size; 
 	vec3 rear_wing_flag_offset; 
 
-	/*vec2 front_light_radius_height; 
-	vec3 front_light_offset;*/
-
 	vec3 rear_transm_size; 
 	vec3 rear_transm_offset;
 

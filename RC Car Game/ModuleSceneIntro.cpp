@@ -71,6 +71,9 @@ bool ModuleSceneIntro::Start()
 	//Create_Fence({ 10,0,10 }, { 60,5,40 });
 
 	Create_Finish_Line_Elements({ 10, 0, -179 }); 
+	Create_Side_Fence_Limit_Segment({ 10, 0. - 193 }, { 50, 0, -193});
+	Create_Side_Fence_Limit_Segment({ 10, 0. - 193 + TUNNEL_WIDTH + 0.5F }, { 50, 0, -193 + TUNNEL_WIDTH + 0.5f});
+
 
 	// create individual fence items from array
 	// similar way from how we use vertexBox2d ric app
@@ -496,11 +499,12 @@ void ModuleSceneIntro::Create_Tunnel_Sensors(const vec3 pos) {
 
 
 
-vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
+void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 
 	vec3 return_last_pos(0,0,0); 
 
 	float fence_height = 3; 
+	float above_element_offset = 1; 
 	float separation = 0; 
 	float first_fence_offset = 0.15f; // fence depth / 2
 
@@ -515,27 +519,11 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		dir.z = 0.5f;
 		top.size = bottom.size = dir;
 
-		float rot_angle_Z = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
-		float rot_angle_X = 90 - rot_angle_Z;
+		float rot_angle_X = asin((dir.x) / sqrt(pow(dir.x, 2) + pow(dest.z - origin.z, 2))) * 180 / _PI;  // 2D rot angle
+		float rot_angle_Z = 90 - rot_angle_X; 
 
-		float z_in_world = original_dir.z / cos(rot_angle_Z * _PI / 180);
-		float x_in_world = original_dir.x * sin(rot_angle_X);
-
-		float proportion = z_in_world / x_in_world; 
-		float real_dist_x = sqrt((pow(TUNNEL_WIDTH, 2) / (1 + proportion))); 
-		float real_dist_z = proportion * real_dist_x; 
-
-	//	if (i == 1) {
-			
-			top.SetPos(origin.x, fence_height, origin.z);
-			bottom.SetPos(origin.x, 0, origin.z);
-		/*}
-		else {
-			separation = 0;   // reset separation 
-			top.SetPos(origin.x - real_dist_x , fence_height, origin.z + real_dist_z );
-			bottom.SetPos(origin.x - real_dist_x , 0, origin.z + real_dist_z);
-
-		}*/
+		top.SetPos(origin.x, fence_height + above_element_offset, origin.z);
+		bottom.SetPos(origin.x, above_element_offset, origin.z);
 		
 		PhysBody3D* top_body = App->physics->AddBody(top, pow(10, 50));
 		PhysBody3D* bottom_body = App->physics->AddBody(bottom, pow(10, 50));
@@ -549,12 +537,11 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		bottom_body->Set_Orientation(rot_angle_Z * _PI / 180, { 0, -1, 0 });
 
 
-
 		while (separation < top.size.x) {
 
 			Cube vertical(0.3f, fence_height, 0.3f);
 			vertical.color = Black;
-			vertical.SetPos(-first_fence_offset * sin(rot_angle_X * _PI / 180) + bottom_body->GetPos().x + (bottom.size.x / 2) * sin(rot_angle_X * _PI / 180) - separation * sin(rot_angle_X * _PI / 180), fence_height / 2, -first_fence_offset * sin(rot_angle_Z * _PI / 180) + bottom_body->GetPos().z + (bottom.size.x / 2) * sin(rot_angle_Z * _PI / 180) - separation * sin(rot_angle_Z * _PI / 180));
+			vertical.SetPos(-first_fence_offset * sin(rot_angle_X * _PI / 180) + bottom_body->GetPos().x + (bottom.size.x / 2) * sin(rot_angle_X * _PI / 180) - separation * sin(rot_angle_X * _PI / 180), fence_height / 2 + above_element_offset, -first_fence_offset * sin(rot_angle_Z * _PI / 180) + bottom_body->GetPos().z + (bottom.size.x / 2) * sin(rot_angle_Z * _PI / 180) - separation * sin(rot_angle_Z * _PI / 180));
 			PhysBody3D* vertical_body = App->physics->AddBody(vertical, pow(10, 50));
 
 			// add rotation
@@ -564,16 +551,9 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 			circuit_cubes.prims.PushBack(vertical);
 			circuit_cubes.bodies.PushBack(vertical_body);
 
-			separation += 3;
-			
-			// store return position
-			if (separation == 3) {
-				return_last_pos.x = vertical_body->GetPos().x;
-				return_last_pos.z = vertical_body->GetPos().z;
-			}
-	//	}
+			separation += 3; 
+		}
 
-		// chop off the end if the vertical fences do not coincide
 
 		circuit_cubes.prims.PushBack(top);
 		circuit_cubes.bodies.PushBack(top_body);
@@ -582,16 +562,10 @@ vec3 ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 		circuit_cubes.prims.PushBack(bottom);
 		circuit_cubes.bodies.PushBack(bottom_body);
 
-
-		// store last position 
-
-		
-		last_positions_to_snap.add(return_last_pos); 
-
 	}
 
-	return return_last_pos; 
-}
+	
+
 
 
 cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)

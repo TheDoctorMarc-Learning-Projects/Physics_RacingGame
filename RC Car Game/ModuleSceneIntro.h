@@ -70,7 +70,7 @@ public:
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position);
 	void Create_Tunnel(vec3 origin, vec3 dest); 
-	vec3 Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); // returns last point, so that we can snap other elements after
+	void Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); 
 	//void Create_Curve(vec3 origin, vec3 dest, float factor = 0.0f, uint elems = 10); 
 
 	//void Create_Fence(vec3 origin, vec3 dest);
@@ -83,8 +83,7 @@ public:
 
 public:
 
-	// list of last position elements
-	p2List<vec3> last_positions_to_snap; // 
+
 
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];
