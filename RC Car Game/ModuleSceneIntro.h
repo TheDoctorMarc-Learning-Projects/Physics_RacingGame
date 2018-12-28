@@ -78,6 +78,8 @@ public:
 	void CreateBar(const int*);
 	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
 
+	void Create_Finish_Line_Elements(const vec3);
+
 public:
 
 	// list of last position elements
@@ -109,6 +111,10 @@ public:
 
 	// list of all cubes
 	cubeObjects circuit_cubes;
+
+
+
+
 	// and cyls
 	CylObjects circuit_cyls; 
 

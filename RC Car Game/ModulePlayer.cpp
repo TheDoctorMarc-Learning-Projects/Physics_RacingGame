@@ -339,7 +339,7 @@ void ModulePlayer::CameraLogic(float dt)
 	vec3 forwardDir = vehicle->GetForwardVector();
 	vec3 desiredCamDistance = currCarPos - (forwardDir * 7.f);
 
-	float wantedHeight =currCarPos.y + 4.f;
+	float wantedHeight =currCarPos.y + 3.f;
 
 	float damp = 5.0f;
 	btVector3 currentCam;

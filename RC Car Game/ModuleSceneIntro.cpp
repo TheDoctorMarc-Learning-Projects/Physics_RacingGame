@@ -76,6 +76,8 @@ bool ModuleSceneIntro::Start()
 
 	//Create_Fence({ 10,0,10 }, { 60,5,40 });
 
+	Create_Finish_Line_Elements({ 10, 0, -179 }); 
+
 	// create individual fence items from array
 	// similar way from how we use vertexBox2d ric app
 	int circuitBoundaries[10] = {
@@ -292,6 +294,57 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	}
 }
 
+
+void ModuleSceneIntro::Create_Finish_Line_Elements(const vec3 pos) {
+
+	float height = 10; 
+	float panel_height = 4; 
+	uint separation = 1; 
+
+	Cube Left, Right; 
+	Left.color = Right.color = White; 
+	Left.SetPos(pos.x, pos.y + height / 2, pos.z - 18);
+	Right.SetPos(pos.x, pos.y + height / 2, pos.z + 18);
+	Left.size = Right.size = { 1, height, 1 };
+
+
+	PhysBody3D* l = App->physics->AddBody(Left, 0.0f);
+	PhysBody3D* r = App->physics->AddBody(Right, 0.0f);
+
+	uint j = 0; 
+	while (j < 4) {
+		while (separation < 38) {
+			Cube e;
+			if (j % 2 == 0) {
+				e.color = (separation % 2 == 0) ? White : Black;
+			}
+			else {
+				e.color = (separation % 2 == 0) ? Black : White;
+			}
+			
+			e.SetPos(l->GetPos().x, l->GetPos().y + height / 2 + panel_height / 2 - j, l->GetPos().z - Left.size.z + separation);
+			e.size = { 1, 1, 1 };
+
+			PhysBody3D* e_body = App->physics->AddBody(e, 0.0f);
+			circuit_cubes.bodies.PushBack(e_body);
+			circuit_cubes.prims.PushBack(e);
+
+			separation++;
+		}
+		separation = 1;
+		j++; 
+	}
+
+
+
+	circuit_cubes.prims.PushBack(Left); 
+	circuit_cubes.prims.PushBack(Right);
+	
+	circuit_cubes.bodies.PushBack(l);
+	circuit_cubes.bodies.PushBack(r);
+	
+
+}
 
 void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle, const float rollAngle)
 {
