@@ -109,7 +109,6 @@ bool ModuleSceneIntro::Start()
 	CreateRampV2({ -130, 2, 37 }, { 15, 20 }, -60.f, 15.0f);
 	CreateRampV2({ -113, 2, 69 }, { 15, 15 }, -60.f, -15.0f);
 
-
 	// create cannon sensors with balls
 	CreateCannonSensor({ -150,0,-179 });
 	CreateCannonSensor({ -130,0,-179 });
@@ -118,6 +117,11 @@ bool ModuleSceneIntro::Start()
 	CreateCannonSensor({ -90,0,-179 });
 	CreateCannonSensor({ -85,0,-179 });
 	CreateCannonSensor({ -80,0,-179 });
+
+	// check points
+	CreateCheckSensor({ 13,0,-192 }, {13,0,-165});
+	CreateCheckSensor({ 132,0,-176 }, { 115,0,-159 });
+	
 
 	return ret;
 }
@@ -198,6 +202,14 @@ update_status ModuleSceneIntro::Update(float dt)
 		cannon_sensors[i].ball->primitive.SetPos(cannon_sensors[i].ball->body->GetPos().x, cannon_sensors[i].ball->body->GetPos().y, cannon_sensors[i].ball->body->GetPos().z);
 		cannon_sensors[i].ball->primitive.Render();
 	}
+
+	//
+	/*Sphere s;
+	s.SetPos(0, 10, -180);
+	s.Render();*/
+	Cube testC;
+	testC.SetPos(0, 10, -180);
+	testC.Render();
 
 	return UPDATE_CONTINUE;
 }
@@ -309,7 +321,7 @@ void ModuleSceneIntro::CreateBar(const int* arrayDir)
 	// TODO: test color, needs special fence list to do this
 	cube.color = (circuit_cubes.prims.Count() % 2 == 0) ? White : Red;
 	cube.SetPos(midPoint.x, cube.size.y / 2, midPoint.z);
-	cube.SetRotation(angle * 180 / _PI, { 0,-1, 0 });
+	cube.SetRotation(angle * RADTODEG, { 0,-1, 0 });
 
 	// physic body
 	PhysBody3D* b = App->physics->AddBody(cube, 0.f);
@@ -536,16 +548,25 @@ cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction
 
 }
 
-void ModuleSceneIntro::CreateCheckSensor(const vec3 position, vec3 direction)
+void ModuleSceneIntro::CreateCheckSensor(const vec3 origin, vec3 destination)
 {
-	Cube checkCube(10, 3, 1);
-	checkCube.SetPos(position.x, position.y, position.z);
-	//checkCube.SetRotation();
-	circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
+	vec3 direction = origin - destination;
+	// get angle xz
+	float angle = atan2f(direction.z, direction.x);
+	// cube primitive
+	vec3 midPoint;
+	midPoint.Set((origin.x + destination.x) * 0.5f, 0, (origin.z + destination.z) * 0.5f);
+	Cube checkCube(10, 2, 1);
+	checkCube.SetPos(midPoint.x, checkCube.size.y * 0.5f, midPoint.z); // y doesnt matter on this case
+	checkCube.SetRotation(angle * RADTODEG, { 0,-1, 0 });
+	checkCube.size.x = length(direction);
 	// physbody
 	PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);
 	// listener
 	b->collision_listeners.add(this);
+	
+	// adds to lists
+	circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
 	check_point_bodies.PushBack(b); // this is a basic checkpoint
 }
 
