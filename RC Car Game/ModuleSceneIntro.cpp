@@ -268,7 +268,10 @@ bool ModuleSceneIntro::UpdateGameState()
 			AllLapsTime[i] = 0;
 		TotalRaceTime = 0;
 		penalizationTime = 0;
-		//sprintf_s(title, "Resetting variables");
+		
+		// fix rare case when the player lose the game and the car entries at tunnel
+		App->renderer3D->tunnel_light_active = false;
+
 		// changes game state
 		game_state = GameState::COUNTDOWN;
 		break;
