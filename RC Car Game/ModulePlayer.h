@@ -25,6 +25,7 @@ public:
 	bool CleanUp();
 
 	void CameraLogic(float dt);
+	void MoveControls();
 	
 
 public:

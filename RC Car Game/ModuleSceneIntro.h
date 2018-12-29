@@ -4,7 +4,7 @@
 #include "Globals.h"
 #include "Primitive.h"
 
-#define MAX_SNAKE 2
+#define MAX_LAPS 3
 #define TUNNEL_WIDTH 28.5f
 #define TUNNEL_HEIGHT 11.5f
 
@@ -13,6 +13,15 @@ class btVector3;
 struct PhysBody3D;
 struct PhysMotor3D;
 struct vec3; 
+
+enum GameState : int
+{
+	PREPARATION, // places camera somewhere, reset states etc
+	COUNTDOWN, // countdown timer
+	GO, // locks camera to vehicle and starts crono
+	WIN,
+	LOSE
+};
 
 struct cubeObjects
 {
@@ -60,6 +69,12 @@ struct checkPoints
 	Cube visualIndicator;
 };
 
+struct countdownSFX
+{
+	bool played = false;
+	uint32 fx = 0u;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -72,7 +87,7 @@ public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	//Cube CreateRamp(vec3 origin, vec3 dest);
-	void CreateCheckSensor(const vec3 position, vec3 direction);
+	void CreateCheckPoint(const vec3 position, vec3 direction);
 	void Create_Tunnel_Sensors(const vec3 position); 
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position);
@@ -85,12 +100,31 @@ public:
 	//void CreateFence(int*);
 	void CreateBar(const int*);
 	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
+	//void CreateCheckPointArc(checkPoints*);
 
 	void Create_Finish_Line_Elements(const vec3);
 
+	bool UpdateGameState();
+	Uint32 GetBestLap();
+	void GetStandardTimeFormat(uint& min, uint& sec, uint &ms, Uint32 time) const;
+	void AddPenalizationTime(Uint32 time);
+
 public:
 
-
+	GameState game_state = GameState::PREPARATION;
+	Timer countdownTimer;
+	Timer lapTimer;
+	Uint32 AllLapsTime[MAX_LAPS] = { 0u }; // for show on title bar when race ends
+	Uint32 TotalRaceTime = 0u;
+	Uint32 penalizationTime = 0u;
+	Uint32 maxTimeForWin = 180000; // 3minutes for now TODO: adjust
+	int lap = 0;
+	// sfx
+	countdownSFX cdsfx[3]; // 3 beep
+	uint cameraMoveSFX = 0u;
+	uint loseSFX = 0u; // TODO
+	uint winSFX = 0u; // TODO
+	uint checkpointSFX = 0u;
 
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];
