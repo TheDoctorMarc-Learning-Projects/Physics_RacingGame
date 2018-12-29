@@ -341,7 +341,7 @@ bool ModuleSceneIntro::UpdateGameState()
 		uint totalMin, totalSec, totalMs = 0u;
 		GetStandardTimeFormat(totalMin, totalSec, totalMs, TotalRaceTime);
 		// show best lap and total times
-		sprintf_s(title, "YOU WIN :) - BEST LAP TIME: %02u:%02u:%03u - TOTAL RACE TIME: %02u:%02u:%03u - Press N to start a New Game", bestLapMin,bestLapMs, bestLapSec, totalMin, totalSec,totalMs);
+		sprintf_s(title, "YOU WIN :) - BEST LAP TIME: %02u:%02u:%03u - TOTAL RACE TIME: %02u:%02u:%03u - Press N to start a New Game", bestLapMin,bestLapSec, bestLapMs, totalMin, totalSec,totalMs);
 	}
 		break;
 	case LOSE:
