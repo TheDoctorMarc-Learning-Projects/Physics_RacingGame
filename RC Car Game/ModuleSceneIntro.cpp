@@ -644,6 +644,11 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 		s.SetPos(origin.x + intial_offset - sph_separation, TUNNEL_HEIGHT, origin.z);
 		sph_separation += 18; 
 		circuit_sphrs.prims.PushBack(s); 
+		PhysBody3D* s_body = App->physics->AddBody(s, 0.0f);
+		circuit_sphrs.bodies.PushBack(s_body);
+		// light
+		App->renderer3D->lights[1].SetPos(s_body->GetPos().x, s_body->GetPos().y, s_body->GetPos().z);
+
 	}
 
 	// store objects
@@ -666,11 +671,16 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 void ModuleSceneIntro::Create_Tunnel_Sensors(const vec3 pos) {
 
 	Cube start, end;
-	start.size.x = start.size.y = end.size.x = end.size.y = 0.5f;
+	start.size.x = start.size.y = end.size.x = end.size.y = 2.5f;
 	start.size.z = end.size.z = TUNNEL_WIDTH;
 
-	start.SetPos(pos.x + 150, pos.y + start.size.y / 2, pos.z); 
+	/*start.SetPos(pos.x + 140, pos.y + start.size.y / 2, pos.z); 
+	end.SetPos(pos.x +10, pos.y + start.size.y / 2, pos.z);*/
+
+
+	start.SetPos(pos.x + 150, pos.y + start.size.y / 2, pos.z);
 	end.SetPos(pos.x, pos.y + start.size.y / 2, pos.z);
+
 
 	PhysBody3D* s_body = App->physics->AddBody(start, 0.0f, true);
 	PhysBody3D* e_body = App->physics->AddBody(end, 0.0f, true);
