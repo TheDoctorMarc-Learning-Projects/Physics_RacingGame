@@ -310,8 +310,8 @@ bool ModuleSceneIntro::UpdateGameState()
 			GetStandardTimeFormat(totalMin, totalSec, totalMs, TotalRaceTime);
 			uint lapMin, lapSec, lapMs = 0u;
 			GetStandardTimeFormat(lapMin, lapSec, lapMs, lapTimer.Read());
-			sprintf_s(title, "LAP:%i - TOTAL TIME: %02u:%02u:%03u - LAP TIME: %02u:%02u:%03u - PENALIZATION: %is - %.1f Km/h",
-					  lap, totalMin, totalSec, totalMs, lapMin, lapSec, lapMs, penalizationTime / 1000, App->player->vehicle->GetKmh());
+			sprintf_s(title, "LAP:%i/%i - TOTAL TIME: %02u:%02u:%03u - LAP TIME: %02u:%02u:%03u - PENALIZATION: %is - %.1f Km/h",
+					  lap, MAX_LAPS, totalMin, totalSec, totalMs, lapMin, lapSec, lapMs, penalizationTime / 1000, App->player->vehicle->GetKmh());
 		}
 		else
 		{
