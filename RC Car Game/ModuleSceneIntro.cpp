@@ -324,6 +324,14 @@ bool ModuleSceneIntro::UpdateGameState()
 			App->audio->PlayFx(loseSFX);
 			game_state = GameState::LOSE;
 		}
+
+		// check if we win
+		if (lap > MAX_LAPS)
+		{
+			// play win sfx
+			App->audio->PlayFx(winSFX);
+			game_state = GameState::WIN;
+		}
 	}
 		break;
 	case WIN:
@@ -369,7 +377,7 @@ void ModuleSceneIntro::AddPenalizationTime(Uint32 time)
 Uint32 ModuleSceneIntro::GetBestLap()
 {
 	Uint32 bestLapTime = AllLapsTime[0] == penalizationTime ? 0:AllLapsTime[0];
-	for (int i = 0; i < MAX_LAPS; ++i)
+	for (int i = 0; i < lap - 1; ++i)
 	{
 		// penalization is added to current lap, but if the current lap is not ended we need to check too to not return incorrect lap time
 		if (AllLapsTime[i] < bestLapTime && AllLapsTime[i] > 0 && AllLapsTime[i] != penalizationTime) 
