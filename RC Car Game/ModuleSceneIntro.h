@@ -72,7 +72,7 @@ public:
 
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
 	//Cube CreateRamp(vec3 origin, vec3 dest);
-	void CreateCheckSensor(const vec3 position, vec3 direction);
+	void CreateCheckPoint(const vec3 position, vec3 direction);
 	void Create_Tunnel_Sensors(const vec3 position); 
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position);
@@ -85,6 +85,7 @@ public:
 	//void CreateFence(int*);
 	void CreateBar(const int*);
 	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
+	//void CreateCheckPointArc(checkPoints*);
 
 	void Create_Finish_Line_Elements(const vec3);
 

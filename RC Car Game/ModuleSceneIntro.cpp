@@ -118,13 +118,13 @@ bool ModuleSceneIntro::Start()
 	CreateCannonSensor({ -80,0,-179 });
 
 	// check points
-	CreateCheckSensor({ 13,0,-192 }, {13,0,-165});
-	CreateCheckSensor({ 132,0,-176 }, { 115,0,-159 });
-	CreateCheckSensor({ 45,0,-108 }, { 20,0,-100 });
-	CreateCheckSensor({ 72,0, 18 }, { 68,0,42 });
-	CreateCheckSensor({ -146,0,188 }, { -145,0, 164 });
-	CreateCheckSensor({ -138,0,68 }, { -147,0, 52 });
-	CreateCheckSensor({ -172,0,15 }, { -158,0, 0 });
+	CreateCheckPoint({ 13,0,-192 }, {13,0,-165});
+	CreateCheckPoint({ 132,0,-176 }, { 115,0,-159 });
+	CreateCheckPoint({ 45,0,-108 }, { 20,0,-100 });
+	CreateCheckPoint({ 72,0, 18 }, { 68,0,42 });
+	CreateCheckPoint({ -146,0,188 }, { -145,0, 164 });
+	CreateCheckPoint({ -138,0,68 }, { -147,0, 52 });
+	CreateCheckPoint({ -172,0,15 }, { -158,0, 0 });
 
 	return ret;
 }
@@ -621,7 +621,7 @@ cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction
 
 }
 
-void ModuleSceneIntro::CreateCheckSensor(const vec3 origin, vec3 destination)
+void ModuleSceneIntro::CreateCheckPoint(const vec3 origin, vec3 destination)
 {
 	vec3 direction = origin - destination;
 	// get angle xz
@@ -638,14 +638,38 @@ void ModuleSceneIntro::CreateCheckSensor(const vec3 origin, vec3 destination)
 	// listener
 	b->collision_listeners.add(this);
 	
-	// adds to lists
-	//circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
+	// create new checkpoint object
 	checkPoints newCheckPoint;
 	newCheckPoint.body = b;
-	newCheckPoint.bodyPrim = checkCube;
+
+	// creates and associates an arc for visual purposes ----
+	float sepMultiplier = 1.3f;
+	vec3 normDir = normalize(direction);
+	float verticalSize = 6.f;
+
+	for (int i = 0; i < 2; ++i) // both laterals
+	{
+		Cube c(1, verticalSize, 1);
+		vec3 dir = i == 0 ? normDir : -normDir;
+
+		c.SetPos(midPoint.x + (dir.x * checkCube.size.x * 0.5f) * sepMultiplier, c.size.y * 0.5f, midPoint.z + (dir.z * checkCube.size.x * 0.5f) * sepMultiplier);
+		c.SetRotation(angle * RADTODEG, { 0,-1,0 });
+		circuit_cubes.prims.PushBack(c);
+	}
+
+	// top indicator bar ------------
+	//get distance between pillars
+	float sizeOffset = 3.f; // offset to make bigger the distance between pilars
+	Cube topBar(checkCube.size.x * sepMultiplier + sizeOffset, 2, 1);
+	mat4x4 trm;
+	newCheckPoint.body->GetTransform(&trm);
+	topBar.transform = trm;
+	topBar.transform[13] += verticalSize;
+	
+	newCheckPoint.bodyPrim = topBar;
 	check_points.PushBack(newCheckPoint);
-	//check_point_bodies.PushBack(b); // this is a basic checkpoint
 }
+
 
 void ModuleSceneIntro::CreateCannonSensor(const vec3 position)
 {
