@@ -174,113 +174,9 @@ update_status ModulePlayer::Update(float dt)
 
 	// handle special keys
 	Keys(); 
-
-	
-	//App->camera->Look((10, 50, 20), vehicle->GetPos(), false);
-
-	// App->camera->Move(vehicle->GetPos());
-	
-	// handle movement
-
-	
-
-	// in the air 
-
-	//if (App->input->GetKey(SDL_SCANCODE_Y) == KEY_DOWN)
-	//{
-	//	vehicle->Get_Rigid_Body()->applyImpulse({ 0,10000,0 }, {0, 0, 0});
-	//}
-
-	//if (vehicle->GetPos().y > 3) {
-	//	vec3 pos = vehicle->GetForwardVector();
-	//	btScalar force = 3; 
-	//	btScalar offset = 5; 
-
-	//	// vehicle->Get_Rigid_Body()->applyImpulse(btVector3{0, 100, 0}, {central_pos.x, central_pos.y, central_pos.z});
-	//	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-	//	{
-	//		force = 3; 
-	//		vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
-	//	}
-	//	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT) {
-	//		force = -3;
-	//		vehicle->Get_Rigid_Body()->applyImpulse({ 0,force,0 }, { pos.x + offset, pos.y, pos.z });
-	//	}
-	//}
-
-	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
-
-		vehicle->SetPos(-180, 0, -180); 
-
-	}
-
-	
-	if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN) {
-
-		vehicle->SetPos(-10, 0, 177);
-
-	}
-
-	// in the ground
-
-	inertia = (-vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
-
-	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
-	{
-		  //App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
-		
-
-			  if (vehicle->GetKmh() <= MAX_SPEED)
-				  acceleration = MAX_ACCELERATION;
-
-			  if (App->input->GetKey(SDL_SCANCODE_P) == KEY_REPEAT) {
-				  vehicle->info.rear_wing_size.y = 0.05f;                   // open rear wing (DRS)
-
-				  if (vehicle->GetKmh() <= MAX_SPEED_DRS)
-					  acceleration = MAX_ACC_DRS;
-			  }
-	}
-
-	else {
-
-		//App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
-
-		vehicle->info.rear_wing_size.y = 0.4f;  // close DRS
-
-		if (vehicle->GetKmh() > 0) {
-			acceleration += inertia;
-		}
-		
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-	{
-		if(turn < TURN_DEGREES)
-			turn +=  TURN_DEGREES;
-	//	acceleration /= 4;   // nerf
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
-	{
-		if(turn > -TURN_DEGREES)
-			turn -= TURN_DEGREES;
-	//	acceleration /= 4;
-	}
-
-	if(App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-	{
-		
-		if (vehicle->GetKmh() > 0) {                      // brake 
-			brake = BRAKE_POWER;
-		}
-		else {
-			acceleration = -MAX_ACCELERATION / 4;             // go backwards 
-		}
-
-	}
-	else if (vehicle->GetKmh() < 0) {
-		acceleration += inertia / 4;
-	}
+	// handle player controls
+	if (App->scene_intro->game_state == GameState::GO)
+		MoveControls();
 
 	
 	/*if (vehicle->GetKmh() > 0) {
@@ -296,15 +192,74 @@ update_status ModulePlayer::Update(float dt)
 	vehicle->Brake(brake);
 
 	vehicle->Render();
-	/*char title[80];
-	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
-	App->window->SetTitle(title);*/
 
 	if(lock_camera)
 		CameraLogic(dt);
 
 
 	return UPDATE_CONTINUE;
+}
+
+void ModulePlayer::MoveControls()
+{
+	inertia = (-vehicle->info.mass * vehicle->GetKmh()) / 50 + vehicle->GetKmh();
+
+	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
+	{
+		//App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
+
+
+		if (vehicle->GetKmh() <= MAX_SPEED)
+			acceleration = MAX_ACCELERATION;
+
+		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_REPEAT) {
+			vehicle->info.rear_wing_size.y = 0.05f;                   // open rear wing (DRS)
+
+			if (vehicle->GetKmh() <= MAX_SPEED_DRS)
+				acceleration = MAX_ACC_DRS;
+		}
+	}
+
+	else {
+
+		//App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
+
+		vehicle->info.rear_wing_size.y = 0.4f;  // close DRS
+
+		if (vehicle->GetKmh() > 0) {
+			acceleration += inertia;
+		}
+
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+	{
+		if (turn < TURN_DEGREES)
+			turn += TURN_DEGREES;
+		//	acceleration /= 4;   // nerf
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
+	{
+		if (turn > -TURN_DEGREES)
+			turn -= TURN_DEGREES;
+		//	acceleration /= 4;
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
+	{
+
+		if (vehicle->GetKmh() > 0) {                      // brake 
+			brake = BRAKE_POWER;
+		}
+		else {
+			acceleration = -MAX_ACCELERATION / 4;             // go backwards 
+		}
+
+	}
+	else if (vehicle->GetKmh() < 0) {
+		acceleration += inertia / 4;
+	}
 }
 
 
@@ -314,14 +269,12 @@ void ModulePlayer::Keys() {
 	if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN) {
 		lock_camera = !lock_camera;
 	}
-	// reset player position
-
-	if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
-		vehicle->Set_Speed(btVector3(0,0,0)); 
-		vehicle->SetPos(0, 0, 0); 
-	}
-
-	// reset overturned car
+	
+	//// reset player position
+	//if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
+	//	vehicle->Set_Speed(btVector3(0,0,0)); 
+	//	vehicle->SetPos(0, 0, 0); 
+	//}
 
 	// returns to last reached checkpoint, if any
 	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
@@ -342,6 +295,22 @@ void ModulePlayer::Keys() {
 		}
 	}
 
+	// debug positions
+
+	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
+
+		vehicle->SetPos(-180, 0, -180);
+
+	}
+
+
+	if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN) {
+
+		vehicle->SetPos(-10, 0, 177);
+
+	}
+
+
 }
 
 void ModulePlayer::CameraLogic(float dt)
@@ -350,7 +319,7 @@ void ModulePlayer::CameraLogic(float dt)
 	vec3 forwardDir = vehicle->GetForwardVector();
 	vec3 desiredCamDistance = currCarPos - (forwardDir * 7.f);
 
-	float wantedHeight =currCarPos.y + 4.f;
+	float wantedHeight = currCarPos.y + 4.f;
 
 	float damp = 5.0f;
 	btVector3 currentCam;

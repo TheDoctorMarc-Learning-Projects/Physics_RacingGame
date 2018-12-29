@@ -32,6 +32,7 @@ bool ModuleSceneIntro::Start()
 	cdsfx[0].fx = App->audio->LoadFx("Sound/normal_beep.wav");
 	cdsfx[1].fx = cdsfx[0].fx;
 	cdsfx[2].fx = App->audio->LoadFx("Sound/last_beep.wav");
+	cinematic_intro = App->audio->LoadFx("Sound/cinematic_cam_aproximation.wav");
 
 	// indiana jones big ball ---
 	//big_ball_prim.radius = 5; 
@@ -245,16 +246,25 @@ bool ModuleSceneIntro::UpdateGameState()
 		App->camera->Position.Set(-150, 40, -180);
 		App->camera->LookAt(App->player->vehicle->GetPos());
 		App->player->lock_camera = false; // unlocks camera
+		
+		// start countdown timer
 		countdownTimer.Start();
 		
 		// resets countdown sfx
 		for (int i = 0; i < 3; ++i)
 			cdsfx[i].played = false;
+
+		// resets all checkpoints
+		for (int i = 0; i < check_points.Count(); ++i) {
+			check_points[i].active = false;
+			check_points[i].bodyPrim.color = White;
+		}
 		
 		// changes game state
 		game_state = GameState::COUNTDOWN;
 		break;
 	case COUNTDOWN:
+		// beep sfx, when ends play cinematic sfx intro and change gamestate
 		for (int i = 0; i < 3; ++i)
 		{
 			if (!cdsfx[i].played && countdownTimer.Read() > (1000 + i * 1000))
@@ -262,12 +272,16 @@ bool ModuleSceneIntro::UpdateGameState()
 				App->audio->PlayFx(cdsfx[i].fx);
 				cdsfx[i].played = true;
 
-				if (i == 2)
+				if (i == 2) {
+					App->audio->PlayFx(cinematic_intro);
 					game_state = GameState::GO;
+				}
 			}
 		}
 		break;
 	case GO:
+		// starts race timer
+		lapsTimer.Start();
 		App->player->lock_camera = true; // locks camera to player
 		break;
 	case WIN:

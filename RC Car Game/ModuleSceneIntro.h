@@ -115,6 +115,7 @@ public:
 	int lap = 0;
 	int maxLaps = 3;
 	countdownSFX cdsfx[3];
+	uint cinematic_intro = 0u;
 
 
 	/*
