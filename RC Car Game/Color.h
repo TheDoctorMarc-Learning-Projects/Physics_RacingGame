@@ -33,3 +33,4 @@ extern Color White;
 extern Color Orange;
 extern Color Violet;
 extern Color Gold;
+extern Color Yelow;

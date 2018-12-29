@@ -73,6 +73,7 @@ struct countdownSFX
 {
 	bool played = false;
 	uint32 fx = 0u;
+	Sphere lightSphere;
 };
 
 class ModuleSceneIntro : public Module

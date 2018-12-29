@@ -28,13 +28,21 @@ bool ModuleSceneIntro::Start()
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
 
-	// load needed sfx for scene
+	// load needed sfx for scene ---------------------------
+	// load countdown data
 	cdsfx[0].fx = App->audio->LoadFx("Sound/normal_beep.wav");
+	cdsfx[0].lightSphere.radius = 1.5f;
+	cdsfx[0].lightSphere.SetPos(10, 10.5f, -174);
 	cdsfx[1].fx = cdsfx[0].fx;
+	cdsfx[1].lightSphere.radius = 1.5f;
+	cdsfx[1].lightSphere.SetPos(10, 10.5f, -179);
 	cdsfx[2].fx = App->audio->LoadFx("Sound/last_beep.wav");
+	cdsfx[2].lightSphere.radius = 1.5f;
+	cdsfx[2].lightSphere.SetPos(10, 10.5f, -184);
+	// general sfx
 	cameraMoveSFX = App->audio->LoadFx("Sound/cinematic_cam_aproximation.wav");
 	checkpointSFX = App->audio->LoadFx("Sound/checkpoint.wav");
-
+	// --------------------------------------------------------
 	// indiana jones big ball ---
 	//big_ball_prim.radius = 5; 
 	//big_ball_prim.SetPos(10, 10, 70); 
@@ -223,6 +231,10 @@ update_status ModuleSceneIntro::Update(float dt)
 		cannon_sensors[i].ball->primitive.Render();
 	}
 
+	// render semaphore spheres
+	for (int i = 0; i < 3; ++i)
+		cdsfx[i].lightSphere.Render();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -238,11 +250,11 @@ bool ModuleSceneIntro::UpdateGameState()
 	case PREPARATION:
 		// reposition player
 		App->player->vehicle->Set_Orientation(-90 * DEGTORAD, { 0,-1,0 });
-		App->player->vehicle->SetPos(0, 0, -180);
+		App->player->vehicle->SetPos(0, 0, -179);
 		App->player->vehicle->Set_Speed({ 0,0,0 });
 
 		// reposition camera, or TODO: travel a predefined "circuit" of transforms for camera lerp movement( if we have time )
-		App->camera->Position.Set(50, 2, -180);//-150, 40, -180);
+		App->camera->Position.Set(50, 2, -179);//-150, 40, -180);
 		App->camera->LookAt(App->player->vehicle->GetPos());
 		App->player->lock_camera = false; // unlocks camera
 
@@ -252,9 +264,11 @@ bool ModuleSceneIntro::UpdateGameState()
 		// start countdown timer
 		countdownTimer.Start();
 		
-		// resets countdown sfx
-		for (int i = 0; i < 3; ++i)
+		// resets countdown sfx and color lights
+		for (int i = 0; i < 3; ++i) {
 			cdsfx[i].played = false;
+			cdsfx[i].lightSphere.color = White;
+		}
 
 		// resets all checkpoints
 		for (int i = 0; i < check_points.Count(); ++i) {
@@ -284,6 +298,7 @@ bool ModuleSceneIntro::UpdateGameState()
 			{
 				App->audio->PlayFx(cdsfx[i].fx);
 				cdsfx[i].played = true;
+				cdsfx[i].lightSphere.color = Yelow;
 
 				if (i == 2) {
 					App->audio->PlayFx(cameraMoveSFX);
@@ -291,6 +306,10 @@ bool ModuleSceneIntro::UpdateGameState()
 					// ...
 					lapTimer.Start(); // start lap timer
 					App->player->lock_camera = true; // locks camera to player
+
+					// turn all semaphore lights to green
+					for (int i = 0; i < 3; ++i)
+						cdsfx[i].lightSphere.color = Green;
 
 					game_state = GameState::GO;
 				}
