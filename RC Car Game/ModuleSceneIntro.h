@@ -14,6 +14,15 @@ struct PhysBody3D;
 struct PhysMotor3D;
 struct vec3; 
 
+enum GameState
+{
+	PREPARATION, // places camera somewhere, reset states etc
+	COUNTDOWN, // countdown timer
+	GO, // locks camera to vehicle and starts crono
+	WIN,
+	LOSE
+};
+
 struct cubeObjects
 {
 	p2DynArray<Cube> prims;
@@ -60,6 +69,12 @@ struct checkPoints
 	Cube visualIndicator;
 };
 
+struct countdownSFX
+{
+	bool played = false;
+	uint32 fx = 0u;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -89,8 +104,17 @@ public:
 
 	void Create_Finish_Line_Elements(const vec3);
 
+	bool UpdateGameState();
+
 public:
 
+	GameState game_state = GameState::PREPARATION;
+	Timer countdownTimer;
+	Timer lapsTimer;
+	Uint32 bestLapTime; // for show on title bar when race ends
+	int lap = 0;
+	int maxLaps = 3;
+	countdownSFX cdsfx[3];
 
 
 	/*

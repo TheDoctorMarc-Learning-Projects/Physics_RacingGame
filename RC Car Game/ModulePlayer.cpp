@@ -22,9 +22,9 @@ bool ModulePlayer::Start()
 
 
 	// Fx's
-	engine_fx = App->audio->LoadFx("Sound/engine.wav");
-	App->audio->Change_Fx_Volume(engine_fx, 40);
-	App->audio->PlayFx(engine_fx, -1);
+	//engine_fx = App->audio->LoadFx("Sound/engine.wav");
+	//App->audio->Change_Fx_Volume(engine_fx, 40);
+	//App->audio->PlayFx(engine_fx, -1);
 	
 
 	// lights
@@ -227,7 +227,7 @@ update_status ModulePlayer::Update(float dt)
 
 	if(App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 	{
-		  App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
+		  //App->audio->Change_Fx_Volume(engine_fx, MIX_MAX_VOLUME);    // louder sound 
 		
 
 			  if (vehicle->GetKmh() <= MAX_SPEED)
@@ -243,7 +243,7 @@ update_status ModulePlayer::Update(float dt)
 
 	else {
 
-		App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
+		//App->audio->Change_Fx_Volume(engine_fx, 40);  // default engine sound
 
 		vehicle->info.rear_wing_size.y = 0.4f;  // close DRS
 
@@ -296,9 +296,9 @@ update_status ModulePlayer::Update(float dt)
 	vehicle->Brake(brake);
 
 	vehicle->Render();
-	char title[80];
+	/*char title[80];
 	sprintf_s(title, "%.1f Km/h", vehicle->GetKmh());
-	App->window->SetTitle(title);
+	App->window->SetTitle(title);*/
 
 	if(lock_camera)
 		CameraLogic(dt);
@@ -350,7 +350,7 @@ void ModulePlayer::CameraLogic(float dt)
 	vec3 forwardDir = vehicle->GetForwardVector();
 	vec3 desiredCamDistance = currCarPos - (forwardDir * 7.f);
 
-	float wantedHeight =currCarPos.y + 3.f;
+	float wantedHeight =currCarPos.y + 4.f;
 
 	float damp = 5.0f;
 	btVector3 currentCam;

@@ -28,6 +28,11 @@ bool ModuleSceneIntro::Start()
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
 
+	// load needed sfx for scene
+	cdsfx[0].fx = App->audio->LoadFx("Sound/normal_beep.wav");
+	cdsfx[1].fx = cdsfx[0].fx;
+	cdsfx[2].fx = App->audio->LoadFx("Sound/last_beep.wav");
+
 	// indiana jones big ball ---
 	//big_ball_prim.radius = 5; 
 	//big_ball_prim.SetPos(10, 10, 70); 
@@ -146,6 +151,9 @@ bool ModuleSceneIntro::CleanUp()
 // Update
 update_status ModuleSceneIntro::Update(float dt)
 {
+	// check and updates game state
+	UpdateGameState();
+
 	Plane p(0, 1, 0, 0);
 	p.axis = true;
 	p.Render();
@@ -221,7 +229,61 @@ update_status ModuleSceneIntro::Update(float dt)
 	testC.SetPos(0, 10, -180);
 	testC.Render();
 
+
+
 	return UPDATE_CONTINUE;
+}
+
+bool ModuleSceneIntro::UpdateGameState()
+{
+	bool ret = true;
+
+	switch (game_state)
+	{
+	case PREPARATION:
+		// reposition camera, or TODO: travel a predefined "circuit" of transforms for camera lerp movement( if we have time )
+		App->camera->Position.Set(-150, 40, -180);
+		App->camera->LookAt(App->player->vehicle->GetPos());
+		App->player->lock_camera = false; // unlocks camera
+		countdownTimer.Start();
+		
+		// resets countdown sfx
+		for (int i = 0; i < 3; ++i)
+			cdsfx[i].played = false;
+		
+		// changes game state
+		game_state = GameState::COUNTDOWN;
+		break;
+	case COUNTDOWN:
+		for (int i = 0; i < 3; ++i)
+		{
+			if (!cdsfx[i].played && countdownTimer.Read() > (1000 + i * 1000))
+			{
+				App->audio->PlayFx(cdsfx[i].fx);
+				cdsfx[i].played = true;
+
+				if (i == 2)
+					game_state = GameState::GO;
+			}
+		}
+		break;
+	case GO:
+		App->player->lock_camera = true; // locks camera to player
+		break;
+	case WIN:
+		break;
+	case LOSE:
+		break;
+	default:
+		break;
+	}
+
+	// prints state on window title
+	char title[80];
+	sprintf_s(title, "%.1f Km/h", App->player->vehicle->GetKmh());
+	App->window->SetTitle(title);
+
+	return ret;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
@@ -660,7 +722,7 @@ void ModuleSceneIntro::CreateCheckPoint(const vec3 origin, vec3 destination)
 	// top indicator bar ------------
 	//get distance between pillars
 	float sizeOffset = 3.f; // offset to make bigger the distance between pilars
-	Cube topBar(checkCube.size.x * sepMultiplier + sizeOffset, 2, 1);
+	Cube topBar(checkCube.size.x * sepMultiplier + sizeOffset, 2, 2);
 	mat4x4 trm;
 	newCheckPoint.body->GetTransform(&trm);
 	topBar.transform = trm;
