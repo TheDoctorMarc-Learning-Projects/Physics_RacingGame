@@ -4,7 +4,7 @@
 #include "Globals.h"
 #include "Primitive.h"
 
-#define MAX_SNAKE 2
+#define MAX_LAPS 3
 #define TUNNEL_WIDTH 28.5f
 #define TUNNEL_HEIGHT 11.5f
 
@@ -14,7 +14,7 @@ struct PhysBody3D;
 struct PhysMotor3D;
 struct vec3; 
 
-enum GameState
+enum GameState : int
 {
 	PREPARATION, // places camera somewhere, reset states etc
 	COUNTDOWN, // countdown timer
@@ -105,18 +105,26 @@ public:
 	void Create_Finish_Line_Elements(const vec3);
 
 	bool UpdateGameState();
+	Uint32 GetBestLap();
+	void GetStandardTimeFormat(uint& min, uint& sec, uint &ms, Uint32 time) const;
+	void AddPenalizationTime(Uint32 time);
 
 public:
 
 	GameState game_state = GameState::PREPARATION;
 	Timer countdownTimer;
-	Timer lapsTimer;
-	Uint32 bestLapTime; // for show on title bar when race ends
+	Timer lapTimer;
+	Uint32 AllLapsTime[MAX_LAPS] = { 0u }; // for show on title bar when race ends
+	Uint32 TotalRaceTime = 0u;
+	Uint32 penalizationTime = 0u;
+	Uint32 maxTimeForWin = 180000; // 3minutes for now TODO: adjust
 	int lap = 0;
-	int maxLaps = 3;
-	countdownSFX cdsfx[3];
-	uint cinematic_intro = 0u;
-
+	// sfx
+	countdownSFX cdsfx[3]; // 3 beep
+	uint cameraMoveSFX = 0u;
+	uint loseSFX = 0u; // TODO
+	uint winSFX = 0u; // TODO
+	uint checkpointSFX = 0u;
 
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];

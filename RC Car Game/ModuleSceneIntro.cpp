@@ -32,7 +32,8 @@ bool ModuleSceneIntro::Start()
 	cdsfx[0].fx = App->audio->LoadFx("Sound/normal_beep.wav");
 	cdsfx[1].fx = cdsfx[0].fx;
 	cdsfx[2].fx = App->audio->LoadFx("Sound/last_beep.wav");
-	cinematic_intro = App->audio->LoadFx("Sound/cinematic_cam_aproximation.wav");
+	cameraMoveSFX = App->audio->LoadFx("Sound/cinematic_cam_aproximation.wav");
+	checkpointSFX = App->audio->LoadFx("Sound/checkpoint.wav");
 
 	// indiana jones big ball ---
 	//big_ball_prim.radius = 5; 
@@ -222,16 +223,6 @@ update_status ModuleSceneIntro::Update(float dt)
 		cannon_sensors[i].ball->primitive.Render();
 	}
 
-	//
-	/*Sphere s;
-	s.SetPos(0, 10, -180);
-	s.Render();*/
-	Cube testC;
-	testC.SetPos(0, 10, -180);
-	testC.Render();
-
-
-
 	return UPDATE_CONTINUE;
 }
 
@@ -239,13 +230,24 @@ bool ModuleSceneIntro::UpdateGameState()
 {
 	bool ret = true;
 
+	char title[100];
+	sprintf_s(title, "RC Racing Game v0.1");
+
 	switch (game_state)
 	{
 	case PREPARATION:
+		// reposition player
+		App->player->vehicle->Set_Orientation(-90 * DEGTORAD, { 0,-1,0 });
+		App->player->vehicle->SetPos(0, 0, -180);
+		App->player->vehicle->Set_Speed({ 0,0,0 });
+
 		// reposition camera, or TODO: travel a predefined "circuit" of transforms for camera lerp movement( if we have time )
-		App->camera->Position.Set(-150, 40, -180);
+		App->camera->Position.Set(50, 2, -180);//-150, 40, -180);
 		App->camera->LookAt(App->player->vehicle->GetPos());
 		App->player->lock_camera = false; // unlocks camera
+
+		// TODO: STOP current music
+		// ...
 		
 		// start countdown timer
 		countdownTimer.Start();
@@ -259,10 +261,18 @@ bool ModuleSceneIntro::UpdateGameState()
 			check_points[i].active = false;
 			check_points[i].bodyPrim.color = White;
 		}
-		
+
+		// reset lap relatives times
+		lap = 0;
+		for (int i = 0; i < MAX_LAPS; ++i)
+			AllLapsTime[i] = 0;
+		TotalRaceTime = 0;
+		penalizationTime = 0;
+		//sprintf_s(title, "Resetting variables");
 		// changes game state
 		game_state = GameState::COUNTDOWN;
 		break;
+
 	case COUNTDOWN:
 		// beep sfx, when ends play cinematic sfx intro and change gamestate
 		for (int i = 0; i < 3; ++i)
@@ -273,31 +283,100 @@ bool ModuleSceneIntro::UpdateGameState()
 				cdsfx[i].played = true;
 
 				if (i == 2) {
-					App->audio->PlayFx(cinematic_intro);
+					App->audio->PlayFx(cameraMoveSFX);
+					// TODO: play race music
+					// ...
+					lapTimer.Start(); // start lap timer
+					App->player->lock_camera = true; // locks camera to player
+
 					game_state = GameState::GO;
 				}
 			}
 		}
 		break;
-	case GO:
-		// starts race timer
-		lapsTimer.Start();
-		App->player->lock_camera = true; // locks camera to player
+	
+	case GO: // player handle its movement
+	{
+		if (lap > 0) // always that player pass first checkpoint
+		{
+			TotalRaceTime = lapTimer.Read();
+			for (int i = 0; i < MAX_LAPS; ++i)
+				TotalRaceTime += AllLapsTime[i];
+			
+			uint totalMin, totalSec, totalMs = 0u;
+			GetStandardTimeFormat(totalMin, totalSec, totalMs, TotalRaceTime);
+			uint lapMin, lapSec, lapMs = 0u;
+			GetStandardTimeFormat(lapMin, lapSec, lapMs, lapTimer.Read());
+			sprintf_s(title, "LAP:%i - TOTAL TIME: %02u:%02u:%03u - LAP TIME: %02u:%02u:%03u - PENALIZATION: %is - %.1f Km/h",
+					  lap, totalMin, totalSec, totalMs, lapMin, lapSec, lapMs, penalizationTime / 1000, App->player->vehicle->GetKmh());
+		}
+		else
+		{
+			sprintf_s(title, "GO");
+		}
+
+		// check if the totaltime exceed max permited total time, and go to lose state
+		if (TotalRaceTime > maxTimeForWin)
+		{
+			// unlocks camera to receive more feedback
+			App->player->lock_camera = false;
+			// play lose sfx
+			App->audio->PlayFx(loseSFX);
+			game_state = GameState::LOSE;
+		}
+	}
 		break;
 	case WIN:
+	{
+		uint bestLapMin, bestLapSec, bestLapMs = 0u;
+		GetStandardTimeFormat(bestLapMin, bestLapSec, bestLapMs, GetBestLap());
+		uint totalMin, totalSec, totalMs = 0u;
+		GetStandardTimeFormat(totalMin, totalSec, totalMs, TotalRaceTime);
+		// show best lap and total times
+		sprintf_s(title, "YOU WIN :) - BEST LAP TIME: %02u:%02u:%03u - TOTAL RACE TIME: %02u:%02u:%03u - Press N to start a New Game", bestLapMin,bestLapMs, bestLapSec, totalMin, totalSec,totalMs);
+	}
 		break;
 	case LOSE:
+	{
+		uint bestLapMin, bestLapSec, bestLapMs = 0u;
+		GetStandardTimeFormat(bestLapMin, bestLapSec, bestLapMs, GetBestLap());
+		sprintf_s(title, "YOU LOSE :( - BEST LAP TIME: %02u:%02u:%03u - Press N to try again", bestLapMin, bestLapSec, bestLapMs);
+	}
 		break;
 	default:
+		sprintf_s(title, "%.1f Km/h", App->player->vehicle->GetKmh());
 		break;
 	}
 
-	// prints state on window title
-	char title[80];
-	sprintf_s(title, "%.1f Km/h", App->player->vehicle->GetKmh());
 	App->window->SetTitle(title);
 
 	return ret;
+}
+
+void ModuleSceneIntro::GetStandardTimeFormat(uint& min, uint& sec, uint& ms, Uint32 timeToConvert) const
+{
+	min = (timeToConvert / 1000) / 60;
+	sec = (timeToConvert / 1000) % 60;
+	ms = (timeToConvert % 1000);
+}
+
+void ModuleSceneIntro::AddPenalizationTime(Uint32 time)
+{
+	AllLapsTime[lap - 1] += time;
+	penalizationTime += time;
+}
+
+Uint32 ModuleSceneIntro::GetBestLap()
+{
+	Uint32 bestLapTime = AllLapsTime[0] == penalizationTime ? 0:AllLapsTime[0];
+	for (int i = 0; i < MAX_LAPS; ++i)
+	{
+		// penalization is added to current lap, but if the current lap is not ended we need to check too to not return incorrect lap time
+		if (AllLapsTime[i] < bestLapTime && AllLapsTime[i] > 0 && AllLapsTime[i] != penalizationTime) 
+			bestLapTime = AllLapsTime[i];
+	}
+
+	return bestLapTime;
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
@@ -326,7 +405,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 			App->renderer3D->tunnel_light_active = false;
 		}
 
-		// iterates all sensor array
+		// iterates all checkPoints array
 		for (int i = 0; i < check_points.Count(); ++i)
 		{
 			if (body1 == check_points[i].body && !check_points[i].active)
@@ -334,6 +413,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 				LOG("basic check point collision");
 				check_points[i].active = true;
 				check_points[i].bodyPrim.color = Green;
+				App->audio->PlayFx(checkpointSFX);
 				// if this is the last checkpoint, reset the first
 				if (i > 0 && i == check_points.Count() - 1)
 				{
@@ -349,10 +429,21 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 						check_points[j].active = false;
 						check_points[j].bodyPrim.color = White;
 					}
-				}
-			}
+					
+					// lap logic
+					if (lap <= MAX_LAPS)
+					{	
+						if(lap > 0) // game doesnt really start after first startline checkpoint
+							AllLapsTime[lap - 1] = lapTimer.Read();
 
-			
+						lapTimer.Start(); // restart lap timer
+						//
+						LOG("LAP %i - Lap Time: %i", lap, AllLapsTime[lap - 1]);
+						
+						lap++;	  // increment lap
+					}
+				}
+			}	
 		}
 
 		// iterates all cannon sensors

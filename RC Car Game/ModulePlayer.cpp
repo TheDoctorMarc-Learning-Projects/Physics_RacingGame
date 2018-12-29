@@ -289,10 +289,24 @@ void ModulePlayer::Keys() {
 					App->scene_intro->check_points[i].body->GetTransform(&trm);
 					vehicle->SetTransform(&trm);
 					vehicle->Set_Speed({ 0,0,0 });
+					// for every time the player repositions the car, penalize with plus time
+					App->scene_intro->AddPenalizationTime(10000);
+					// play sfx
+					App->audio->PlayFx(App->scene_intro->cameraMoveSFX);
 					break;
 				}
 			}
 		}
+	}
+
+	// NEW game
+	if (App->input->GetKey(SDL_SCANCODE_N) == KEY_DOWN)
+		App->scene_intro->game_state = GameState::PREPARATION;
+	
+	// switch game states
+	if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
+	{
+		App->scene_intro->game_state = GameState::WIN;
 	}
 
 	// debug positions
