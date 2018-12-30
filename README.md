@@ -1,37 +1,28 @@
-## Welcome to GitHub Pages
+﻿
+   Welcome to our game README 
 
-You can use the [editor on GitHub](https://github.com/thedoctormarc/Physics_RacingGame/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+   This project is developed by CITM students: 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+José Antonio Prieto
+Marc Doctor Pedrosa
+   
 
-### Markdown
+   Link to the source code in Github: 
+https://github.com/thedoctormarc/Physics_RacingGame
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
 
-```markdown
-Syntax highlighted code block
+ The game is focused on a Radio Control car, 
+ which has to go through a series of obstacles 
+ (balls, pendulum, ramps...) in a limited time
+ (3 laps in 3 minutes, you loose 10 secs when 
+ pressing 'M' to reposition the car) 
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
+---------  controls -----------
 
-1. Numbered
-2. List
+ Use the arrows to move the car 
+ (up and dow to accelerate and brake, 
+ left and right for the direction) 
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/thedoctormarc/Physics_RacingGame/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+ Mantain 'P' to open the rear wing (DRS)
+ and gain speed 
