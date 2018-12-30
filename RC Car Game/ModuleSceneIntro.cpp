@@ -141,6 +141,10 @@ bool ModuleSceneIntro::Start()
 	CreateCheckPoint({ -138,0,68 }, { -147,0, 52 });
 	CreateCheckPoint({ -172,0,15 }, { -158,0, 0 });
 
+	// partyBall zone
+	for (int i = 0; i < MAX_PARTY_BALLS; ++i)
+		CreatePartyBall(partyBallDefPositions[i], partyBallSpecificRadius[i]);
+
 	return ret;
 }
 
@@ -235,6 +239,13 @@ update_status ModuleSceneIntro::Update(float dt)
 	for (int i = 0; i < 3; ++i)
 		cdsfx[i].lightSphere.Render();
 
+	// render and set pos of partyballs primitives
+	for (int i = 0; i < partyBallsZone.prims.Count(); ++i)
+	{
+		partyBallsZone.prims[i].SetPos(partyBallsZone.bodies[i]->GetPos().x, partyBallsZone.bodies[i]->GetPos().y, partyBallsZone.bodies[i]->GetPos().z);
+		partyBallsZone.prims[i].Render();
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -275,6 +286,9 @@ bool ModuleSceneIntro::UpdateGameState()
 			check_points[i].active = false;
 			check_points[i].bodyPrim.color = White;
 		}
+
+		// reposition party zone balls
+		RepositionPartyBalls();
 
 		// reset lap relatives times
 		lap = 0;
@@ -428,10 +442,10 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 	if (body1->is_sensor)
 	{
 		// activate tunnel light
-		if (body1->_first_of_a_pair) {
+		if (body1->_first_of_a_pair  && body2 == App->player->vehicle) {
 			App->renderer3D->tunnel_light_active = true; 
 		}
-		else {
+		else if(!body1->_first_of_a_pair  && body2 == App->player->vehicle) {
 			App->renderer3D->tunnel_light_active = false;
 		}
 
@@ -785,9 +799,6 @@ void ModuleSceneIntro::Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest) {
 	}
 
 	
-
-
-
 cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction)
 {
 	// creates, adds and set timer to cannon balls, adds to list and push the ball
@@ -900,7 +911,27 @@ void ModuleSceneIntro::CreateCannonSensor(const vec3 position)
 	cannon_sensors.PushBack(newCannon);
 }
 
+void ModuleSceneIntro::CreatePartyBall(const vec3 position, float radius)
+{
+	Sphere s;
+	s.radius = radius;
+	s.SetPos(position.x, position.y, position.z);
+	PhysBody3D* b = App->physics->AddBody(s, radius * 50.f);
+	
+	partyBallsZone.prims.PushBack(s);
+	partyBallsZone.bodies.PushBack(b);
+}
 
+void ModuleSceneIntro::RepositionPartyBalls() 
+{
+	for (int i = 0; i < partyBallsZone.bodies.Count(); ++i)
+	{
+		// reposition partyballs bodies to previous exact stored positions
+		partyBallsZone.bodies[i]->SetPos(partyBallDefPositions[i].x, partyBallDefPositions[i].y + partyBallsZone.prims[i].radius , partyBallDefPositions[i].z);
+		partyBallsZone.bodies[i]->Set_Speed({ 0,0,0 });
+		partyBallsZone.bodies[i]->Get_Rigid_Body()->setAngularVelocity({ 0,0,0 });
+	}
+}
 
 
 

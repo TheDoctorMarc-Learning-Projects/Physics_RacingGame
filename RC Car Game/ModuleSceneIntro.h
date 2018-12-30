@@ -5,6 +5,7 @@
 #include "Primitive.h"
 
 #define MAX_LAPS 3
+#define MAX_PARTY_BALLS 11
 #define TUNNEL_WIDTH 28.5f
 #define TUNNEL_HEIGHT 11.5f
 
@@ -102,6 +103,8 @@ public:
 	void CreateBar(const int*);
 	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
 	//void CreateCheckPointArc(checkPoints*);
+	void CreatePartyBall(const vec3 position, float radius = 1.0f);
+	void RepositionPartyBalls();
 
 	void Create_Finish_Line_Elements(const vec3);
 
@@ -179,6 +182,10 @@ public:
 	p2List<cannonBalls> cannon_balls;
 	// check points for cannon zone
 	p2DynArray<cannonSensors> cannon_sensors;
+	SphObjects partyBallsZone;
+	vec3 partyBallDefPositions[MAX_PARTY_BALLS] = { {152,0,64},{129,0,107},{140,0,120}, {126,0,151}, {132,0,38},
+													{85,0,164},{120,0,170}, {143,0,100}, {90, 0,182}, {56,0,180}, {136,0,136} };
+	float partyBallSpecificRadius[MAX_PARTY_BALLS] = { 4.0f, 2.0f, 0.5f, 3.0f, 1.5f, 0.75f, 1.25f, 1.0f, 0.85f, 1.0f, 1.0f };
 
 
 	// primitive "lights"
