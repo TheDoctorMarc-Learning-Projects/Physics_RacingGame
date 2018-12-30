@@ -145,6 +145,27 @@ bool ModuleSceneIntro::Start()
 	for (int i = 0; i < MAX_PARTY_BALLS; ++i)
 		CreatePartyBall(partyBallDefPositions[i], partyBallSpecificRadius[i]);
 
+	// falling snakes obstacle
+	CreateFallingSnake({ 23, 11.5f, 169 }, 0.65f, 9);
+	CreateFallingSnake({ 19, 11.5f, 183 }, 0.65f, 9);
+	CreateFallingSnake({ 6, 11.5f, 175 }, 0.65f, 9);
+	CreateFallingSnake({ -7, 11.5f, 169 }, 0.65f, 9);
+	CreateFallingSnake({ -4, 11.5f, 183 }, 0.65f, 9);
+	CreateFallingSnake({ -23, 11.5f, 169 }, 0.65f, 9);
+	CreateFallingSnake({ -19, 11.5f, 183 }, 0.65f, 9);
+	CreateFallingSnake({ -63, 11.5f, 169 }, 0.65f, 9);
+	CreateFallingSnake({ -58, 11.5f, 183 }, 0.65f, 9);
+	CreateFallingSnake({ -42, 11.5f, 176 }, 0.65f, 9);
+	CreateFallingSnake({ -83, 11.5f, 183 }, 0.65f, 9);
+	CreateFallingSnake({ -100, 11.5f, 169 }, 0.65f, 9);
+	CreateFallingSnake({ -100, 11.5f, 176 }, 0.65f, 9);
+	CreateFallingSnake({ -100, 11.5f, 183 }, 0.65f, 9);
+
+	
+	/*CreateFallingSnake({ 0, 10, -174 });
+	CreateFallingSnake({ 0, 10, -182 }, 0.65f, 8);*/
+
+
 	return ret;
 }
 
@@ -168,10 +189,10 @@ update_status ModuleSceneIntro::Update(float dt)
 	// check and updates game state
 	UpdateGameState();
 
+	// grid ground
 	Plane p(0, 1, 0, 0);
 	p.axis = true;
 	p.Render();
-
 
 	// draw all circuit pieces
 	for (int i = 0; i < circuit_cubes.prims.Count(); ++i)
@@ -244,6 +265,13 @@ update_status ModuleSceneIntro::Update(float dt)
 	{
 		partyBallsZone.prims[i].SetPos(partyBallsZone.bodies[i]->GetPos().x, partyBallsZone.bodies[i]->GetPos().y, partyBallsZone.bodies[i]->GetPos().z);
 		partyBallsZone.prims[i].Render();
+	}
+
+	// render falling snakes
+	for (int i = 0; i < fallingSnakes.prims.Count(); ++i)
+	{
+		fallingSnakes.bodies[i]->GetTransform(&(fallingSnakes.prims[i].transform));
+		fallingSnakes.prims[i].Render();
 	}
 
 	return UPDATE_CONTINUE;
@@ -626,6 +654,7 @@ void ModuleSceneIntro::CreateBar(const int* arrayDir)
 	PhysBody3D* b = App->physics->AddBody(cube, 0.f);
 	b->SetPos(midPoint.x, cube.size.y / 2, midPoint.z);
 	b->Set_Orientation(angle, { 0,-1,0 });
+	b->SetStatic(true);
 
 	circuit_cubes.prims.PushBack(cube);
 	circuit_cubes.bodies.PushBack(b);
@@ -643,14 +672,14 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	// top 
 	top.size.z = TUNNEL_WIDTH;
-	PhysBody3D* top_body = App->physics->AddBody(top); 
+	PhysBody3D* top_body = App->physics->AddBody(top,0.0f); 
 	top_body->SetStatic(true); 
 	top_body->SetPos(origin.x, TUNNEL_HEIGHT + corner_junction , origin.z);
 	top.SetPos(origin.x, TUNNEL_HEIGHT + corner_junction, origin.z);
 
 	// left
 	left.size.z = TUNNEL_HEIGHT;
-	PhysBody3D* left_body = App->physics->AddBody(left, pow(10, 50));
+	PhysBody3D* left_body = App->physics->AddBody(left, 0.0f);
 	left_body->SetStatic(true);
 	left_body->SetPos(origin.x, TUNNEL_HEIGHT / 2, top_body->GetPos().z - top.size.z / 2 + corner_junction);
 	left.SetPos(origin.x, TUNNEL_HEIGHT / 2, top_body->GetPos().z - top.size.z / 2 + corner_junction);
@@ -659,7 +688,7 @@ void ModuleSceneIntro::Create_Tunnel(vec3 origin, vec3 dest) {
 
 	// right
 	right.size.z = TUNNEL_HEIGHT;
-	PhysBody3D* right_body = App->physics->AddBody(right, pow(10, 50));
+	PhysBody3D* right_body = App->physics->AddBody(right, 0.0f);
 	right_body->SetStatic(true);
 	right_body->SetPos(origin.x, TUNNEL_HEIGHT / 2, top_body->GetPos().z + top.size.z / 2 - corner_junction);
 	right.SetPos(origin.x, TUNNEL_HEIGHT / 2, top_body->GetPos().z + top.size.z / 2 - corner_junction);
@@ -819,21 +848,12 @@ cannonBalls* ModuleSceneIntro::SpawnCannonBall(const vec3 origin, vec3 direction
 	ball_prim.color = Orange;
 	// creates the body for collision
 	PhysBody3D* b = App->physics->AddBody(ball_prim, 100.0f);
-	//b->SetPos(newXpos, origin.y, origin.z);
 	b->SetStatic(true);
 	// creates new cannon ball data
 	cannonBalls* newCannonBall = new cannonBalls();
 	newCannonBall->body = b;
 	newCannonBall->primitive = ball_prim;
 	newCannonBall->original_pos = b->GetPos();
-	// adds to cannonballs list
-	//cannon_balls.add(newCannonBall);
-
-	// adds impulse
-	/*float force = 5000.0f;
-	vec3 newDir(newXpos - App->player->vehicle->GetPos().x, origin.y - App->player->vehicle->GetPos().y, origin.z - App->player->vehicle->GetPos().z);
-	newDir = normalize(newDir);
-	b->Push(-newDir.x * force, newDir.y * force, newDir.y * force);*/
 
 	return newCannonBall;
 
@@ -935,6 +955,36 @@ void ModuleSceneIntro::RepositionPartyBalls()
 	}
 }
 
+void ModuleSceneIntro::CreateFallingSnake(const vec3 position, const float radius, int max_balls)
+{
+	Sphere s;
+	s.SetPos(position.x, position.y, position.z);
+	s.radius = radius;
+
+	// create dynamic temporal physbodys
+	p2DynArray<PhysBody3D*> bodySpheres = { NULL };
+
+	PhysBody3D* firstBodySphere = App->physics->AddBody(s, 0.0f); // first ball, static
+	bodySpheres.PushBack(firstBodySphere);
+	// adds to general list to draw
+	fallingSnakes.prims.PushBack(s);
+	fallingSnakes.bodies.PushBack(firstBodySphere); // for if we need feedback
+
+	for (int i = 1; i < max_balls; ++i)
+	{
+		PhysBody3D* b = App->physics->AddBody(s);
+		fallingSnakes.prims.PushBack(s);
+		fallingSnakes.bodies.PushBack(b); //default mass for the rest
+		bodySpheres.PushBack(b);
+	}
+
+	// add p2p constraint
+	for (int i = 0; i < max_balls - 1; ++i)
+	{
+		App->physics->AddConstraintP2P(*bodySpheres[i], *bodySpheres[i + 1], { 0.0f, -s.radius, 0.0f }, { 0.0f, s.radius, 0.0f });
+	}
+
+}
 
 
 

@@ -105,6 +105,7 @@ public:
 	//void CreateCheckPointArc(checkPoints*);
 	void CreatePartyBall(const vec3 position, float radius = 1.0f);
 	void RepositionPartyBalls();
+	void CreateFallingSnake(const vec3 position, const float size = 0.5f, int numOfBalls = 3);
 
 	void Create_Finish_Line_Elements(const vec3);
 
@@ -184,11 +185,13 @@ public:
 	p2DynArray<cannonSensors> cannon_sensors;
 	SphObjects partyBallsZone;
 	vec3 partyBallDefPositions[MAX_PARTY_BALLS] = { {152,0,64},{129,0,107},{140,0,120}, {126,0,151}, {132,0,38},
-													{85,0,164},{120,0,170}, {143,0,100}, {90, 0,182}, {56,0,180}, {136,0,136} };
+													{85,0,164},{120,0,170}, {136,0,100}, {90, 0,182}, {56,0,180}, {136,0,136} };
 	float partyBallSpecificRadius[MAX_PARTY_BALLS] = { 4.0f, 2.0f, 0.5f, 3.0f, 1.5f, 0.75f, 1.25f, 1.0f, 0.85f, 1.0f, 1.0f };
 
 
 	// primitive "lights"
 	Sphere test_light;
+
+	SphObjects fallingSnakes;
 	
 };
