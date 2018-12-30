@@ -42,6 +42,9 @@ bool ModuleSceneIntro::Start()
 	// general sfx
 	cameraMoveSFX = App->audio->LoadFx("Sound/cinematic_cam_aproximation.wav");
 	checkpointSFX = App->audio->LoadFx("Sound/checkpoint.wav");
+	cannonShotSFX = App->audio->LoadFx("Sound/cannon_shot.wav");
+	winSFX = App->audio->LoadFx("Sound/winSFX.wav");
+	loseSFX = App->audio->LoadFx("Sound/loseSFX.wav");
 	// --------------------------------------------------------
 	// indiana jones big ball ---
 	//big_ball_prim.radius = 5; 
@@ -381,7 +384,7 @@ bool ModuleSceneIntro::UpdateGameState()
 				if (i == 2) {
 					App->audio->PlayFx(cameraMoveSFX);
 					// TODO: play race music
-					// ...
+					App->audio->PlayMusic("Sound/music_track.ogg", 0.0f);
 					lapTimer.Start(); // start lap timer
 					App->player->lock_camera = true; // locks camera to player
 
@@ -422,6 +425,7 @@ bool ModuleSceneIntro::UpdateGameState()
 			App->player->lock_camera = false;
 			// play lose sfx
 			App->audio->PlayFx(loseSFX);
+			App->audio->PlayMusic("", 0.0f); // stop music
 			game_state = GameState::LOSE;
 		}
 
@@ -430,6 +434,7 @@ bool ModuleSceneIntro::UpdateGameState()
 		{
 			// play win sfx
 			App->audio->PlayFx(winSFX);
+			App->audio->PlayMusic("", 0.0f); // stops music
 			game_state = GameState::WIN;
 		}
 	}
@@ -573,6 +578,8 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 				//newDir = normalize(newDir);
 				cannon_sensors[i].ball->body->SetStatic(false);
 				cannon_sensors[i].ball->body->Push(newDir.x * force, newDir.y * force, newDir.z * force);
+				// play sfx
+				App->audio->PlayFx(cannonShotSFX);
 			}
 		}
 

@@ -306,6 +306,8 @@ void ModulePlayer::Keys() {
 	// switch game states
 	if (App->input->GetKey(SDL_SCANCODE_F9) == KEY_DOWN)
 	{
+		App->audio->PlayMusic("", 0.0f); // stops music
+		App->audio->PlayFx(App->scene_intro->winSFX);
 		App->scene_intro->game_state = GameState::WIN;
 	}
 

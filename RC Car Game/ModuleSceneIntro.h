@@ -136,9 +136,10 @@ public:
 	// sfx
 	countdownSFX cdsfx[3]; // 3 beep
 	uint cameraMoveSFX = 0u;
-	uint loseSFX = 0u; // TODO
-	uint winSFX = 0u; // TODO
+	uint loseSFX = 0u; 
+	uint winSFX = 0u;
 	uint checkpointSFX = 0u;
+	uint cannonShotSFX = 0u;
 
 	/*
 	PhysBody3D* pb_snake[MAX_SNAKE];
@@ -172,11 +173,7 @@ public:
 
 	// and spheres
 	SphObjects circuit_sphrs; 
-
-
-	// checkpoints, maybe its useful create another helper struct like circuit_cubes
-	/*p2DynArray<PhysBody3D*> check_point_bodies;
-	p2DynArray<Cube> check_point_prim;*/
+	// checkpoints
 	p2DynArray<checkPoints> check_points;
 
 	// individual useful check point
