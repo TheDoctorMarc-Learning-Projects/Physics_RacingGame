@@ -122,6 +122,8 @@ bool ModuleSceneIntro::Start()
 	CreateRampV2({70, 2, -45 }, { 15, 15 }, -45.f, -15.0f);
 	CreateRampV2({ -130, 2, 37 }, { 15, 20 }, -60.f, 15.0f);
 	CreateRampV2({ -113, 2, 69 }, { 15, 15 }, -60.f, -15.0f);
+	// before pendulum
+	CreateRampV2({ -67, 2, -179 }, { 30, 26 }, 0.0f, 7.0f);
 
 	// create cannon sensors with balls
 	CreateCannonSensor({ -150,0,-179 });
@@ -130,7 +132,12 @@ bool ModuleSceneIntro::Start()
 	CreateCannonSensor({ -100,0,-179 });
 	CreateCannonSensor({ -90,0,-179 });
 	CreateCannonSensor({ -85,0,-179 });
-	CreateCannonSensor({ -80,0,-179 });
+	CreateCannonSensor({ -80,1,-179 });
+	CreateCannonSensor({ -75,2,-179 });
+	CreateCannonSensor({ -70,3,-179 });
+	CreateCannonSensor({ -65,4,-179 });
+	CreateCannonSensor({ -58,5,-179 });
+	CreateCannonSensor({ -58,5,-179 });
 
 	// check points
 	CreateCheckPoint({ 13,0,-192 }, {13,0,-165});
@@ -145,7 +152,7 @@ bool ModuleSceneIntro::Start()
 	for (int i = 0; i < MAX_PARTY_BALLS; ++i)
 		CreatePartyBall(partyBallDefPositions[i], partyBallSpecificRadius[i]);
 
-	// falling snakes obstacle
+	// falling snakes obstacle, p2p constraints
 	CreateFallingSnake({ 23, 11.5f, 169 }, 0.75f, 8);
 	CreateFallingSnake({ 19, 11.5f, 183 }, 0.75f, 8);
 	CreateFallingSnake({ 6, 11.5f, 175 }, 0.75f, 8);
@@ -163,6 +170,26 @@ bool ModuleSceneIntro::Start()
 	color_delayer_timer.Start();
 	/*CreateFallingSnake({ 0, 11.5f, -174 }, 0.75f, 8);
 	CreateFallingSnake({ 0, 11.5f, -182 }, 0.75f, 8);*/
+
+	// wrecking ball with hinge constraint test ------------------
+	wreckingBallSs[0].SetPos(-30, 30, -179);
+	wreckingBallBs[0] = App->physics->AddBody(wreckingBallSs[0], 0.0f);
+	for (int i = 1; i < MAX_WRECKING__CBALLS - 1; ++i)
+	{
+		wreckingBallSs[i].SetPos(-30, 30 - wreckingBallSs[i].radius, -179);
+		wreckingBallBs[i] = App->physics->AddBody(wreckingBallSs[i], 10.0f);
+	}
+	wreckingBallSs[MAX_WRECKING__CBALLS - 1].SetPos(-30, 10, -169);
+	wreckingBallSs[MAX_WRECKING__CBALLS - 1].radius = 5.0f;
+	wreckingBallBs[MAX_WRECKING__CBALLS - 1] = App->physics->AddBody(wreckingBallSs[9], 50.0f);
+
+	for (int i = 0; i < MAX_WRECKING__CBALLS - 1; ++i)
+	{
+		App->physics->AddConstraintHinge(*wreckingBallBs[i], *wreckingBallBs[i + 1], { 0, -wreckingBallSs[i].radius, 0 }, { 0,wreckingBallSs[i+1].radius,0 }, { 1,0,0 }, { 1,0,0 }, true);
+	}
+	// adds push to last wrecking ball
+	//wreckingBallBs[MAX_WRECKING__CBALLS - 1]->Push(0, 0, 500.0f);
+	// ------------------------------------------------------------
 
 	return ret;
 }
@@ -276,6 +303,13 @@ update_status ModuleSceneIntro::Update(float dt)
 
 	FallingSnakesColorCascade();
 
+	// render maze wrecking ball pendulum spheres
+	for (int i = 0; i < 10; ++i)
+	{
+		wreckingBallBs[i]->GetTransform(&(wreckingBallSs[i].transform));
+		wreckingBallSs[i].Render();
+	}
+
 	return UPDATE_CONTINUE;
 }
 
@@ -291,7 +325,7 @@ bool ModuleSceneIntro::UpdateGameState()
 	case PREPARATION:
 		// reposition player
 		App->player->vehicle->Set_Orientation(-90 * DEGTORAD, { 0,-1,0 });
-		App->player->vehicle->SetPos(0, 0, -179);
+		App->player->vehicle->SetPos(-100, 0, -179);
 		App->player->vehicle->Set_Speed({ 0,0,0 });
 
 		// reposition camera, or TODO: travel a predefined "circuit" of transforms for camera lerp movement( if we have time )
@@ -482,7 +516,7 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 		// iterates all checkPoints array
 		for (int i = 0; i < check_points.Count(); ++i)
 		{
-			if (body1 == check_points[i].body && !check_points[i].active)
+			if (body1 == check_points[i].body && !check_points[i].active  && body2 == App->player->vehicle)
 			{
 				LOG("basic check point collision");
 				check_points[i].active = true;
@@ -869,7 +903,7 @@ void ModuleSceneIntro::CreateCheckPoint(const vec3 origin, vec3 destination)
 	// cube primitive
 	vec3 midPoint;
 	midPoint.Set((origin.x + destination.x) * 0.5f, 0, (origin.z + destination.z) * 0.5f);
-	Cube checkCube(10, 2, 1);
+	Cube checkCube(10, 6, 1);
 	checkCube.SetPos(midPoint.x, checkCube.size.y * 0.5f, midPoint.z); // y doesnt matter on this case
 	checkCube.SetRotation(angle * RADTODEG, { 0,-1, 0 });
 	checkCube.size.x = length(direction);
@@ -885,7 +919,7 @@ void ModuleSceneIntro::CreateCheckPoint(const vec3 origin, vec3 destination)
 	// creates and associates an arc for visual purposes ----
 	float sepMultiplier = 1.3f;
 	vec3 normDir = normalize(direction);
-	float verticalSize = 6.f;
+	float verticalSize = checkCube.size.y; // the height for the both sides is equal to sensor "window" size//6.f;
 
 	for (int i = 0; i < 2; ++i) // both laterals
 	{
@@ -904,7 +938,7 @@ void ModuleSceneIntro::CreateCheckPoint(const vec3 origin, vec3 destination)
 	mat4x4 trm;
 	newCheckPoint.body->GetTransform(&trm);
 	topBar.transform = trm;
-	topBar.transform[13] += verticalSize;
+	topBar.transform[13] += verticalSize - topBar.size.y; //- 1.5f;
 	
 	newCheckPoint.bodyPrim = topBar;
 	check_points.PushBack(newCheckPoint);
@@ -916,7 +950,7 @@ void ModuleSceneIntro::CreateCannonSensor(const vec3 position)
 	Cube checkCube(24, 3, 1);
 	checkCube.SetPos(position.x, position.y, position.z);
 	checkCube.SetRotation(90, { 0,-1,0 });
-	circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
+	//circuit_cubes.prims.PushBack(checkCube); // for now (debug draw only)
 	// physbody
 	PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);
 	// listener

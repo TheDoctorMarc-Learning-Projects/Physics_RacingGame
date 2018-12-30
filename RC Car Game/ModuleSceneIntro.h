@@ -8,6 +8,7 @@
 #define MAX_PARTY_BALLS 11
 #define TUNNEL_WIDTH 28.5f
 #define TUNNEL_HEIGHT 11.5f
+#define MAX_WRECKING__CBALLS 10 // the first is the "static one", the last is the big one
 
 class btRigidBody;
 class btVector3;
@@ -203,5 +204,9 @@ public:
 	p2DynArray<FallingSnakesData> fallingSnakes;
 	Timer color_delayer_timer;
 	Uint32 color_swapping_timer_fsnakes = 60u;
+
+	// wrecking ball pendulum test
+	PhysBody3D* wreckingBallBs[10] = { NULL };
+	Sphere wreckingBallSs[10];
 	
 };
