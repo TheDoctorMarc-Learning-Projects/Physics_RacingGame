@@ -270,12 +270,6 @@ void ModulePlayer::Keys() {
 		lock_camera = !lock_camera;
 	}
 	
-	//// reset player position
-	//if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN) {
-	//	vehicle->Set_Speed(btVector3(0,0,0)); 
-	//	vehicle->SetPos(0, 0, 0); 
-	//}
-
 	// returns to last reached checkpoint, if any
 	if (App->input->GetKey(SDL_SCANCODE_R) == KEY_DOWN)
 	{
@@ -311,21 +305,15 @@ void ModulePlayer::Keys() {
 		App->scene_intro->game_state = GameState::WIN;
 	}
 
-	// debug positions
+	//// debug positions
 
-	if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
+	//if (App->input->GetKey(SDL_SCANCODE_L) == KEY_DOWN) {
+	//	vehicle->SetPos(-180, 0, -180);
+	//}
 
-		vehicle->SetPos(-180, 0, -180);
-
-	}
-
-
-	if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN) {
-
-		vehicle->SetPos(-10, 0, 177);
-
-	}
-
+	//if (App->input->GetKey(SDL_SCANCODE_G) == KEY_DOWN) {
+	//	vehicle->SetPos(-10, 0, 177);
+	//}
 
 }
 
