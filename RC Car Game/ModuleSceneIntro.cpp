@@ -412,18 +412,6 @@ Uint32 ModuleSceneIntro::GetBestLap()
 void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 {
 
-
-	// specific sensors check
-	if(body1 == test_sensor)
-	{
-		if (big_ball_body->isStatic())
-		{
-			LOG("Indiana jones ball is coming");
-			big_ball_body->SetStatic(false);
-			test_timer.Start();
-		}
-	}
-
 	// if a collision is coming from a sensor call
 	if (body1->is_sensor)
 	{
@@ -543,15 +531,12 @@ void ModuleSceneIntro::Create_Finish_Line_Elements(const vec3 pos) {
 		j++; 
 	}
 
-
-
 	circuit_cubes.prims.PushBack(Left); 
 	circuit_cubes.prims.PushBack(Right);
 	
 	circuit_cubes.bodies.PushBack(l);
 	circuit_cubes.bodies.PushBack(r);
 	
-
 }
 
 void ModuleSceneIntro::CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle, const float rollAngle)

@@ -94,34 +94,28 @@ public:
 	bool Start();
 	update_status Update(float dt);
 	bool CleanUp();
-
 	void OnCollision(PhysBody3D* body1, PhysBody3D* body2);
-	//Cube CreateRamp(vec3 origin, vec3 dest);
+
+	// circuit elements creations ------------
 	void CreateCheckPoint(const vec3 position, vec3 direction);
 	void Create_Tunnel_Sensors(const vec3 position); 
 	cannonBalls* SpawnCannonBall(const vec3 origin, vec3 direction);
 	void CreateCannonSensor(const vec3 position);
 	void Create_Tunnel(vec3 origin, vec3 dest); 
 	void Create_Side_Fence_Limit_Segment(vec3 origin, vec3 dest); 
-	//void Create_Curve(vec3 origin, vec3 dest, float factor = 0.0f, uint elems = 10); 
-
-	//void Create_Fence(vec3 origin, vec3 dest);
-
-	//void CreateFence(int*);
 	void CreateBar(const int*);
 	void CreateRampV2(const vec3 mapPositionXZ, const vec2 plane_size, const float yawAngle = 0.f, const float rollAngle = 0.f);
-	//void CreateCheckPointArc(checkPoints*);
 	void CreatePartyBall(const vec3 position, float radius = 1.0f);
-	void RepositionPartyBalls();
 	void CreateFallingSnake(const vec3 position, const float size = 0.5f, int numOfBalls = 3);
-	void FallingSnakesColorCascade();
-
 	void Create_Finish_Line_Elements(const vec3);
-
+	// utils
+	void RepositionPartyBalls();
+	void FallingSnakesColorCascade();
 	bool UpdateGameState();
 	Uint32 GetBestLap();
 	void GetStandardTimeFormat(uint& min, uint& sec, uint &ms, Uint32 time) const;
 	void AddPenalizationTime(Uint32 time);
+	// -----------------------------------------
 
 public:
 
@@ -141,30 +135,6 @@ public:
 	uint checkpointSFX = 0u;
 	uint cannonShotSFX = 0u;
 
-	/*
-	PhysBody3D* pb_snake[MAX_SNAKE];
-	Sphere s_snake[MAX_SNAKE];
-
-	PhysBody3D* pb_snake2[MAX_SNAKE];
-	Sphere s_snake2[MAX_SNAKE];
-	*/
-
-	//PhysBody3D* pb_chassis;
-	//Cube p_chassis;
-
-	//PhysBody3D* pb_wheel;
-	//Cylinder p_wheel;
-
-	//PhysBody3D* pb_wheel2;
-	//Cylinder p_wheel2;
-
-	//PhysMotor3D* left_wheel;
-	//PhysMotor3D* right_wheel;
-
-
-	PhysBody3D* big_ball_body; 
-	Sphere big_ball_prim; 
-
 	// list of all cubes
 	cubeObjects circuit_cubes;
 
@@ -175,12 +145,6 @@ public:
 	SphObjects circuit_sphrs; 
 	// checkpoints
 	p2DynArray<checkPoints> check_points;
-
-	// individual useful check point
-	PhysBody3D* test_sensor;
-
-	// timers
-	Timer test_timer;
 
 	// tunnel
 	cubeObjects tunnel;
@@ -193,10 +157,6 @@ public:
 	vec3 partyBallDefPositions[MAX_PARTY_BALLS] = { {152,0,64},{129,0,107},{140,0,120}, {126,0,151}, {132,0,38},
 													{85,0,164},{120,0,170}, {136,0,100}, {90, 0,182}, {56,0,180}, {136,0,136} };
 	float partyBallSpecificRadius[MAX_PARTY_BALLS] = { 4.0f, 2.0f, 0.5f, 3.0f, 1.5f, 0.75f, 1.25f, 1.0f, 0.85f, 1.0f, 1.0f };
-
-
-	// primitive "lights"
-	Sphere test_light;
 
 	p2DynArray<FallingSnakesData> fallingSnakes;
 	Timer color_delayer_timer;
