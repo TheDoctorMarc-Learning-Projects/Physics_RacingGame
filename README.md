@@ -28,7 +28,7 @@ like balls, wrecking ball, ramps, jumps, "fallingSnakes". Can you beat it?
 
 ### Debug Keys
 
-- F1: to show/unshow body colliders
+- F1: to show/unshow body colliders (not disponible on release version, only shows world constraints)
 - F3: locks/unlocks camera to vehicle
   - Move freely with WASD keys + Shift key to move faster
 - F9: go directly to win condition
