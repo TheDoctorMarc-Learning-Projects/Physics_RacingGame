@@ -927,6 +927,8 @@ void ModuleSceneIntro::RepositionPartyBalls()
 	for (int i = 0; i < partyBallsZone.bodies.Count(); ++i)
 	{
 		// reposition partyballs bodies to previous exact stored positions
+		mat4x4 trm;
+		partyBallsZone.bodies[i]->SetTransform(&trm); // resets transform
 		partyBallsZone.bodies[i]->SetPos(partyBallDefPositions[i].x, partyBallDefPositions[i].y + partyBallsZone.prims[i].radius , partyBallDefPositions[i].z);
 		partyBallsZone.bodies[i]->Set_Speed({ 0,0,0 });
 		partyBallsZone.bodies[i]->Get_Rigid_Body()->setAngularVelocity({ 0,0,0 });
