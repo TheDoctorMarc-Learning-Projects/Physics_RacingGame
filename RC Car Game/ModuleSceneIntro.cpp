@@ -326,6 +326,8 @@ bool ModuleSceneIntro::UpdateGameState()
 	switch (game_state)
 	{
 	case PREPARATION:
+		// stop music
+		App->audio->PlayMusic("", 0.0f);
 		// reposition player
 		App->player->vehicle->Set_Orientation(-90 * DEGTORAD, { 0,-1,0 });
 		App->player->vehicle->SetPos(0, 0, -179);
