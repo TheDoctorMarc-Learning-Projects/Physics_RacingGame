@@ -800,8 +800,8 @@ void ModuleSceneIntro::Create_Tunnel_Sensors(const vec3 pos) {
 	e_body->collision_listeners.add(this);
 
 	// add to list 
-	circuit_cubes.prims.PushBack(start);
-	circuit_cubes.prims.PushBack(end);
+	//circuit_cubes.prims.PushBack(start);
+	//circuit_cubes.prims.PushBack(end);
 	circuit_cubes.bodies.PushBack(s_body);
 	circuit_cubes.bodies.PushBack(e_body);
 
