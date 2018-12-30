@@ -33,6 +33,10 @@ like balls, wrecking ball, ramps, jumps, "fallingSnakes". Can you beat it?
   - Move freely with WASD keys + Shift key to move faster
 - F9: go directly to win condition
 
+### Bullet3D physics constraints used
+- Hinge: for full wrecking ball
+- Point to point: to falling snakes inside tunnel
+
 ### Credits/References
 
 - Backtrack music copyrighted by "Rise Against"
