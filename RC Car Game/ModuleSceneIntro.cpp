@@ -28,7 +28,7 @@ bool ModuleSceneIntro::Start()
 	App->camera->Move(vec3(1.0f, 1.0f, 0.0f));
 	App->camera->LookAt(vec3(0, 0, 0));
 
-	// load needed sfx for scene ---------------------------
+	// load needed sfx for scene -------------------------------------------------
 	// load countdown data
 	cdsfx[0].fx = App->audio->LoadFx("Sound/normal_beep.wav");
 	cdsfx[0].lightSphere.radius = 1.5f;
@@ -45,69 +45,14 @@ bool ModuleSceneIntro::Start()
 	cannonShotSFX = App->audio->LoadFx("Sound/cannon_shot.wav");
 	winSFX = App->audio->LoadFx("Sound/winSFX.wav");
 	loseSFX = App->audio->LoadFx("Sound/loseSFX.wav");
-	// --------------------------------------------------------
-	// indiana jones big ball ---
-	//big_ball_prim.radius = 5; 
-	//big_ball_prim.SetPos(10, 10, 70); 
-	//big_ball_prim.color = Green; 
-	//big_ball_body = App->physics->AddBody(big_ball_prim, 100.0f);//6000.0f);
-	//big_ball_body->SetStatic(true);
-	//big_ball_body->Set_Speed(btVector3(0, 20, 0));
-	
-	// check point test TODO: make a specific function, actually unlocks the indiana ball ----
+	// ----------------------------------------------------------------------------
 
-	//Cube checkCube(10, 10, 1);
-	//checkCube.SetPos(10, 2, 60);
-	//circuit_cubes.prims.PushBack(checkCube);
-	//// physbody
-	////PhysBody3D* b = App->physics->AddBody(checkCube, 0.0f, true);
-	//test_sensor = App->physics->AddBody(checkCube, 0.0f, true);
-	//// listener
-	////b->collision_listeners.add(this);
-	//test_sensor->collision_listeners.add(this);
-	//check_point_bodies.PushBack(test_sensor);
-	
-	// ----------------------------------------------------------------------------------------
-	
-	// ramp
-	// test_ramp = CreateRamp((0, 0, 0), (10, 30, 30)); 
-
-	// tunnel
-	// Create_Tunnel((50, 50, 50), (300, 300, 300));
-
-	// test timer
-	//test_timer.Start();
-
-	// sensors test
-	/*CreateCheckSensor({ 0,0,40 }, { 0,0,0 });
-	CreateCheckSensor({ 0,0,80 }, { 0,0,0 });
-	CreateCheckSensor({ 0,0,120 }, { 0,0,0 });
-	CreateCheckSensor({ 0,0,160 }, { 0,0,0 });*/
-
-
-
-	//Create_Fence({ 10,0,10 }, { 60,5,40 });
+	// Circuit elements ---------------------------------------
 
 	Create_Finish_Line_Elements({ 10, 0, -179 }); 
 	Create_Side_Fence_Limit_Segment({ -50, 0. - 193 }, { 55, 0, -193});
 	Create_Side_Fence_Limit_Segment({ -50, 0. - 193 + TUNNEL_WIDTH + 0.5f }, { 55, 0, -193 + TUNNEL_WIDTH + 0.5f});
 
-
-	// create individual fence items from array
-	// similar way from how we use vertexBox2d ric app
-	int circuitBoundaries[10] = {
-	-200, 200,
-	200, 200,
-	200, -200,
-	-200, -200,
-	-200, 200
-	};
-
-	//for (int i = 0; i < 8; i+=2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
-	//{
-	//	//CreateFence(&exteriorFences[i]);
-	//	CreateBar(&circuitBoundaries[i]);
-	//}
 	for (int i = 0; i < 294; i += 2) // in pack of two, be sure to send correctly or got a crash for out of array bounds
 	{
 		CreateBar(&circuitSketch_segmentPG[i]);
@@ -171,8 +116,6 @@ bool ModuleSceneIntro::Start()
 	CreateFallingSnake({ -100, 11.5f, 176 }, 0.75f, 8);
 	CreateFallingSnake({ -100, 11.5f, 183 }, 0.75f, 8);
 	color_delayer_timer.Start();
-	/*CreateFallingSnake({ 0, 11.5f, -174 }, 0.75f, 8);
-	CreateFallingSnake({ 0, 11.5f, -182 }, 0.75f, 8);*/
 
 	// wrecking ball with hinge constraint test ------------------
 	wreckingBallSs[0].SetPos(-30, 30, -179);
@@ -190,9 +133,10 @@ bool ModuleSceneIntro::Start()
 	{
 		App->physics->AddConstraintHinge(*wreckingBallBs[i], *wreckingBallBs[i + 1], { 0, -wreckingBallSs[i].radius, 0 }, { 0,wreckingBallSs[i+1].radius,0 }, { 1,0,0 }, { 1,0,0 }, true);
 	}
-	// adds push to last wrecking ball
-	//wreckingBallBs[MAX_WRECKING__CBALLS - 1]->Push(0, 0, 500.0f);
+	
 	// ------------------------------------------------------------
+
+	// -------------------------------------------------------------------------------
 
 	return ret;
 }
@@ -237,31 +181,6 @@ update_status ModuleSceneIntro::Update(float dt)
 	// draw all checkPoints primitives, debug draw purposes
 	for (int i = 0; i < check_points.Count(); ++i)
 		check_points[i].bodyPrim.Render();
-
-	/*// render test light object
-	test_light.Render();*/
-
-	/*big_ball_prim.SetPos(big_ball_body->GetPos().x, big_ball_body->GetPos().y, big_ball_body->GetPos().z); 
-	big_ball_prim.Render(); 
-	
-	
-	if (App->input->GetKey(SDL_SCANCODE_K) == KEY_DOWN) {
-		float magnitude = 85000;
-		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
-	}*/
-
-	/*if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN) {
-		float magnitude = 8500;
-		big_ball_body->Push((App->player->vehicle->GetPos().x - big_ball_body->GetPos().x)*magnitude, (App->player->vehicle->GetPos().y - big_ball_body->GetPos().y)*magnitude, (App->player->vehicle->GetPos().z - big_ball_body->GetPos().z)*magnitude);
-	}*/
-
-	// big ball reposition test
-	/*if (test_timer.Read() > 5000 && !big_ball_body->isStatic())
-	{
-		big_ball_body->SetPos(10, 10, 70);
-		big_ball_body->SetStatic(true);
-		test_timer.Start();
-	}*/
 
 	// Cannon sensors collision cooldown states
 	for (int i = 0; i < cannon_sensors.Count(); ++i)
@@ -338,9 +257,6 @@ bool ModuleSceneIntro::UpdateGameState()
 		App->camera->LookAt(App->player->vehicle->GetPos());
 		App->player->lock_camera = false; // unlocks camera
 
-		// TODO: STOP current music
-		// ...
-		
 		// start countdown timer
 		countdownTimer.Start();
 		
@@ -385,7 +301,6 @@ bool ModuleSceneIntro::UpdateGameState()
 
 				if (i == 2) {
 					App->audio->PlayFx(cameraMoveSFX);
-					// TODO: play race music
 					App->audio->PlayMusic("Sound/music_track.ogg", 0.0f);
 					lapTimer.Start(); // start lap timer
 					App->player->lock_camera = true; // locks camera to player
@@ -573,7 +488,6 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 
 				// adds impulse
 				float force = 500.0f;//5600.0f;
-				//int x = cannon_sensors[i].ball->body->GetPos().x;
 				vec3 newDir(App->player->vehicle->GetPos().x - cannon_sensors[i].ball->body->GetPos().x,
 							App->player->vehicle->GetPos().y - cannon_sensors[i].ball->body->GetPos().y ,
 							App->player->vehicle->GetPos().z - cannon_sensors[i].ball->body->GetPos().z);
