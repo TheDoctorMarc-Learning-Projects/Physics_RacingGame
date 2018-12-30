@@ -325,7 +325,7 @@ bool ModuleSceneIntro::UpdateGameState()
 	case PREPARATION:
 		// reposition player
 		App->player->vehicle->Set_Orientation(-90 * DEGTORAD, { 0,-1,0 });
-		App->player->vehicle->SetPos(-100, 0, -179);
+		App->player->vehicle->SetPos(0, 0, -179);
 		App->player->vehicle->Set_Speed({ 0,0,0 });
 
 		// reposition camera, or TODO: travel a predefined "circuit" of transforms for camera lerp movement( if we have time )
