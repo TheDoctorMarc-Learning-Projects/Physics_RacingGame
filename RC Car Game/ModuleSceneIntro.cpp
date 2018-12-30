@@ -146,25 +146,23 @@ bool ModuleSceneIntro::Start()
 		CreatePartyBall(partyBallDefPositions[i], partyBallSpecificRadius[i]);
 
 	// falling snakes obstacle
-	CreateFallingSnake({ 23, 11.5f, 169 }, 0.65f, 9);
-	CreateFallingSnake({ 19, 11.5f, 183 }, 0.65f, 9);
-	CreateFallingSnake({ 6, 11.5f, 175 }, 0.65f, 9);
-	CreateFallingSnake({ -7, 11.5f, 169 }, 0.65f, 9);
-	CreateFallingSnake({ -4, 11.5f, 183 }, 0.65f, 9);
-	CreateFallingSnake({ -23, 11.5f, 169 }, 0.65f, 9);
-	CreateFallingSnake({ -19, 11.5f, 183 }, 0.65f, 9);
-	CreateFallingSnake({ -63, 11.5f, 169 }, 0.65f, 9);
-	CreateFallingSnake({ -58, 11.5f, 183 }, 0.65f, 9);
-	CreateFallingSnake({ -42, 11.5f, 176 }, 0.65f, 9);
-	CreateFallingSnake({ -83, 11.5f, 183 }, 0.65f, 9);
-	CreateFallingSnake({ -100, 11.5f, 169 }, 0.65f, 9);
-	CreateFallingSnake({ -100, 11.5f, 176 }, 0.65f, 9);
-	CreateFallingSnake({ -100, 11.5f, 183 }, 0.65f, 9);
-
-	
-	/*CreateFallingSnake({ 0, 10, -174 });
-	CreateFallingSnake({ 0, 10, -182 }, 0.65f, 8);*/
-
+	CreateFallingSnake({ 23, 11.5f, 169 }, 0.75f, 8);
+	CreateFallingSnake({ 19, 11.5f, 183 }, 0.75f, 8);
+	CreateFallingSnake({ 6, 11.5f, 175 }, 0.75f, 8);
+	CreateFallingSnake({ -7, 11.5f, 169 }, 0.75f, 8);
+	CreateFallingSnake({ -4, 11.5f, 183 }, 0.75f, 8);
+	CreateFallingSnake({ -23, 11.5f, 169 }, 0.75f, 8);
+	CreateFallingSnake({ -19, 11.5f, 183 }, 0.75f, 8);
+	CreateFallingSnake({ -63, 11.5f, 169 }, 0.75f, 8);
+	CreateFallingSnake({ -58, 11.5f, 183 }, 0.75f, 8);
+	CreateFallingSnake({ -42, 11.5f, 176 }, 0.75f, 8);
+	CreateFallingSnake({ -83, 11.5f, 183 }, 0.75f, 8);
+	CreateFallingSnake({ -100, 11.5f, 169 }, 0.75f, 8);
+	CreateFallingSnake({ -100, 11.5f, 176 }, 0.75f, 8);
+	CreateFallingSnake({ -100, 11.5f, 183 }, 0.75f, 8);
+	color_delayer_timer.Start();
+	/*CreateFallingSnake({ 0, 11.5f, -174 }, 0.75f, 8);
+	CreateFallingSnake({ 0, 11.5f, -182 }, 0.75f, 8);*/
 
 	return ret;
 }
@@ -267,12 +265,16 @@ update_status ModuleSceneIntro::Update(float dt)
 		partyBallsZone.prims[i].Render();
 	}
 
-	// render falling snakes
-	for (int i = 0; i < fallingSnakes.prims.Count(); ++i)
+	for (int i = 0; i < fallingSnakes.Count(); ++i)
 	{
-		fallingSnakes.bodies[i]->GetTransform(&(fallingSnakes.prims[i].transform));
-		fallingSnakes.prims[i].Render();
+		for (int j = 0; j < fallingSnakes[i].s.Count(); ++j)
+		{
+			fallingSnakes[i].b[j]->GetTransform(&(fallingSnakes[i].s[j].transform));
+			fallingSnakes[i].s[j].Render();
+		}
 	}
+
+	FallingSnakesColorCascade();
 
 	return UPDATE_CONTINUE;
 }
@@ -957,6 +959,7 @@ void ModuleSceneIntro::RepositionPartyBalls()
 
 void ModuleSceneIntro::CreateFallingSnake(const vec3 position, const float radius, int max_balls)
 {
+	static int idc = 0;
 	Sphere s;
 	s.SetPos(position.x, position.y, position.z);
 	s.radius = radius;
@@ -967,25 +970,55 @@ void ModuleSceneIntro::CreateFallingSnake(const vec3 position, const float radiu
 	PhysBody3D* firstBodySphere = App->physics->AddBody(s, 0.0f); // first ball, static
 	bodySpheres.PushBack(firstBodySphere);
 	// adds to general list to draw
-	fallingSnakes.prims.PushBack(s);
-	fallingSnakes.bodies.PushBack(firstBodySphere); // for if we need feedback
+	FallingSnakesData nw;
+	fallingSnakes.PushBack(nw);
+	fallingSnakes[idc].s.PushBack(s);
+	fallingSnakes[idc].b.PushBack(firstBodySphere); // for if we need feedback
 
 	for (int i = 1; i < max_balls; ++i)
 	{
 		PhysBody3D* b = App->physics->AddBody(s);
-		fallingSnakes.prims.PushBack(s);
-		fallingSnakes.bodies.PushBack(b); //default mass for the rest
+		fallingSnakes[idc].s.PushBack(s);
+		fallingSnakes[idc].b.PushBack(b); //default mass for the rest
 		bodySpheres.PushBack(b);
 	}
 
+	float offsetS = 0.02f;
 	// add p2p constraint
 	for (int i = 0; i < max_balls - 1; ++i)
 	{
-		App->physics->AddConstraintP2P(*bodySpheres[i], *bodySpheres[i + 1], { 0.0f, -s.radius, 0.0f }, { 0.0f, s.radius, 0.0f });
+		App->physics->AddConstraintP2P(*bodySpheres[i], *bodySpheres[i + 1], { 0.0f, -s.radius - offsetS, 0.0f }, { 0.0f, s.radius + offsetS, 0.0f });
 	}
 
+	// increment idc
+	idc++;
 }
 
+void ModuleSceneIntro::FallingSnakesColorCascade() // traverse all instaces one by one changing color
+{
+	if (color_delayer_timer.Read() > color_swapping_timer_fsnakes)
+	{
+		for (int i = 0; i < fallingSnakes.Count(); ++i) // traverse all instances
+		{
+			if (fallingSnakes[i].lastChangedColorId >= fallingSnakes[i].s.Count()) // if this is the last object from this instance
+			{
+				fallingSnakes[i].s[fallingSnakes[i].lastChangedColorId - 1].color = White; // resets color
+				fallingSnakes[i].lastChangedColorId = 0; // restarts internal counter
+			}
+			// starts to check the last swapped id from this instance
+			for (int j = fallingSnakes[i].lastChangedColorId; j < fallingSnakes[i].s.Count(); ++j)
+			{
+				if (j > 0)
+					fallingSnakes[i].s[j - 1].color = White;
+
+				fallingSnakes[i].s[j].color = Green;
+				color_delayer_timer.Start();
+				fallingSnakes[i].lastChangedColorId++;
+				break;
+			}
+		}
+	}
+}
 
 
 

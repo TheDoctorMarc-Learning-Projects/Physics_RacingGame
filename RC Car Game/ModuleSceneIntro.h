@@ -77,6 +77,13 @@ struct countdownSFX
 	Sphere lightSphere;
 };
 
+struct FallingSnakesData
+{
+	p2DynArray<Sphere> s;
+	p2DynArray<PhysBody3D*> b = { NULL };
+	int lastChangedColorId = 0;
+};
+
 class ModuleSceneIntro : public Module
 {
 public:
@@ -106,6 +113,7 @@ public:
 	void CreatePartyBall(const vec3 position, float radius = 1.0f);
 	void RepositionPartyBalls();
 	void CreateFallingSnake(const vec3 position, const float size = 0.5f, int numOfBalls = 3);
+	void FallingSnakesColorCascade();
 
 	void Create_Finish_Line_Elements(const vec3);
 
@@ -192,6 +200,8 @@ public:
 	// primitive "lights"
 	Sphere test_light;
 
-	SphObjects fallingSnakes;
+	p2DynArray<FallingSnakesData> fallingSnakes;
+	Timer color_delayer_timer;
+	Uint32 color_swapping_timer_fsnakes = 60u;
 	
 };
