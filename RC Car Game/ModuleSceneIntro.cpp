@@ -271,7 +271,7 @@ update_status ModuleSceneIntro::Update(float dt)
 				cannon_sensors[i].collision = false;
 				// reposition the associated ball
 				cannon_sensors[i].ball->body->SetPos(cannon_sensors[i].ball->original_pos.x, cannon_sensors[i].ball->original_pos.y, cannon_sensors[i].ball->original_pos.z);
-				//cannon_sensors[i].ball->body->Set_Speed(btVector3(0, 0, 0));
+				cannon_sensors[i].ball->body->Set_Speed({0,0,0});
 				cannon_sensors[i].ball->body->SetStatic(true);
 			}
 		}
@@ -565,12 +565,12 @@ void ModuleSceneIntro::OnCollision(PhysBody3D* body1, PhysBody3D* body2)
 				cannon_sensors[i].collision = true;
 
 				// adds impulse
-				float force = 5600.0f;
+				float force = 500.0f;//5600.0f;
 				//int x = cannon_sensors[i].ball->body->GetPos().x;
-				vec3 newDir(App->player->vehicle->GetPos().x - cannon_sensors[i].ball->body->GetPos().x ,
+				vec3 newDir(App->player->vehicle->GetPos().x - cannon_sensors[i].ball->body->GetPos().x,
 							App->player->vehicle->GetPos().y - cannon_sensors[i].ball->body->GetPos().y ,
 							App->player->vehicle->GetPos().z - cannon_sensors[i].ball->body->GetPos().z);
-				newDir = normalize(newDir);
+				//newDir = normalize(newDir);
 				cannon_sensors[i].ball->body->SetStatic(false);
 				cannon_sensors[i].ball->body->Push(newDir.x * force, newDir.y * force, newDir.z * force);
 			}
